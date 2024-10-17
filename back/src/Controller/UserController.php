@@ -66,7 +66,7 @@ class UserController extends AbstractController
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
 
-        $user = $userRepository->findOneBy(['email' => $data['email']]);
+        $user = $userRepository->findOneBy(['email' => $email]);
 
         if (!$user || !$userPasswordHasherInterface->isPasswordValid($user, $password)) {
             return $this->json(['message' => 'Email ou mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
