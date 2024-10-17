@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
@@ -20,6 +21,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Groups(['user:signup'])]
     private ?string $email = null;
 
     /**
@@ -35,24 +37,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(['user:signup'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['user:signup'])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(['user:signup'])]
     private ?int $age = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:signup'])]
     private ?string $discord = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(['user:signup'])]
     private ?string $gender = null;
 
     /**
      * @var Collection<int, Platform>
      */
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'users')]
+    #[Groups(['user:signup'])]
     private Collection $platform;
 
     /**
