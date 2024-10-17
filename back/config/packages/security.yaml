@@ -20,7 +20,6 @@ security:
         login:
             pattern:  ^/api/login
             stateless: true
-            anonymous: true
             json_login:
                 check_path: /api/login
                 username_path: email
@@ -29,9 +28,7 @@ security:
         api:
             pattern: ^/api
             stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
