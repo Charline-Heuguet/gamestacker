@@ -1,6 +1,11 @@
 <?php
+
+namespace App\Controller;
+
 use App\Entity\User;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -50,4 +55,35 @@ class UserController extends AbstractController
         // Retourner l'utilisateur créé
         return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user:signup']);
     }
+
+    #[Route('/login', name: 'login', methods: ['POST'])]
+    public function login(Request $request,
+    UserRepository $userRepository, 
+    UserPasswordHasherInterface $userPasswordHasherInterface,
+    JWTTokenManagerInterface $JWTManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        $email = $data['email'] ?? null;
+        $password = $data['password'] ?? null;
+
+        $user = $userRepository->findOneBy(['email' => $email]);
+
+        if (!$user || !$userPasswordHasherInterface->isPasswordValid($user, $password)) {
+            return $this->json(['message' => 'Email ou mot de passe incorrect'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $token = $JWTManager->create($user);
+
+        // Retourner le token JWT
+        return $this->json(['token' => $token], Response::HTTP_OK);
+
+
+    }
+
+    #[Route('/logout', name: 'logout', methods: ['POST'])]
+    public function logout(): JsonResponse
+    {
+        return $this->json(['message' => 'Logout successful'], Response::HTTP_OK);
+    }
+    
 }
