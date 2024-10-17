@@ -19,41 +19,70 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 class UserController extends AbstractController 
 {
     #[Route('/signup',name:'signup', methods: ['POST'])]
-    public function signup(Request $request, 
-    SerializerInterface $serialiazerInterface,
-    UserPasswordHasherInterface $passwordHasherInterface,
-    ValidatorInterface $validatorInterface,
-    EntityManagerInterface $entityManager): JsonResponse
-    {
-        $user = $serialiazerInterface->deserialize(
-            $request->getContent(), 
-            User::class, 
-            'json', 
-            ['groups' => 'user:signup']
-        );
-
-        $user->setPassword($passwordHasherInterface->hashPassword($user, $user->getPassword()));
-
-        $currentRole = $user->getRoles();
-        if(!in_array('ROLE_USER', $currentRole)){
-            $user->setRoles(array_merge($currentRole, ['ROLE_USER']));
+    public function signup(
+        Request $request,
+        UserPasswordHasherInterface $passwordHasher,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator,
+        UserRepository $userRepository
+    ): JsonResponse {
+        // Étape 1 : Récupérer les données depuis la requête
+        $data = json_decode($request->getContent(), true);
+    
+        // Étape 2 : Vérifier si l'email est déjà utilisé
+        $existingUser = $userRepository->findOneBy(['email' => $data['email'] ?? '']);
+        if ($existingUser) {
+            return new JsonResponse(
+                ['error' => "L'adresse email est déjà utilisée."],
+                JsonResponse::HTTP_CONFLICT
+            );
         }
-
-        $errors = $validatorInterface->validate($user);
+    
+        // Étape 3 : Créer un nouvel utilisateur et le remplir
+        $user = new User();
+        $user->setEmail($data['email'] ?? '');
+        $user->setPseudo($data['pseudo'] ?? '');
+        $user->setAge($data['age'] ?? null);
+        $user->setGender($data['gender'] ?? null);
+        $user->setDiscord($data['discord'] ?? null);
+        $user->setDescription($data['description'] ?? null);
+    
+        // Étape 4 : Hasher le mot de passe
+        if (isset($data['password'])) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
+            $user->setPassword($hashedPassword);
+        } else {
+            return new JsonResponse(['error' => "Le mot de passe est requis"], JsonResponse::HTTP_BAD_REQUEST);
+        }
+    
+        // Étape 5 : Valider l'entité User
+        $errors = $validator->validate($user);
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getMessage();
             }
-            return $this->json(['errors' => $errorMessages], Response::HTTP_BAD_REQUEST);
+    
+            return new JsonResponse(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
         }
-
-        // Persister et enregistrer l'objet User
+    
+        // Étape 6 : Sauvegarder l'utilisateur en BDD
         $entityManager->persist($user);
         $entityManager->flush();
-
-        // Retourner l'utilisateur créé
-        return $this->json($user, Response::HTTP_CREATED, [], ['groups' => 'user:signup']);
+    
+        // Étape 7 : Retourner une réponse avec les informations de l'utilisateur
+        return new JsonResponse([
+            'message' => 'Utilisateur inscrit avec succès',
+            'user' => [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'pseudo' => $user->getPseudo(),
+                'age' => $user->getAge(),
+                'gender' => $user->getGender(),
+                'discord' => $user->getDiscord(),
+                'description' => $user->getDescription(),
+            ]
+        ], JsonResponse::HTTP_CREATED);
     }
 
     #[Route('/login', name: 'login', methods: ['POST'])]

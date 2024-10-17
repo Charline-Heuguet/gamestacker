@@ -2,11 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\AnnouncementRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AnnouncementRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: AnnouncementRepository::class)]
 class Announcement
@@ -37,22 +37,23 @@ class Announcement
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'announcements')]
     private Collection $category;
 
-    #[ORM\ManyToOne(inversedBy: 'announcements')]
+    // Relation ManyToOne avec User (l'utilisateur qui publie l'annonce)
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'announcements')]
     private ?User $user = null;
 
     /**
      * @var Collection<int, User>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'announcements')]
-    private Collection $participant;
-
-    
+    // Relation ManyToMany avec User (les participants de l'annonce)
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'announcementsParticipated')]
+    private Collection $participants;
 
     public function __construct()
     {
         $this->category = new ArrayCollection();
-        $this->participant = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
+
 
     public function getId(): ?int
     {
@@ -143,6 +144,7 @@ class Announcement
         return $this;
     }
 
+    // GESTION DU PUBLISHER: 
     public function getUser(): ?User
     {
         return $this->user;
@@ -155,18 +157,19 @@ class Announcement
         return $this;
     }
 
+  // Gestion des participants
     /**
      * @return Collection<int, User>
      */
-    public function getParticipant(): Collection
+    public function getParticipants(): Collection
     {
-        return $this->participant;
+        return $this->participants;
     }
 
     public function addParticipant(User $participant): static
     {
-        if (!$this->participant->contains($participant)) {
-            $this->participant->add($participant);
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
         }
 
         return $this;
@@ -174,7 +177,7 @@ class Announcement
 
     public function removeParticipant(User $participant): static
     {
-        $this->participant->removeElement($participant);
+        $this->participants->removeElement($participant);
 
         return $this;
     }
