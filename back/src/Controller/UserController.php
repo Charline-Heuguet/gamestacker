@@ -46,6 +46,7 @@ class UserController extends AbstractController
         $user->setGender($data['gender'] ?? null);
         $user->setDiscord($data['discord'] ?? null);
         $user->setDescription($data['description'] ?? null);
+        $user->setRoles(['ROLE_USER']);
     
         // Étape 4 : Hasher le mot de passe
         if (isset($data['password'])) {
