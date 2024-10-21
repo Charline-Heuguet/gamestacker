@@ -3,7 +3,11 @@
 namespace App\Controller\Admin;
 
 use App\Entity\User;
+use App\Entity\Forum;
 use App\Entity\Article;
+use App\Entity\Comment;
+use App\Entity\Category;
+use App\Entity\Platform;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -26,6 +30,7 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Dashboard GameStacker');
+            
     }
 
     public function configureCrud(): Crud
@@ -40,8 +45,20 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');
 
         yield MenuItem::section("Users");
-        yield MenuItem::linkToCrud('Users', 'fa fa-shop', User::class);
-        yield MenuItem::linkToCrud('Articles', 'fa fa-shopping-cart', Article::class);
+        yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
+
+        yield MenuItem::section("Forum");
+        yield MenuItem::linkToCrud('Forums', 'fas fa-hands-helping', Forum::class);
+        yield MenuItem::linkToCrud('Forums Comments', 'fas fa-comments', Comment::class);
+
+
+        yield MenuItem::section("Blog");
+        yield MenuItem::linkToCrud('Articles', 'fab fa-blogger-b', Article::class);
+        yield MenuItem::linkToCrud('Articles Comments', 'fas fa-comments', Comment::class);
+
+        yield MenuItem::section("Labels");
+        yield MenuItem::linkToCrud("Categories", 'fa fa-tags', Category::class);
+        yield MenuItem::linkToCrud("Platforms", 'fas fa-gamepad', Platform::class);
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
 }
