@@ -8,6 +8,7 @@ use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Category;
 use App\Entity\Platform;
+use App\Entity\Announcement;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -21,7 +22,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-         $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
+        $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
         return $this->redirect($adminUrlGenerator->setController(ArticleCrudController::class)->generateUrl());
 
     }
@@ -46,6 +47,9 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section("Users");
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
+
+        yield MenuItem::section("Team Play");
+        yield MenuItem::linkToCrud('Announcements', 'fas fa-bullhorn', Announcement::class);
 
         yield MenuItem::section("Forum");
         yield MenuItem::linkToCrud('Forums', 'fas fa-hands-helping', Forum::class);

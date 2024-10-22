@@ -17,7 +17,9 @@ class AnnouncementFixtures extends Fixture implements DependentFixtureInterface
 
         // Récupérer les utilisateurs existants
         $users = $manager->getRepository(User::class)->findAll();
-
+        
+        $maxNbPlayers = 8;
+        
         // Générer plusieurs annonces
         for ($i = 1; $i <= 10; $i++) {
             $announcement = new Announcement();
@@ -27,7 +29,7 @@ class AnnouncementFixtures extends Fixture implements DependentFixtureInterface
             $announcement->setDate($faker->dateTimeBetween('-1 months', '+1 months'));
 
             // Définir max_nb_players
-            $announcement->setMaxNbPlayers($faker->numberBetween(1, 8));
+            $announcement->setMaxNbPlayers($maxNbPlayers);
 
             // Associer à un créateur utilisateur
             $creator = $faker->randomElement($users);
@@ -38,7 +40,7 @@ class AnnouncementFixtures extends Fixture implements DependentFixtureInterface
                 return $user !== $creator; // Exclure le créateur de la liste des participants
             });
 
-            $randomParticipants = $faker->randomElements($participants, $faker->numberBetween(1, 7));
+            $randomParticipants = $faker->randomElements($participants, $faker->numberBetween(1, $maxNbPlayers - 1));
             foreach ($randomParticipants as $participant) {
                 $announcement->addParticipant($participant);
             }

@@ -25,6 +25,7 @@ class UserCrudController extends AbstractCrudController
         return [
             IdField::new('id'),
             TextField::new('pseudo'),
+            TextField::new('discord'),
             TextField::new('email'),
             TextEditorField::new('description'),
             AssociationField::new('platform', 'Platforms')

@@ -13,17 +13,19 @@ class UserFixtures extends Fixture
     {
         $faker = Factory::create();
 
+        $gender = ['Homme', 'Femme', 'Autre'];
+
         // Création de faux utilisateurs
         for ($i = 0; $i < 30; $i++) {
             $user = new User();
-            $user->setEmail('user' . $i . '@example.com');
+            $user->setEmail($faker->email());
             $user->setRoles(['ROLE_USER']);
             $user->setPassword('password' . $i); 
-            $user->setPseudo('user' . $i);
+            $user->setPseudo($faker->userName());
             $user->setDescription($faker->sentence());
             $user->setAge($faker->numberBetween(18, 60));
-            $user->setDiscord('user' . $i);
-            $user->setGender('Homme');
+            $user->setDiscord('#' . $faker->userName());
+            $user->setGender($faker->randomElement($gender));
 
             $manager->persist($user);
 
