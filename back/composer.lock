@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d1fc881bf2ecef0ad7ac6a4396c695a8",
+    "content-hash": "5dfb809259e43585f1c68707e2b34273",
     "packages": [
         {
             "name": "composer/semver",
@@ -1316,16 +1316,16 @@
         },
         {
             "name": "easycorp/easyadmin-bundle",
-            "version": "v4.13.3",
+            "version": "v4.13.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EasyCorp/EasyAdminBundle.git",
-                "reference": "6a6548edd70d4d26afa1b2b7acf60f78b600d1c9"
+                "reference": "99df736933ff915576a072b741268154cf745871"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/6a6548edd70d4d26afa1b2b7acf60f78b600d1c9",
-                "reference": "6a6548edd70d4d26afa1b2b7acf60f78b600d1c9",
+                "url": "https://api.github.com/repos/EasyCorp/EasyAdminBundle/zipball/99df736933ff915576a072b741268154cf745871",
+                "reference": "99df736933ff915576a072b741268154cf745871",
                 "shasum": ""
             },
             "require": {
@@ -1399,7 +1399,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EasyCorp/EasyAdminBundle/issues",
-                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.13.3"
+                "source": "https://github.com/EasyCorp/EasyAdminBundle/tree/v4.13.4"
             },
             "funding": [
                 {
@@ -1407,7 +1407,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-10-16T17:22:56+00:00"
+            "time": "2024-10-20T09:45:57+00:00"
         },
         {
             "name": "egulias/email-validator",
@@ -1475,6 +1475,69 @@
                 }
             ],
             "time": "2023-10-06T06:47:41+00:00"
+        },
+        {
+            "name": "fakerphp/faker",
+            "version": "v1.23.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/FakerPHP/Faker.git",
+                "reference": "bfb4fe148adbf78eff521199619b93a52ae3554b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/FakerPHP/Faker/zipball/bfb4fe148adbf78eff521199619b93a52ae3554b",
+                "reference": "bfb4fe148adbf78eff521199619b93a52ae3554b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4 || ^8.0",
+                "psr/container": "^1.0 || ^2.0",
+                "symfony/deprecation-contracts": "^2.2 || ^3.0"
+            },
+            "conflict": {
+                "fzaninotto/faker": "*"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.4.1",
+                "doctrine/persistence": "^1.3 || ^2.0",
+                "ext-intl": "*",
+                "phpunit/phpunit": "^9.5.26",
+                "symfony/phpunit-bridge": "^5.4.16"
+            },
+            "suggest": {
+                "doctrine/orm": "Required to use Faker\\ORM\\Doctrine",
+                "ext-curl": "Required by Faker\\Provider\\Image to download images.",
+                "ext-dom": "Required by Faker\\Provider\\HtmlLorem for generating random HTML.",
+                "ext-iconv": "Required by Faker\\Provider\\ru_RU\\Text::realText() for generating real Russian text.",
+                "ext-mbstring": "Required for multibyte Unicode string functionality."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "support": {
+                "issues": "https://github.com/FakerPHP/Faker/issues",
+                "source": "https://github.com/FakerPHP/Faker/tree/v1.23.1"
+            },
+            "time": "2024-01-02T13:46:09+00:00"
         },
         {
             "name": "knplabs/knp-components",
@@ -10737,5 +10800,5 @@
         "ext-iconv": "*"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

@@ -100,7 +100,11 @@
   </header>
 
   <main>
-    <slot></slot>
+    <slot>
+      <div id="app">
+        <Dashboard />
+    </div>
+    </slot>
   </main>
 
   
