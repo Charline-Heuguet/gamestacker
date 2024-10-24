@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Forum;
+use App\Entity\Comment;
 use App\Form\ForumType;
+use App\Form\CommentType;
 use App\Repository\UserRepository;
 use App\Repository\ForumRepository;
+use App\Service\CommentFilterService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,6 +29,7 @@ class ForumController extends AbstractController
         $this->forumRepository = $forumRepository;
     }
 
+    /// VISUALISER TOUS LES TICKETS ///
     #[Route('/forum', name: 'forum', methods: ['GET'])]
     public function index(): Response
     {
@@ -34,6 +38,7 @@ class ForumController extends AbstractController
         return $this->json($forums, 200, [], ['groups' => 'forum:read']);
     }
 
+    /// VISUALISER UN TICKKET ///
     #[Route('/forum/{id}', name: 'view_forum', methods: ['GET'])]
     public function viewForum($id): Response
     {
@@ -43,6 +48,8 @@ class ForumController extends AbstractController
         return $this->json(['forum' => $forum], 200, [], ['groups' => 'forum:details', 'comment:details']);
     }
 
+
+    /// AJOUTE UN TICKET ///
     #[Route('/forum-add', name: 'add_forum', methods: ['POST'])]
     public function forumAdd(Request $request, UserRepository $userRepository): JsonResponse
     {
@@ -85,22 +92,45 @@ class ForumController extends AbstractController
         ], 400);
     }
 
-
-    #[Route('/forum/{id}/delete', name: 'delete_forum', methods: ['DELETE'])]
-    public function deleteForum($id): JsonResponse
+    #[Route('/forum/{id}/add-comment', name: 'add_forum_comment', methods: ['POST'])]
+    public function addForumComment(Request $request, Forum $forum, UserRepository $userRepository, CommentFilterService $commentFilterService): JsonResponse
     {
-        $forum = $this->forumRepository->find($id);
+        // Créer un utilisateur test
+        // A remplacer par $user = $this->getUser() lorsque le login sera actif
+        //Verifier que le User a l'id 39  existe dans la base de données
+        $userTest = $userRepository->findOneBy(['id'=>39]);
+        // Récupérer les données du commentaire depuis la requête
+        $data = json_decode($request->getContent(), true);
 
-        if ($forum) {
-            $this->entityManager->remove($forum);
-            $this->entityManager->flush();
 
-            return new JsonResponse(['status' => 'Forum post deleted'], 200);
+        // Créer une nouvelle entité Comment
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->submit($data);
+        
+
+        if($form->isSubmitted() && $form->isValid()) {
+            $filteredContent = $commentFilterService->filterProhibitedContent($comment->getContent());
+            $comment->setContent($filteredContent);
+            $comment->setDate(new \DateTime()); // Attribuer la date actuelle au commentaire
+            $comment->setUser($userTest); // A remplacer par $user lorsque le login sera actif
+        } else {
+            return new JsonResponse(['status' => 'Invalid data'], 400);
         }
 
-        return new JsonResponse(['status' => 'Forum post not found'], 404);
+        // Ajouter le commentaire au forum en utilisant la méthode addComment
+        $forum->addComment($comment);
+
+        // Persister les changements
+        $this->entityManager->persist($comment); // Persister le commentaire
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'Comment added successfully'], 201);
     }
 
+    
+
+    /// MODIFIER UN TICKET DANS LES 10 PREMIERE MINUTE ///
     #[Route('/forum-edit/{id}', name: 'edit_forum', methods: ['PUT'])]
     public function editForum(int $id, Request $request, ForumRepository $forumRepository): JsonResponse
     {
@@ -137,4 +167,19 @@ class ForumController extends AbstractController
         return new JsonResponse(['status' => 'Invalid data'], 400);
     }
 
+    /// SUPPRIME UN TICKET ///
+    #[Route('/forum/{id}/delete', name: 'delete_forum', methods: ['DELETE'])]
+    public function deleteForum($id): JsonResponse
+    {
+        $forum = $this->forumRepository->find($id);
+
+        if ($forum) {
+            $this->entityManager->remove($forum);
+            $this->entityManager->flush();
+
+            return new JsonResponse(['status' => 'Forum post deleted'], 200);
+        }
+
+        return new JsonResponse(['status' => 'Forum post not found'], 404);
+    }
 }
