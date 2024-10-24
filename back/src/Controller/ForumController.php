@@ -84,10 +84,19 @@ public function forumAdd(Request $request, UserRepository $userRepository): Json
         'errors' => (string) $form->getErrors(true, false)
     ], 400);
 }
+ 
+    #[Route('/forum/{id}/delete', name: 'delete_forum', methods: ['DELETE'])]
+    public function deleteForum($id): JsonResponse
+    {
+        $forum = $this->forumRepository->find($id);
 
-    
+        if ($forum) {
+            $this->entityManager->remove($forum);
+            $this->entityManager->flush();
 
-    
+            return new JsonResponse(['status' => 'Forum post deleted'], 200);
+        }
 
-    
+        return new JsonResponse(['status' => 'Forum post not found'], 404);
+    }
 }
