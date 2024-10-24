@@ -26,7 +26,7 @@ class Forum
     #[Groups(['forum:read', 'forum:details'])]
     private ?string $content = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     #[Groups(['forum:read', 'forum:details'])]
     private ?\DateTimeInterface $date = null;
 
@@ -41,9 +41,13 @@ class Forum
     #[Groups(['forum:details'])]
     private Collection $comment;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $updatedAt = null;
+
     public function __construct()
     {
         $this->comment = new ArrayCollection();
+        $this->date = new \DateTime();
     }
 
     public function getId(): ?int
@@ -125,6 +129,18 @@ class Forum
                 $comment->setForum(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeInterface $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

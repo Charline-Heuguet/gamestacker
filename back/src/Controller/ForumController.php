@@ -44,47 +44,48 @@ class ForumController extends AbstractController
     }
 
     #[Route('/forum-add', name: 'add_forum', methods: ['POST'])]
-public function forumAdd(Request $request, UserRepository $userRepository): JsonResponse
-{
-    // remplacer par $user = $this->getUser(); pour récupérer l'utilisateur connecté
-    // quand le login sera en place
-    $testUser = $userRepository->findOneBy(['id' => 361]);
-    if (!$testUser) {
-        throw new NotFoundHttpException('User "testUser" not found');
+    public function forumAdd(Request $request, UserRepository $userRepository): JsonResponse
+    {
+        // remplacer par $user = $this->getUser(); pour récupérer l'utilisateur connecté
+        // quand le login sera en place
+        $testUser = $userRepository->findOneBy(['id' => 31]);
+        if (!$testUser) {
+            throw new NotFoundHttpException('User "testUser" not found');
+        }
+
+        // Décodage des données JSON envoyées dans la requête
+        $data = json_decode($request->getContent(), true);
+
+        // Vérification que les données ont été reçues
+        if (!$data) {
+            return new JsonResponse(['status' => 'No data received'], 400);
+        }
+
+        // Création de l'entité Forum
+        $forum = new Forum();
+
+        // Création du formulaire et soumission des données
+        $form = $this->createForm(ForumType::class, $forum);
+        $form->submit($data);
+
+        // Vérification de la validité du formulaire
+        if ($form->isSubmitted() && $form->isValid()) {
+            $forum->setUser($testUser);  // A changer lors du login
+            $forum->setDate(new \DateTime());  // Attribution de la date actuelle
+            $this->entityManager->persist($forum);
+            $this->entityManager->flush();
+
+            return new JsonResponse(['status' => 'Forum post created'], 201);
+        }
+
+        // Retour des erreurs si le formulaire n'est pas valide
+        return new JsonResponse([
+            'status' => 'Invalid data', 
+            'errors' => (string) $form->getErrors(true, false)
+        ], 400);
     }
 
-    // Décodage des données JSON envoyées dans la requête
-    $data = json_decode($request->getContent(), true);
 
-    // Vérification que les données ont été reçues
-    if (!$data) {
-        return new JsonResponse(['status' => 'No data received'], 400);
-    }
-
-    // Création de l'entité Forum
-    $forum = new Forum();
-
-    // Création du formulaire et soumission des données
-    $form = $this->createForm(ForumType::class, $forum);
-    $form->submit($data);
-
-    // Vérification de la validité du formulaire
-    if ($form->isSubmitted() && $form->isValid()) {
-        $forum->setUser($testUser);  // A changer lors du login
-        $forum->setDate(new \DateTime());  // Attribution de la date actuelle
-        $this->entityManager->persist($forum);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['status' => 'Forum post created'], 201);
-    }
-
-    // Retour des erreurs si le formulaire n'est pas valide
-    return new JsonResponse([
-        'status' => 'Invalid data', 
-        'errors' => (string) $form->getErrors(true, false)
-    ], 400);
-}
- 
     #[Route('/forum/{id}/delete', name: 'delete_forum', methods: ['DELETE'])]
     public function deleteForum($id): JsonResponse
     {
@@ -99,4 +100,41 @@ public function forumAdd(Request $request, UserRepository $userRepository): Json
 
         return new JsonResponse(['status' => 'Forum post not found'], 404);
     }
+
+    #[Route('/forum-edit/{id}', name: 'edit_forum', methods: ['PUT'])]
+    public function editForum(int $id, Request $request, ForumRepository $forumRepository): JsonResponse
+    {
+        $forum = $forumRepository->find($id);
+
+        if (!$forum) {
+            return new JsonResponse(['status' => 'Ticket not found'], 404);
+        }
+
+        $currentDateTime = new \DateTime();
+        $createdAt = $forum->getDate();
+        
+        // Calculer la différence en minutes entre la date actuelle et la date de création
+        $interval = $createdAt->diff($currentDateTime);
+        $minutesDifference = $interval->i + ($interval->h * 60); // Ajouter les heures converties en minutes
+
+        // Vérifier si plus de 10 minutes se sont écoulées
+        if ($minutesDifference > 10) {
+            return new JsonResponse(['status' => 'You cannot edit the ticket anymore. The 10 minutes window has passed.'], 403);
+        }
+
+        // Si la modification est encore autorisée, traiter la mise à jour
+        $data = json_decode($request->getContent(), true);
+        $form = $this->createForm(ForumType::class, $forum);
+        $form->submit($data);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $forum->setUpdatedAt(new \DateTime()); 
+            $this->entityManager->flush();
+
+            return new JsonResponse(['status' => 'Ticket updated successfully'], 200);
+        }
+
+        return new JsonResponse(['status' => 'Invalid data'], 400);
+    }
+
 }

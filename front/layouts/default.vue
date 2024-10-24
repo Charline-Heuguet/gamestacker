@@ -101,9 +101,6 @@
 
   <main>
     <slot>
-      <div id="app">
-        <Dashboard />
-    </div>
     </slot>
   </main>
 

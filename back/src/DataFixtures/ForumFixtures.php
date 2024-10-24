@@ -20,6 +20,7 @@ class ForumFixtures extends Fixture implements DependentFixtureInterface
             $forum->setTitle($faker->sentence(6, true));
             $forum->setContent($faker->paragraph(4, true));
             $forum->setDate($faker->dateTimeBetween('-1 years', 'now'));
+            $forum->setUpdatedAt($faker->dateTimeBetween($forum->getDate(), 'now'));
 
             $user = $this->getReference('user_' . rand(0, 9)); // Associer un utilisateur
             $forum->setUser($user);
