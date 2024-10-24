@@ -106,8 +106,6 @@ class UserController extends AbstractController
 
         // Retourner le token JWT
         return $this->json(['token' => $token], Response::HTTP_OK);
-
-
     }
 
     #[Route('/logout', name: 'logout', methods: ['POST'])]

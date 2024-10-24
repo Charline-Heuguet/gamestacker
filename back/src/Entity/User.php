@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: "Le pseudo doit contenir au moins {{ limit }} caractères.",
         maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:signup', 'forum:read', 'forum:details'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -104,6 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user')]
+    #[Groups(['comment:details'])]
     private Collection $comment;
 
 
