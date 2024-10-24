@@ -21,6 +21,7 @@ class ArticleCrudController extends AbstractCrudController
         return Article::class;
     }
 
+
     public function configureFields(string $pageName): iterable
     {
         return [
