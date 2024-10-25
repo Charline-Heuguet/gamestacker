@@ -19,36 +19,37 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:create', 'article:read'])]
+    #[Groups(['article:create', 'article:read', 'article:details'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:create'])]
+    #[Groups(['article:create', 'article:details'])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['article:create', 'article:read'])]
+    #[Groups(['article:create', 'article:read', 'article:details'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:create', 'article:read'])]
+    #[Groups(['article:create', 'article:read','article:details'])]
     private ?string $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[Groups(['article:create'])]
+    #[Groups(['article:create', 'article:details'])]
     private ?User $user = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'articles')]
-    #[Groups(['article:create', 'article:read'])]
+    #[Groups(['article:create', 'article:read', 'article:details'])]
     private Collection $category;
 
     /**
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'article')]
+    #[Groups(['article:details'])]
     private Collection $comment;
 
     public function __construct()
