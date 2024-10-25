@@ -16,27 +16,37 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['forum:details', 'comment:details'])]
+    #[Groups(['forum:details', 'comment:details','article:details' ])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['forum:details', 'comment:details'])]
+    #[Groups(['forum:details', 'comment:details', 'article:details' ])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
     private ?Forum $forum = null;
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
-    #[Groups(['forum:details', 'comment:details'])]
+    #[Groups(['forum:details', 'comment:details', 'article:details' ])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
     private ?Article $article = null;
 
+    #[ORM\Column(options: ['default' => 0])]
+    #[Groups(['forum:details', 'comment:details', 'article:details' ])]
+
+    private ?int $upvote = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    #[Groups(['forum:details', 'comment:details', 'article:details' ])]
+    private ?int $downvote = 0;
+
     public function getId(): ?int
     {
         return $this->id;
     }
+
 
     public function getContent(): ?string
     {
@@ -101,5 +111,29 @@ class Comment
     public function __toString(): string
     {
         return $this->content;  
+    }
+
+    public function getUpvote(): ?int
+    {
+        return $this->upvote;
+    }
+
+    public function setUpvote(int $upvote): static
+    {
+        $this->upvote = $upvote;
+
+        return $this;
+    }
+
+    public function getDownvote(): ?int
+    {
+        return $this->downvote;
+    }
+
+    public function setDownvote(int $downvote): static
+    {
+        $this->downvote = $downvote;
+
+        return $this;
     }
 }

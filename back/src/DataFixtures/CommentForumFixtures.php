@@ -14,6 +14,8 @@ class CommentForumFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Factory::create();
 
+        
+
         // Charger les forums existants
         for ($i = 1; $i <= 10; $i++) {
             $forum = $this->getReference('forum_' . $i); // Récupérer la référence des forums
@@ -23,6 +25,8 @@ class CommentForumFixtures extends Fixture implements DependentFixtureInterface
                 $comment = new Comment();
                 $comment->setContent($faker->paragraph(2, true));
                 $comment->setDate($faker->dateTimeThisYear());
+                $comment->setUpvote($faker->numberBetween(0, 100));
+                $comment->setDownvote('-' . $faker->numberBetween(0, 100));
 
                 // Associer un utilisateur
                 $user = $this->getReference('user_' . rand(0, 9));

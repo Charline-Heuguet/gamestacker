@@ -21,8 +21,9 @@ class CommentArticleFixtures extends Fixture implements DependentFixtureInterfac
             $comment = new Comment();
             $comment->setContent($faker->paragraph(1));
             $comment->setDate($faker->dateTimeThisYear());
+            $comment->setUpvote($faker->numberBetween(0, 100));
+            $comment->setDownvote('-' . $faker->numberBetween(0, 100));
 
-            
             // Associer chaque commentaire à un article et à un utilisateur via les références
             $comment->setArticle($this->getReference('article_' . rand(1, 10)));
             $comment->setUser($this->getReference('user_' . rand(0, 9)));
