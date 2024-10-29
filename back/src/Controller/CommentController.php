@@ -36,24 +36,32 @@ class CommentController extends AbstractController
     
     //Ajouter +1 au nombre de votes sur un commentaire 
     #[Route('/comment/{id}/upvote', name: 'comment_upvote', methods: ['POST'])]
-    public function commentForumUpvote($id, UserRepository $userRepository): JsonResponse
+    public function commentForumUpvote($id, UserRepository $userRepository, CommentRepository $commentRepository, Request $request): JsonResponse
     {
         $user = $userRepository->findOneBy(['id' => 217]);
         if (!$user) {
-            return new JsonResponse(['message' => 'Connectez-vous pour participer'], 403);
+            return new JsonResponse(['message' => 'Utilisateur non trouvé'], 403);
         }
-    
-        $comment = $this->commentRepository->find($id);
+
+        $comment = $commentRepository->find($id);
         if (!$comment) {
             return new JsonResponse(['message' => 'Commentaire non trouvé'], 404);
         }
-    
-        if ($comment->getUpvote() > 0) {
+
+        $session = $request->getSession();
+        $upvotedComments = $session->get('upvoted_comments', []);
+
+        if (in_array($comment->getId(), $upvotedComments)) {
+            // Annuler l'upvote
             $comment->setUpvote($comment->getUpvote() - 1);
+            $upvotedComments = array_diff($upvotedComments, [$comment->getId()]);
         } else {
+            // Ajouter un upvote
             $comment->setUpvote($comment->getUpvote() + 1);
+            $upvotedComments[] = $comment->getId();
         }
 
+        $session->set('upvoted_comments', $upvotedComments);
         $this->entityManager->flush();
         return new JsonResponse(['upvotes' => $comment->getUpvote()]);
         
@@ -61,25 +69,33 @@ class CommentController extends AbstractController
     
     //Ajouter -1 au nombre de votes sur un commentaire
     #[Route('/comment/{id}/downvote', name: 'comment_downvote', methods: ['POST'])]
-    public function commentForumDownvote($id, UserRepository $userRepository): JsonResponse
+    public function commentForumDownvote($id, UserRepository $userRepository, CommentRepository $commentRepository, EntityManagerInterface $entityManager, Request $request): JsonResponse
     {
-        $user = $userRepository->findOneBy(['id' => 217]);
+        $user = $userRepository->findOneBy(['id' => 217]); // Remplacez 218 par l'ID de l'utilisateur actuel
         if (!$user) {
             return new JsonResponse(['message' => 'Connectez-vous pour participer'], 403);
         }
-    
-        $comment = $this->commentRepository->find($id);
+
+        $comment = $commentRepository->find($id);
         if (!$comment) {
             return new JsonResponse(['message' => 'Commentaire non trouvé'], 404);
         }
-    
-        if ($comment->getDownvote() < 0) {
-        $comment->setDownvote($comment->getDownvote() + 1);
-    } else {
-        $comment->setDownvote($comment->getDownvote() - 1);
-    }
-    
-        $this->entityManager->flush();
+
+        $session = $request->getSession();
+        $downvotedComments = $session->get('downvoted_comments', []);
+
+        if (in_array($comment->getId(), $downvotedComments)) {
+            // Annuler le downvote
+            $comment->setDownvote($comment->getDownvote() + 1);
+            $downvotedComments = array_diff($downvotedComments, [$comment->getId()]);
+        } else {
+            // Ajouter un downvote
+            $comment->setDownvote($comment->getDownvote() - 1);
+            $downvotedComments[] = $comment->getId();
+        }
+
+        $session->set('downvoted_comments', $downvotedComments);
+        $entityManager->flush();
         return new JsonResponse(['downvotes' => $comment->getDownvote()]);
     }
 
@@ -94,7 +110,7 @@ class CommentController extends AbstractController
         }
 
         // Utilisateur test temporaire
-        $userTest = $userRepository->findOneBy(['id' => 211]);
+        $userTest = $userRepository->findOneBy(['id' => 218]);
         if (!$userTest) {
             return new JsonResponse(['status' => 'Utilisateur non trouvé'], 404);
         }

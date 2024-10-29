@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: "Le pseudo doit contenir au moins {{ limit }} caractères.",
         maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['user:signup', 'forum:read', 'forum:details', 'article:details'])]
+    #[Groups(['user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read','announcement:details'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -62,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $age = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:signup', 'announcement:details'])]
     private ?string $discord = null;
 
     #[ORM\Column(length: 30)]
