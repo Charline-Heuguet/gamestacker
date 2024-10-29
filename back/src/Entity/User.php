@@ -24,7 +24,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180)]
     #[Assert\NotBlank(message: "L'email ne doit pas être vide.")]
     #[Assert\Email(message: "L'adresse email '{{ value }}' n'est pas valide.")]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:read', 'user:signup'])]
     private ?string $email = null;
 
     /**
@@ -48,32 +48,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: "Le pseudo doit contenir au moins {{ limit }} caractères.",
         maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read','announcement:details'])]
+    #[Groups(['user:read', 'user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read','announcement:details'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:read', 'user:signup'])]
     private ?string $description = null;
 
     #[ORM\Column]
     #[Assert\NotBlank(message: "L'âge ne doit pas être vide.")]
     #[Assert\Positive(message: "L'âge doit être un nombre positif.")]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:read', 'user:signup'])]
     private ?int $age = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:signup', 'announcement:details'])]
+    #[Groups(['user:read' ,'user:signup', 'announcement:details'])]
     private ?string $discord = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:read', 'user:signup'])]
     private ?string $gender = null;
 
     /**
      * @var Collection<int, Platform>
      */
     #[ORM\ManyToMany(targetEntity: Platform::class, inversedBy: 'users')]
-    #[Groups(['user:signup'])]
+    #[Groups(['user:read', 'user:signup'])]
     private Collection $platform;
 
     /**
@@ -104,7 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'user')]
-    #[Groups(['comment:details'])]
+    #[Groups(['comment:details', 'user:article:comments', 'user:forum:comments'])]
     private Collection $comment;
 
 

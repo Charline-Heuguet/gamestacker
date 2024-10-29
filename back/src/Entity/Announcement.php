@@ -18,7 +18,7 @@ class Announcement
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['announcement:read', 'announcement:details'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -26,15 +26,15 @@ class Announcement
     private ?string $content = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(['announcement:read', 'announcement:details'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?string $game = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['announcement:read', 'announcement:details'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
-    #[Groups(['announcement:read', 'announcement:details'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?int $max_nb_players = null;
 
     /**

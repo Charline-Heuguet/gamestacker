@@ -57,7 +57,7 @@ public function index(Request $request, PaginatorInterface $paginator): Response
     ], 200, [], ['groups' => 'forum:read']);
 }
     /// VISUALISER UN TICKKET ///
-    #[Route('/{id}', name: 'view_forum', methods: ['GET'])]
+    #[Route('/{id}', name: 'view', methods: ['GET'])]
     public function viewForum($id): Response
     {
         $forum = $this->forumRepository->find($id);
