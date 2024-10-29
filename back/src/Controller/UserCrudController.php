@@ -38,53 +38,64 @@ class UserCrudController extends AbstractController
         return $this->json($user, 200, [], ['groups' => 'user:read']);
     }
 
-
+    //Permet de voir les commentaires des articles posté par un utilisateur
     #[Route('/view-comments-article', name: 'comments_article', methods: ['GET'])]
-public function viewCommentsArticle(): JsonResponse
-{
-    $user = $this->userRepository->find(218);
-
-    if (!$user) {
-        return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
-    }
-
-    $articleCommentsData = [];
-    foreach ($user->getComment() as $comment) {
-        if ($comment->getArticle() !== null) {
-            $articleCommentsData[] = [
-                'comment' => $comment,
-                'url' => $this->router->generate('api_article_show', ['id' => $comment->getArticle()->getId()], RouterInterface::ABSOLUTE_URL)
-            ];
-        }
-    }
-
-    if (empty($articleCommentsData)) {
-        return $this->json(['message' => 'Vous n\'avez pas encore posté de commentaires sur les articles'], 404);
-    }
-
-    return $this->json($articleCommentsData, 200, [], ['groups' => 'user:article:comments']);
-}
-
-
-    #[Route('/view-comments-forum', name: 'comments_forum', methods: ['GET'])]
-    public function viewCommentsForum(): JsonResponse
+    public function viewCommentsArticle(): JsonResponse
     {
+        //On récupère l'utilisateur
         $user = $this->userRepository->find(218);
 
+        //On vérifie que l'utilisateur existe sinon on renvoi une 404 
         if (!$user) {
             return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
         }
 
-        $forumCommentsData = [];
+        //On crée un tableau pour stocker les commentaires des articles et l'url de l'article
+        $articleCommentsData = [];
+        //On parcours les commentaires de l'utilisateur
         foreach ($user->getComment() as $comment) {
-            if ($comment->getForum() !== null) {
-                $forumCommentsData[] = [
+            //Si l'article n'est pas null alors j'insère le commentaire et l'url de l'article dans le tableau $articleCommentsData
+            if ($comment->getArticle() !== null) {
+                $articleCommentsData[] = [
+                    'comment' => $comment,
+                    //!\Bien vérfier la route et les paramètres à passers
+                    'url' => $this->router->generate('api_article_show', ['id' => $comment->getArticle()->getId()], RouterInterface::ABSOLUTE_URL)
+                ];
+            }
+        }
+
+        //Si le tableau est vide alors on renvoi un message d'erreur
+        if (empty($articleCommentsData)) {
+            return $this->json(['message' => 'Vous n\'avez pas encore posté de commentaires sur les articles'], 404);
+        }
+
+        return $this->json($articleCommentsData, 200, [], ['groups' => 'user:article:comments']);
+    }
+
+    //Permet de voir les commentaires des forums posté par un utilisateur
+    #[Route('/view-comments-forum', name: 'comments_forum', methods: ['GET'])]
+    public function viewCommentsForum(): JsonResponse
+    {
+        //On récupère l'utilisateur
+        $user = $this->userRepository->find(218);
+
+        //On vérifie que l'utilisateur existe, sinon on renvoi une 404
+        if (!$user) {
+            return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
+        }
+
+        
+        $forumCommentsData = []; // On créer un tableau $forumCommentsData pour stocker les commentaire et l'url
+        foreach ($user->getComment() as $comment) { // On parcours les commentaires de l'utilisateur et on génère l'url du ticket de forum pour chaque commentaire
+            if ($comment->getForum() !== null) { //Si le forum récuperé par les commentaire n'est pas null
+                $forumCommentsData[] = [ //Je stocke les commentaires de chaque forum et je génère l'url correspondante
                     'comment' => $comment,
                     'url' => $this->router->generate('api_forum_view', ['id' => $comment->getForum()->getId()], RouterInterface::ABSOLUTE_URL)
                 ];
             }
         }
 
+        //Si le tableau $forumCommentsData est vide alors on renvoi un message d'erreur
         if (empty($forumCommentsData)) {
             return $this->json(['message' => 'Vous n\'avez pas encore posté de commentaires sur le forum'], 404);
         }
@@ -92,35 +103,36 @@ public function viewCommentsArticle(): JsonResponse
         return $this->json($forumCommentsData, 200, [], ['groups' => 'user:forum:comments']);
     }
 
-
+    //Permet de voir les annonces posté par un utilisateur
     #[Route('/view-announcements', name: 'announcements', methods: ['GET'])]
-public function viewAnnouncements(): JsonResponse
-{
-    $user = $this->userRepository->find(218);
+    public function viewAnnouncements(): JsonResponse
+    {
+        //On récupère l'utilisateur
+        $user = $this->userRepository->find(218);
 
-    if (!$user) {
-        return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
+        //On vérifie que l'utilisateur existe, sinon on renvoi une 404
+        if (!$user) {
+            return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
+        }
+
+        //On récupère les annonces de l'utilisateur
+        $announcements = $user->getAnnouncements();
+
+        //Si l'utilisateur n'a pas encore posté d'annonces alors on renvoi un message d'erreur
+        if ($announcements->isEmpty()) {
+            return $this->json(['message' => 'Vous n\'avez pas encore posté d\'annonces'], 404);
+        }
+
+        // Créer un tableau contenant les annonces et leurs URLs
+        $announcementData = [];
+        //Pour chaque annonce, on stocke l'annonce et l'url de l'annonce dans le tableau $announcementData
+        foreach ($announcements as $announcement) {
+            $announcementData[] = [
+                'announcement' => $announcement,
+                'url' => $this->router->generate('api_announcement_show', ['id' => $announcement->getId()], RouterInterface::ABSOLUTE_URL)
+            ];
+        }
+
+        return $this->json($announcementData, 200, [], ['groups' => 'user:announcement']);
     }
-
-    $announcements = $user->getAnnouncements();
-
-    if ($announcements->isEmpty()) {
-        return $this->json(['message' => 'Vous n\'avez pas encore posté d\'annonces'], 404);
-    }
-
-    // Créer un tableau contenant les annonces et leurs URLs
-    $announcementData = [];
-    foreach ($announcements as $announcement) {
-        $announcementData[] = [
-            'announcement' => $announcement,
-            'url' => $this->router->generate('api_announcement_show', ['id' => $announcement->getId()], RouterInterface::ABSOLUTE_URL)
-        ];
-    }
-
-    return $this->json($announcementData, 200, [], ['groups' => 'user:announcement']);
-}
-
-
-
-
 }

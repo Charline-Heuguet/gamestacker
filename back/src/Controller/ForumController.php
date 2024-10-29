@@ -35,28 +35,29 @@ class ForumController extends AbstractController
 
     /// VISUALISER TOUS LES TICKETS ///
     #[Route('/', name: 'forum', methods: ['GET'])]
-public function index(Request $request, PaginatorInterface $paginator): Response
-{
-    $searchTerm = $request->query->get('search', '');
+    public function index(Request $request, PaginatorInterface $paginator): Response
+    {
+        $searchTerm = $request->query->get('search', '');
 
-    // Récupérer la requête en fonction de la présence du terme de recherche
-    $query = $searchTerm 
-        ? $this->forumRepository->findBySearchTerm($searchTerm)
-        : $this->forumRepository->findAllOrderedByDate();
+        // Récupérer la requête en fonction de la présence du terme de recherche
+        $query = $searchTerm 
+            ? $this->forumRepository->findBySearchTerm($searchTerm)
+            : $this->forumRepository->findAllOrderedByDate();
 
-    // Paginer les résultats
-    $pagination = $paginator->paginate(
-        $query,
-        $request->query->getInt('page', 1),
-        10
-    );
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
 
-    return $this->json([
-        'items' => $pagination->getItems(),
-        'totalItems' => $pagination->getTotalItemCount(),
-    ], 200, [], ['groups' => 'forum:read']);
-}
-    /// VISUALISER UN TICKKET ///
+        return $this->json([
+            'items' => $pagination->getItems(),
+            'totalItems' => $pagination->getTotalItemCount(),
+        ], 200, [], ['groups' => 'forum:read']);
+    }
+
+    /// VISUALISER UN TICKET ///
     #[Route('/{id}', name: 'view', methods: ['GET'])]
     public function viewForum($id): Response
     {
