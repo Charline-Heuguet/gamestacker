@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Announcement;
 use App\Form\AnnouncementType;
 use App\Repository\UserRepository;
+use App\Service\RoomIdGeneratorService;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\AnnouncementRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,17 +29,28 @@ class AnnouncementController extends AbstractController
     }
 
     //VOIR TOUTES LES ANNONCES
-    #[Route('/', name: 'all', methods: ['GET'])]
-    public function allAnnouncements(): JsonResponse
-    {
-      $announcement = $this->announcementRepository->findAll();
+    #[Route('/', name: 'announcement', methods: ['GET'])]
+public function index(Request $request, PaginatorInterface $paginator): JsonResponse
+{
+    $searchTerm = $request->query->get('search', '');
 
-      if (!$announcement) {
-            return $this->json(['message' => 'No announcement found'], 404);
-      }
-      
-        return $this->json($announcement, 200, [], ['groups' => 'announcement:read']);
-    }
+    // Construire la requête en fonction de la présence du terme de recherche
+    $query = $searchTerm 
+        ? $this->announcementRepository->findBySearchTerm($searchTerm)
+        : $this->announcementRepository->findAllOrderedByDate();
+
+    // Paginer les résultats
+    $pagination = $paginator->paginate(
+        $query,
+        $request->query->getInt('page', 1),
+        10
+    );
+
+    return $this->json([
+        'items' => $pagination->getItems(),
+        'totalItems' => $pagination->getTotalItemCount(),
+    ], 200, [], ['groups' => 'announcement:read']);
+}
 
     //VOIR UNE ANNONCES
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -48,9 +61,9 @@ class AnnouncementController extends AbstractController
     }
     #CREER UNE ANNONCE
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function createAnnouncement(Request $request, UserRepository $userRepository): JsonResponse
+    public function createAnnouncement(Request $request, UserRepository $userRepository, RoomIdGeneratorService $roomIdGenerator): JsonResponse
     {
-        $testUser = $userRepository->findBy(['id' => 215]);
+        $testUser = $userRepository->findBy(['id' => 338]);
 
         $data = json_decode($request->getContent(), true);
 
@@ -68,6 +81,7 @@ class AnnouncementController extends AbstractController
             $announcement->setUser($testUser[0]);
             $announcement->setDate(new \DateTime());
             $announcement->addParticipant($testUser[0]);
+            $announcement->setRoomId($roomIdGenerator->generateUniqueId(14));
 
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();

@@ -11,6 +11,18 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
 class AnnouncementFixtures extends Fixture implements DependentFixtureInterface
 {
+    // Fonction pour générer un ID unique avec lettres et chiffres aléatoires
+    private function generateUniqueId($length = 15): string {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+
+        return $randomString;
+    }
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create();
@@ -27,6 +39,7 @@ class AnnouncementFixtures extends Fixture implements DependentFixtureInterface
             $announcement->setContent($faker->paragraph());
             $announcement->setGame($faker->randomElement(['FIFA', 'Call of Duty', 'Fortnite']));
             $announcement->setDate($faker->dateTimeBetween('-1 months', '+1 months'));
+            $announcement->setRoomId("#" . $this->generateUniqueId(14));
 
             // Définir max_nb_players
             $announcement->setMaxNbPlayers($maxNbPlayers);

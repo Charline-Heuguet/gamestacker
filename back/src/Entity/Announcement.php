@@ -57,6 +57,10 @@ class Announcement
     #[Groups(['announcement:details'])]
     private Collection $participants;
 
+    #[ORM\Column(length: 15)]
+    #[Groups(['announcement:read','announcement:details'])]
+    private ?string $roomId = null;
+
     public function __construct()
     {
         $this->category = new ArrayCollection();
@@ -187,6 +191,18 @@ class Announcement
     public function removeParticipant(User $participant): static
     {
         $this->participants->removeElement($participant);
+
+        return $this;
+    }
+
+    public function getRoomId(): ?string
+    {
+        return $this->roomId;
+    }
+
+    public function setRoomId(string $roomId): static
+    {
+        $this->roomId = $roomId;
 
         return $this;
     }

@@ -2,9 +2,10 @@
 
 namespace App\Repository;
 
+use Doctrine\ORM\Query;
 use App\Entity\Announcement;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<Announcement>
@@ -15,6 +16,26 @@ class AnnouncementRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Announcement::class);
     }
+
+
+    // src/Repository/AnnouncementRepository.php
+
+public function findAllOrderedByDate(): Query
+{
+    return $this->createQueryBuilder('a')
+        ->orderBy('a.date', 'DESC')
+        ->getQuery();
+}
+
+public function findBySearchTerm(string $term): Query
+{
+    return $this->createQueryBuilder('a')
+        ->where('a.roomId LIKE :term')
+        ->orWhere('a.game LIKE :term')
+        ->setParameter('term', '%' . $term . '%')
+        ->orderBy('a.date', 'DESC')
+        ->getQuery();
+}
 
     //    /**
     //     * @return Announcement[] Returns an array of Announcement objects
@@ -40,4 +61,5 @@ class AnnouncementRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
 }
