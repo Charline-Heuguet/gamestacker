@@ -35,29 +35,30 @@ class ForumController extends AbstractController
 
     /// VISUALISER TOUS LES TICKETS ///
     #[Route('/', name: 'forum', methods: ['GET'])]
-public function index(Request $request, PaginatorInterface $paginator): Response
-{
-    $searchTerm = $request->query->get('search', '');
+    public function index(Request $request, PaginatorInterface $paginator): Response
+    {
+        $searchTerm = $request->query->get('search', '');
 
-    // Récupérer la requête en fonction de la présence du terme de recherche
-    $query = $searchTerm 
-        ? $this->forumRepository->findBySearchTerm($searchTerm)
-        : $this->forumRepository->findAllOrderedByDate();
+        // Récupérer la requête en fonction de la présence du terme de recherche
+        $query = $searchTerm 
+            ? $this->forumRepository->findBySearchTerm($searchTerm)
+            : $this->forumRepository->findAllOrderedByDate();
 
-    // Paginer les résultats
-    $pagination = $paginator->paginate(
-        $query,
-        $request->query->getInt('page', 1),
-        10
-    );
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
 
-    return $this->json([
-        'items' => $pagination->getItems(),
-        'totalItems' => $pagination->getTotalItemCount(),
-    ], 200, [], ['groups' => 'forum:read']);
-}
-    /// VISUALISER UN TICKKET ///
-    #[Route('/{id}', name: 'view_forum', methods: ['GET'])]
+        return $this->json([
+            'items' => $pagination->getItems(),
+            'totalItems' => $pagination->getTotalItemCount(),
+        ], 200, [], ['groups' => 'forum:read']);
+    }
+
+    /// VISUALISER UN TICKET ///
+    #[Route('/{id}', name: 'view', methods: ['GET'])]
     public function viewForum($id): Response
     {
         $forum = $this->forumRepository->find($id);
@@ -127,7 +128,7 @@ public function index(Request $request, PaginatorInterface $paginator): Response
 
         // Vérifier si plus de 10 minutes se sont écoulées
         if ($minutesDifference > 10) {
-            return new JsonResponse(['status' => 'You cannot edit the ticket anymore. The 10 minutes window has passed.'], 403);
+            return new JsonResponse(['message' => 'Désolé, vous ne pouvez modifier votre ticket que 10 minutes après l\'avoir creer.'], 403);
         }
 
         // Si la modification est encore autorisée, traiter la mise à jour
@@ -139,10 +140,10 @@ public function index(Request $request, PaginatorInterface $paginator): Response
             $forum->setUpdatedAt(new \DateTime()); 
             $this->entityManager->flush();
 
-            return new JsonResponse(['status' => 'Ticket updated successfully'], 200);
+            return new JsonResponse(['message' => 'Ticket modifié.'], 200);
         }
 
-        return new JsonResponse(['status' => 'Invalid data'], 400);
+        return new JsonResponse(['message' => 'Données Invalides.'], 400);
     }
 
     /// SUPPRIME UN TICKET ///
@@ -155,10 +156,10 @@ public function index(Request $request, PaginatorInterface $paginator): Response
             $this->entityManager->remove($forum);
             $this->entityManager->flush();
 
-            return new JsonResponse(['status' => 'Forum post deleted'], 200);
+            return new JsonResponse(['message' => 'Vous avez supprimé un votre ticket.'], 200);
         }
 
-        return new JsonResponse(['status' => 'Forum post not found'], 404);
+        return new JsonResponse(['status' => 'Le ticket n\'existe pas.'], 404);
     }
 
 }

@@ -16,21 +16,23 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['forum:details', 'comment:details','article:details' ])]
+    #[Groups(['forum:details', 'comment:details','article:details', 'user:article:comments', 'user:forum:comments' ])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['forum:details', 'comment:details', 'article:details' ])]
+    #[Groups(['forum:details', 'comment:details', 'article:details', 'user:article:comments' , 'user:forum:comments' ])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
+    #[Groups(['user:forum:comments'])]
     private ?Forum $forum = null;
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
-    #[Groups(['forum:details', 'comment:details', 'article:details' ])]
+    #[Groups(['forum:details', 'comment:details', 'article:details'])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'comment')]
+    #[Groups(['user:article:comments'])]
     private ?Article $article = null;
 
     #[ORM\Column(options: ['default' => 0])]

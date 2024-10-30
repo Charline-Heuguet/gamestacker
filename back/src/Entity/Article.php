@@ -19,7 +19,7 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:create', 'article:read', 'article:details'])]
+    #[Groups(['article:create', 'article:read', 'article:details', 'user:article:comments'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]

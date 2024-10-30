@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\AnnouncementRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AnnouncementRepository::class)]
 class Announcement
@@ -17,28 +18,35 @@ class Announcement
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups(['announcement:details'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?string $game = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
     private ?int $max_nb_players = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'announcements')]
+    #[Groups(['announcement:read', 'announcement:details'])]
     private Collection $category;
 
     // Relation ManyToOne avec User (l'utilisateur qui publie l'annonce)
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'announcements')]
+    #[Groups(['announcement:read', 'announcement:details'])]
     private ?User $user = null;
 
     /**
@@ -46,6 +54,7 @@ class Announcement
      */
     // Relation ManyToMany avec User (les participants de l'annonce)
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'announcementsParticipated')]
+    #[Groups(['announcement:details'])]
     private Collection $participants;
 
     public function __construct()

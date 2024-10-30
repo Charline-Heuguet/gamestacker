@@ -19,7 +19,7 @@ class Forum
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['forum:read', 'forum:details'])]
+    #[Groups(['forum:read', 'forum:details', 'user:forum:comments'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
