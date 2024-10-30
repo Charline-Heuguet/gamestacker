@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -47,7 +48,7 @@ class UserCrudController extends AbstractController
     }
 
     #[Route('/verify-password', name: 'verify_password', methods: ['POST'])]
-    public function verifyPassword(Request $request, UserPasswordHasherInterface $passwordHasher): JsonResponse
+    public function verifyPassword(Request $request, UserPasswordHasherInterface $passwordHasher, SessionInterface $session): JsonResponse
     {
         $user = $this->userRepository->find(241);
 
@@ -63,6 +64,10 @@ class UserCrudController extends AbstractController
             return $this->json(['message' => 'Mot de passe incorrect'], 403);
         }
 
+        //Ici on utilise la session pour stocker la vérification du mot de passe
+        //Sinon l'utilisateur pourrais bypass via l'url (suite cf. editProfile())
+        $session->set('password_verified', true);
+
         // Redirection vers le formulaire de modification
         return $this->json([
             'message' => 'Mot de passe vérifié',
@@ -71,10 +76,14 @@ class UserCrudController extends AbstractController
     }
 
     #[Route('/edit', name: 'edit_profile', methods: ['PUT'])]
-    public function editProfile(Request $request): JsonResponse
+    public function editProfile(Request $request, SessionInterface $session): JsonResponse
     {
+        // Si l'indicateur 'password_verified' n'est pas pas dans les sessions alors on envoi une erreur
+        if (!$session->get('password_verified')) {
+        return $this->json(['message' => 'Accès refusé : mot de passe non vérifié'], 403);
+    }
         // Récupérer un utilisateur connecté et existant
-        $user = $this->userRepository->find(218);
+        $user = $this->userRepository->find(241);
 
         if (!$user) {
             return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
@@ -88,6 +97,10 @@ class UserCrudController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->persist($user);
             $this->entityManager->flush();
+
+            //Une fois le formulaire rempli, on supprime l'indicateur
+            $session->remove('password_verified');
+
             return $this->json(['message' => 'Profil mis à jour'], 200);
         }
 
