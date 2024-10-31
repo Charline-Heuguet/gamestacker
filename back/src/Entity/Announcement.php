@@ -15,6 +15,7 @@ class Announcement
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['announcement:read', 'announcement:details'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

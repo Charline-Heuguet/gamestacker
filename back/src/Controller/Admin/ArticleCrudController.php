@@ -2,16 +2,16 @@
 
 namespace App\Controller\Admin;
 
-use DateTime;
 use App\Entity\Article;
+use App\Field\VichFileField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class ArticleCrudController extends AbstractCrudController
@@ -21,49 +21,43 @@ class ArticleCrudController extends AbstractCrudController
         return Article::class;
     }
 
-
     public function configureFields(string $pageName): iterable
     {
         return [
             TextField::new('title'),
             TextField::new('content'),
             DateTimeField::new('date'),
-            TextField::new('image'),
 
-            // Utiliser AssociationField pour les catégories
+            // Utilisation de VichFileField pour l'upload de l'image
+            VichFileField::new('imageFile', 'Image')
+                ->onlyOnForms(), // Pour afficher seulement dans les formulaires
+
+            // Affiche l'image actuelle sur la page d'index et les détails
+            ImageField::new('image')
+                ->setBasePath('/images/articles')
+                ->onlyOnIndex(),
+
             AssociationField::new('category', 'Categories')
                 ->formatValue(function ($value, $entity) {
-                    // Boucler sur les catégories et afficher leur nom
                     return implode(', ', array_map(function ($category) {
-                        return $category->getName(); // Remplace getName par la méthode pour afficher le nom de la catégorie
+                        return $category->getName();
                     }, $entity->getCategory()->toArray()));
                 }),
 
-            // Utiliser ArrayField pour afficher les commentaires
             ArrayField::new('comment', 'Comments')
                 ->formatValue(function ($value, $entity) {
-                // Récupérer les 3 derniers commentaires
-                $comments = array_slice($entity->getComment()->toArray(), -3);
-
-        // Afficher les 3 derniers commentaires avec le pseudo de l'utilisateur
-                return implode('<br>', array_map(function ($comment) {
-                    $user = $comment->getUser();
-                    $pseudo = $user ? $user->getPseudo() : 'Anonymous';
-                    return sprintf(
-                '<strong>%s</strong>: %s', 
-                $pseudo, 
-                        $comment->getContent()
-            );
-        }, $comments));
-    }),
-
-        
+                    $comments = array_slice($entity->getComment()->toArray(), -3);
+                    return implode('<br>', array_map(function ($comment) {
+                        $user = $comment->getUser();
+                        $pseudo = $user ? $user->getPseudo() : 'Anonymous';
+                        return sprintf('<strong>%s</strong>: %s', $pseudo, $comment->getContent());
+                    }, $comments));
+                }),
         ];
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions
-            ->add(Crud::PAGE_INDEX, Action::DETAIL); // Ajoute l'action de détail à la page index
+        return $actions->add(Crud::PAGE_INDEX, Action::DETAIL);
     }
 }
