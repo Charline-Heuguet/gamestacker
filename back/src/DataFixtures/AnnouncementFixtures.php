@@ -33,7 +33,7 @@ class AnnouncementFixtures extends Fixture implements DependentFixtureInterface
         $maxNbPlayers = 8;
         
         // Générer plusieurs annonces
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 1; $i <= 15; $i++) {
             $announcement = new Announcement();
             $announcement->setTitle($faker->sentence());
             $announcement->setContent($faker->paragraph());

@@ -35,6 +35,7 @@ class UserFixtures extends Fixture
             $user->setAge($faker->numberBetween(18, 60));
             $user->setDiscord('#' . $faker->userName());
             $user->setGender($faker->randomElement($gender));
+            $user->setImage('default.jpg');
 
             $manager->persist($user);
 

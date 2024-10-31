@@ -178,32 +178,32 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
 
     //EXPULSER UN PARTICPANT D'UNE ANNONCE
     #[Route('/{id}/kick/{participant_id}', name: 'kick', methods: ['POST'])]
-public function kickParticipant(int $id, int $participant_id, UserRepository $userRepository, AnnouncementRepository $announcementRepository): JsonResponse
-{
-    $userTest = $userRepository->findBy(['id' => 215]);
-    $announcement = $announcementRepository->find($id);
-    $participant = $userRepository->find($participant_id);
+    public function kickParticipant(int $id, int $participant_id, UserRepository $userRepository, AnnouncementRepository $announcementRepository): JsonResponse
+    {
+        $userTest = $userRepository->findBy(['id' => 423]);
+        $announcement = $announcementRepository->find($id);
+        $participant = $userRepository->find($participant_id);
 
-    if (!$announcement) {
-        return new JsonResponse(['status' => 'Annonce non trouvée'], 404);
+        if (!$announcement) {
+            return new JsonResponse(['status' => 'Annonce non trouvée'], 404);
+        }
+
+        if (!$participant) {
+            return new JsonResponse(['status' => 'Participant non trouvé'], 404);
+        }
+
+        if($participant == $userTest[0]){
+            return new JsonResponse(['status' => 'Vous ne pouvez pas vous expulser vous-même'], 403);
+        }
+
+        if ($announcement->getUser() !== $userTest[0]) {
+            return new JsonResponse(['status' => 'Vous n\'avez pas la permission d\'expulser ce participant'], 403);
+        }
+
+        $announcement->removeParticipant($participant);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'Vous avez expulsé le joueur ' . $participant->getPseudo()], 200);
     }
-
-    if (!$participant) {
-        return new JsonResponse(['status' => 'Participant non trouvé'], 404);
-    }
-
-    if($participant == $userTest[0]){
-        return new JsonResponse(['status' => 'Vous ne pouvez pas vous expulser vous-même'], 403);
-    }
-
-    if ($announcement->getUser() !== $userTest[0]) {
-        return new JsonResponse(['status' => 'Vous n\'avez pas la permission d\'expulser ce participant'], 403);
-    }
-
-    $announcement->removeParticipant($participant);
-    $this->entityManager->flush();
-
-    return new JsonResponse(['status' => 'Vous avez expulsé le joueur ' . $participant->getPseudo()], 200);
-}
 
 }
