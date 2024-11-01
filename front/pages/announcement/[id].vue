@@ -13,15 +13,15 @@
                 class="w-16 h-16 rounded-full object-cover mr-4"
               />
               <div>
-                <h2 class="text-lg font-semibold">{{ announcement.user.pseudo }}</h2>
-                <p class="text-gray-400">Discord : {{ announcement.user.discord }}</p>
+                <h2 class="text-lg font-semibold text-emerald-500">{{ announcement.user.pseudo }}</h2>
+                <p class="text-gray-400">Discord : <span class="text-emerald-800 hover:text-emerald-600">{{ announcement.user.discord }}</span></p>
               </div>
             </div>
   
             <p><strong>Jeu :</strong> {{ announcement.game }}</p>
             <p><strong>Date :</strong> {{ formatDate(announcement.date) }}</p>
             <p><strong>Nombre maximum de joueurs :</strong> {{ announcement.max_nb_players }}</p>
-            <p><strong>Room ID :</strong> {{ announcement.roomId }}</p>
+            <p><strong>Room ID :</strong> <span class="text-emerald-800 hover:text-emerald-600">{{ announcement.roomId }}</span></p>
             <p class="mt-4">{{ announcement.content }}</p>
           </div>
   
@@ -34,8 +34,8 @@
                 class="w-12 h-12 rounded-full object-cover mr-4"
               />
               <div class="flex-1">
-                <h4 class="font-semibold">{{ participant.pseudo }}</h4>
-                <p class="text-gray-400">Discord : {{ participant.discord }}</p>
+                <h4 class="font-semibold text-emerald-500">{{ participant.pseudo }}</h4>
+                <p class="text-gray-400">Discord : <span class="text-emerald-800 hover:text-emerald-600">{{ participant.discord }}</span></p>
               </div>
               <!-- Bouton d'expulsion -->
               <KickButton
@@ -148,7 +148,7 @@
   
   <style scoped>
   .announcement-container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
   }
   
