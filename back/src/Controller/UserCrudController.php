@@ -105,8 +105,8 @@ class UserCrudController extends AbstractController
         }
 
         $errors = [];
-    foreach ($form->getErrors(true) as $error) {
-        $errors[] = $error->getMessage();
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
     }
 
         return $this->json(['message' => 'Données non valides', 'errors' => $errors], 400);
@@ -210,4 +210,39 @@ class UserCrudController extends AbstractController
 
         return $this->json($announcementData, 200, [], ['groups' => 'user:announcement']);
     }
+
+    #[Route('/view-created-forums', name: 'created_forums', methods: ['GET'])]
+public function viewCreatedForums(): JsonResponse
+{
+    // On récupère l'utilisateur
+    $user = $this->userRepository->find(429);
+
+    // On vérifie que l'utilisateur existe, sinon on renvoie une 404
+    if (!$user) {
+        return $this->json(['message' => 'Cet utilisateur n\'existe pas'], 404);
+    }
+
+    // On récupère les forums créés par l'utilisateur
+    $forums = $user->getForums();
+
+    // Si l'utilisateur n'a pas encore créé de forums, on renvoie un message d'erreur
+    if ($forums->isEmpty()) {
+        return $this->json(['message' => 'Vous n\'avez pas encore créé de forums'], 404);
+    }
+
+    // Créer un tableau contenant les forums, leurs URLs et le nombre de commentaires
+    $forumData = [];
+    foreach ($forums as $forum) {
+        $commentCount = $forum->getComment()->count();
+
+        $forumData[] = [
+            'forum' => $forum,
+            'url' => $this->router->generate('api_forum_view', ['id' => $forum->getId()], RouterInterface::ABSOLUTE_URL),
+            'comment_count' => $commentCount
+        ];
+    }
+
+    return $this->json($forumData, 200, [], ['groups' => 'user:forum']);
+}
+
 }

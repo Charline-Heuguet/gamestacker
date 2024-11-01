@@ -19,7 +19,7 @@ class Forum
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['forum:read', 'forum:details', 'user:forum:comments'])]
+    #[Groups(['forum:read', 'forum:details', 'user:forum:comments','user:forum'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -27,7 +27,7 @@ class Forum
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['forum:read', 'forum:details'])]
+    #[Groups(['forum:read', 'forum:details', 'user:forum'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\ManyToOne(inversedBy: 'forums')]
@@ -42,6 +42,7 @@ class Forum
     private Collection $comment;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['user:forum'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
