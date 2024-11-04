@@ -1,6 +1,7 @@
 <template>
+
   <header>
-    <nav class="bg-white border-gray-200">
+    <nav class="bg-white border-b border-black">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <!-- Logo et Nom du site -->
         <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -40,13 +41,13 @@
           >
             <!-- Liens de navigation -->
             <li>
-              <a href="#" class="block py-2 px-3 text-black hover:text-blue-700 rounded md:bg-transparent md:p-0">Actualité</a>
+              <a href="#" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Actualité</a> 
             </li>
             <li>
-              <a href="#" class="block py-2 px-3 text-black hover:text-blue-700 rounded md:bg-transparent md:p-0">Forum</a>
+              <a href="/forum" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Forum</a>
             </li>
             <li>
-              <a href="#" class="block py-2 px-3 text-black hover:text-blue-700 rounded md:bg-transparent md:p-0">Annonces</a>
+              <a href="/announcement" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Annonces</a>
             </li>
 
             <!-- Barre de recherche en mode mobile -->
@@ -67,8 +68,8 @@
             <!-- Connexion (Visible dans le menu mobile) -->
             <li class="mt-4 md:hidden">
               <a href="#" class="flex items-center space-x-2 text-black hover:text-blue-700">
-                <UIcon name="material-symbols:person" class="w-5 h-5" />
-                <span class="uppercase font-semibold		">Connexion </span> 
+                <UIcon name="material-symbols:person hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]" class="w-5 h-5" />
+                <span class="uppercase font-semibold	hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]	">Connexion </span> 
               </a>
             </li>
           </ul>
@@ -91,15 +92,16 @@
 
           <!-- Icône utilisateur visible en desktop uniquement -->
           <div class="flex items-center space-x-2"><span class="text-black font-semibold	">|</span>
-            <UIcon name="material-symbols:person" class="w-5 h-5 text-black" />
-            <p class="text-black uppercase font-semibold		"> Connexion</p> 
+          <a href="/login" style="display: flex;">
+            <UIcon name="material-symbols:person" class="w-5 h-5 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]" />
+             <p class="text-black uppercase font-semibold	hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]	"> Connexion</p> </a>
           </div>
         </div>
       </div>
     </nav>
   </header>
 
-  <main class="bg-zinc-900">
+  <main>
     <slot>
     </slot>
   </main>

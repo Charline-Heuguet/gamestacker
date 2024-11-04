@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Controller;
 
@@ -40,7 +40,7 @@ class ForumController extends AbstractController
         $searchTerm = $request->query->get('search', '');
 
         // Récupérer la requête en fonction de la présence du terme de recherche
-        $query = $searchTerm 
+        $query = $searchTerm
             ? $this->forumRepository->findBySearchTerm($searchTerm)
             : $this->forumRepository->findAllOrderedByDate();
 
@@ -62,7 +62,7 @@ class ForumController extends AbstractController
     public function viewForum($id): Response
     {
         $forum = $this->forumRepository->find($id);
-        return $this->json( $forum, 200, [], ['groups' => 'forum:details', 'comment:details']);
+        return $this->json($forum, 200, [], ['groups' => 'forum:details', 'comment:details']);
     }
 
 
@@ -104,7 +104,7 @@ class ForumController extends AbstractController
 
         // Retour des erreurs si le formulaire n'est pas valide
         return new JsonResponse([
-            'status' => 'Invalid data', 
+            'status' => 'Invalid data',
             'errors' => (string) $form->getErrors(true, false)
         ], 400);
     }
@@ -121,7 +121,7 @@ class ForumController extends AbstractController
 
         $currentDateTime = new \DateTime();
         $createdAt = $forum->getDate();
-        
+
         // Calculer la différence en minutes entre la date actuelle et la date de création
         $interval = $createdAt->diff($currentDateTime);
         $minutesDifference = $interval->i + ($interval->h * 60); // Ajouter les heures converties en minutes
@@ -137,7 +137,7 @@ class ForumController extends AbstractController
         $form->submit($data);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $forum->setUpdatedAt(new \DateTime()); 
+            $forum->setUpdatedAt(new \DateTime());
             $this->entityManager->flush();
 
             return new JsonResponse(['message' => 'Ticket modifié.'], 200);
@@ -161,5 +161,4 @@ class ForumController extends AbstractController
 
         return new JsonResponse(['status' => 'Le ticket n\'existe pas.'], 404);
     }
-
 }

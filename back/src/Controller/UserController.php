@@ -16,9 +16,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 #[Route('/api', name: 'api_')]
-class UserController extends AbstractController 
+class UserController extends AbstractController
 {
-    #[Route('/signup',name:'signup', methods: ['POST'])]
+    #[Route('/signup', name: 'signup', methods: ['POST'])]
     public function signup(
         Request $request,
         UserPasswordHasherInterface $passwordHasher,
@@ -28,7 +28,7 @@ class UserController extends AbstractController
     ): JsonResponse {
         // Étape 1 : Récupérer les données depuis la requête
         $data = json_decode($request->getContent(), true);
-    
+
         // Étape 2 : Vérifier si l'email est déjà utilisé
         $existingUser = $userRepository->findOneBy(['email' => $data['email'] ?? '']);
         if ($existingUser) {
@@ -37,7 +37,7 @@ class UserController extends AbstractController
                 JsonResponse::HTTP_CONFLICT
             );
         }
-    
+
         // Étape 3 : Créer un nouvel utilisateur et le remplir
         $user = new User();
         $user->setEmail($data['email'] ?? '');
@@ -47,7 +47,7 @@ class UserController extends AbstractController
         $user->setDiscord($data['discord'] ?? null);
         $user->setDescription($data['description'] ?? null);
         $user->setRoles(['ROLE_USER']);
-    
+
         // Étape 4 : Hasher le mot de passe
         if (isset($data['password'])) {
             $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
@@ -55,7 +55,7 @@ class UserController extends AbstractController
         } else {
             return new JsonResponse(['error' => "Le mot de passe est requis"], JsonResponse::HTTP_BAD_REQUEST);
         }
-    
+
         // Étape 5 : Valider l'entité User
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
@@ -63,14 +63,14 @@ class UserController extends AbstractController
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getMessage();
             }
-    
+
             return new JsonResponse(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
         }
-    
+
         // Étape 6 : Sauvegarder l'utilisateur en BDD
         $entityManager->persist($user);
         $entityManager->flush();
-    
+
         // Étape 7 : Retourner une réponse avec les informations de l'utilisateur
         return new JsonResponse([
             'message' => 'Utilisateur inscrit avec succès',
@@ -86,12 +86,13 @@ class UserController extends AbstractController
         ], JsonResponse::HTTP_CREATED);
     }
 
-    #[Route('/login', name: 'login', methods: ['POST'])]
-    public function login(Request $request,
-    UserRepository $userRepository, 
-    UserPasswordHasherInterface $userPasswordHasherInterface,
-    JWTTokenManagerInterface $JWTManager): JsonResponse
-    {
+    #[Route('/login', name: 'login', methods: ['POST', 'GET'])]
+    public function login(
+        Request $request,
+        UserRepository $userRepository,
+        UserPasswordHasherInterface $userPasswordHasherInterface,
+        JWTTokenManagerInterface $JWTManager
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $email = $data['email'] ?? null;
         $password = $data['password'] ?? null;
@@ -113,5 +114,4 @@ class UserController extends AbstractController
     {
         return $this->json(['message' => 'Logout successful'], Response::HTTP_OK);
     }
-    
 }
