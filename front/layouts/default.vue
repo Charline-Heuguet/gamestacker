@@ -41,7 +41,7 @@
           >
             <!-- Liens de navigation -->
             <li>
-              <a href="#" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Actualité</a> 
+              <a href="/article" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Actualité</a> 
             </li>
             <li>
               <a href="/forum" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Forum</a>

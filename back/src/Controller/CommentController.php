@@ -110,7 +110,7 @@ class CommentController extends AbstractController
         }
 
         // Utilisateur test temporaire
-        $userTest = $userRepository->findOneBy(['id' => 218]);
+        $userTest = $userRepository->findOneBy(['id' => 1]);
         if (!$userTest) {
             return new JsonResponse(['status' => 'Utilisateur non trouvé'], 404);
         }

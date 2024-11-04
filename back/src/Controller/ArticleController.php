@@ -2,19 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Article;
-use App\Entity\Comment;
-use App\Form\CommentType;
-use App\Repository\UserRepository;
+use App\Repository\AnnouncementRepository;
 use App\Repository\ArticleRepository;
-use App\Service\CommentFilterService;
+
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('api/article', name: 'api_article_')]
@@ -32,11 +26,18 @@ class ArticleController extends AbstractController
 
     /// VISUALISER TOUS LES ARTICLES ///
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(): Response
+    public function index(AnnouncementRepository $announcementRepository): Response
     {
         $article = $this->articleRepository->findAll();
 
         return $this->json($article, Response::HTTP_OK, [], ['groups' => 'article:read']);
+    }
+
+    #[Route('/announce', name: 'announce', methods: ['GET'])]
+    public function fetchAnnounce(AnnouncementRepository $announcementRepository): Response
+    {
+        $announce = $announcementRepository->findLatestAnnouncements(5);
+        return $this->json($announce, 200, [], ['groups' => 'announcement:read']);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]

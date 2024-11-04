@@ -37,6 +37,15 @@ public function findBySearchTerm(string $term): Query
         ->getQuery();
 }
 
+public function findLatestAnnouncements(int $limit = 5)
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.date', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Announcement[] Returns an array of Announcement objects
     //     */

@@ -19,7 +19,7 @@ class Announcement
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'article:annonce'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -27,11 +27,11 @@ class Announcement
     private ?string $content = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'article:annonce'])]
     private ?string $game = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['announcement:read', 'announcement:details', 'user:announcement'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'article:annonce'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column]
@@ -42,12 +42,12 @@ class Announcement
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'announcements')]
-    #[Groups(['announcement:read', 'announcement:details'])]
+    #[Groups(['announcement:read', 'announcement:details', 'article:annonce'])]
     private Collection $category;
 
     // Relation ManyToOne avec User (l'utilisateur qui publie l'annonce)
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'announcements')]
-    #[Groups(['announcement:read', 'announcement:details'])]
+    #[Groups(['announcement:read', 'announcement:details', 'article:annonce'])]
     private ?User $user = null;
 
     /**
