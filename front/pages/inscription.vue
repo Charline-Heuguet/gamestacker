@@ -1,6 +1,6 @@
 <template>
     <div class="signup-container min-h-screen flex items-center justify-center bg-white px-4 py-12">
-        <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-neumorphism">
+        <div class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-neumorphism">
             <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Inscription</h1>
             <form @submit.prevent="handleSignup" class="space-y-6">
                 <div class="form-group">

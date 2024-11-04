@@ -1,6 +1,6 @@
 <template>
   <div class="forum-article-container min-h-screen bg-white py-12 px-4">
-    <div v-if="forum" class="max-w-3xl mx-auto bg-gray-100 p-8 rounded-lg shadow-neumorphism">
+    <div v-if="forum" class="max-w-4xl mx-auto bg-gray-100 p-8 rounded-lg shadow-neumorphism">
       <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ forum.title }}</h1>
       <p class="text-gray-600 mb-4"><strong>Date :</strong> {{ formatDate(forum.date) }}</p>
       <p class="text-gray-600 mb-4"><strong>Auteur :</strong> {{ forum.user ? forum.user.pseudo : 'Anonyme' }}</p>

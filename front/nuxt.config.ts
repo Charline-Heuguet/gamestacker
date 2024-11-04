@@ -4,10 +4,10 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
   modules: ['@nuxt/ui'],
   css: [
-    '@/assets/css/global.css'  // Chemin vers le fichier CSS global
+    '@/assets/css/global.css'
   ],
   plugins: [
-    '~/plugins/pinia.js'  // Assurez-vous que ce chemin est correct
+    '~/plugins/pinia.js'
   ],
   app: {
     head: {

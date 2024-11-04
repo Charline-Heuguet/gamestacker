@@ -55,7 +55,7 @@
 
         <!-- Modal de création d'annonce -->
         <div v-if="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-md w-full">
+            <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
                 <h3 class="text-xl font-semibold mb-4">Créer une annonce</h3>
                 <form @submit.prevent="createAnnouncement">
                     <div class="mb-4">
@@ -136,27 +136,17 @@ const createAnnouncement = async () => {
             body: JSON.stringify(newAnnouncement.value)
         });
 
-        // Vérifiez si la réponse est en JSON avant de la lire
-        const contentType = response.headers.get("content-type");
+        const data = await response.json();
         if (!response.ok) {
-            let errorMessage;
-            if (contentType && contentType.indexOf("application/json") !== -1) {
-                const data = await response.json();
-                errorMessage = data.status || 'Erreur inconnue';
-            } else {
-                // Si la réponse n'est pas JSON, affichez le texte brut pour comprendre l'erreur
-                errorMessage = await response.text();
-            }
-            console.error(`Erreur lors de la création de l'annonce : ${errorMessage}`);
-            alert(`Erreur : ${errorMessage}`);
+            alert(`Erreur : ${data.status}`);
         } else {
             alert('Annonce créée avec succès !');
             closeCreateModal();
-            fetchAnnouncements(page.value, searchTerm.value);
+            // Redirection automatique vers l'annonce nouvellement créée
+            window.location.href = `/announcement/${data.id}`;
         }
     } catch (error) {
         console.error("Erreur lors de la création de l'annonce :", error);
-        alert("Une erreur inattendue s'est produite.");
     }
 };
 

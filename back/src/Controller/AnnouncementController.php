@@ -63,7 +63,7 @@ class AnnouncementController extends AbstractController
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function createAnnouncement(Request $request, UserRepository $userRepository, RoomIdGeneratorService $roomIdGenerator): JsonResponse
     {
-        $testUser = $userRepository->findBy(['id' => 31]);
+        $testUser = $userRepository->findBy(['id' => 30]);
 
         $data = json_decode($request->getContent(), true);
 
@@ -86,7 +86,7 @@ class AnnouncementController extends AbstractController
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();
 
-            return new JsonResponse(['status' => 'Annonce crée. Bon jeu !'], 201);
+            return new JsonResponse(['status' => 'Annonce créée. Bon jeu !', 'id' => $announcement->getId()], 201);
         }
 
         return new JsonResponse([
@@ -159,7 +159,7 @@ class AnnouncementController extends AbstractController
     #[Route('/{id}/join', name: 'join', methods: ['POST'])]
     public function joinAnnouncement($id, Announcement $announcement, UserRepository $userRepository): JsonResponse
     {
-        $userTest = $userRepository->findBy(['id' => 31]);
+        $userTest = $userRepository->findBy(['id' => 30]);
 
         $announcement = $this->announcementRepository->find($id);
 
@@ -176,12 +176,12 @@ class AnnouncementController extends AbstractController
         }
     }
 
-    //EXPULSER UN PARTICPANT D'UNE ANNONCE
+    //EXPULSER UN PARTICIPANT D'UNE ANNONCE
     #[Route('/{id}/kick/{participant_id}', name: 'kick', methods: ['POST'])]
-    public function kickParticipant(int $id, int $participant_id, UserRepository $userRepository, AnnouncementRepository $announcementRepository): JsonResponse
+    public function kickParticipant(int $id, int $participant_id, UserRepository $userRepository): JsonResponse
     {
-        $userTest = $userRepository->findBy(['id' => 423]);
-        $announcement = $announcementRepository->find($id);
+        $user = $this->getUser();  // Récupère l'utilisateur connecté
+        $announcement = $this->announcementRepository->find($id);
         $participant = $userRepository->find($participant_id);
 
         if (!$announcement) {
@@ -192,14 +192,17 @@ class AnnouncementController extends AbstractController
             return new JsonResponse(['status' => 'Participant non trouvé'], 404);
         }
 
-        if ($participant == $userTest[0]) {
-            return new JsonResponse(['status' => 'Vous ne pouvez pas vous expulser vous-même'], 403);
-        }
-
-        if ($announcement->getUser() !== $userTest[0]) {
+        // Vérifie que l'utilisateur connecté est bien le créateur de l'annonce
+        if ($announcement->getUser() !== $user) {
             return new JsonResponse(['status' => 'Vous n\'avez pas la permission d\'expulser ce participant'], 403);
         }
 
+        // Empêcher l'expulsion de l'auteur lui-même
+        if ($participant === $user) {
+            return new JsonResponse(['status' => 'Vous ne pouvez pas vous expulser vous-même'], 403);
+        }
+
+        // Supprime le participant de l'annonce
         $announcement->removeParticipant($participant);
         $this->entityManager->flush();
 
