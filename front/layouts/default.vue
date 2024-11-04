@@ -1,5 +1,4 @@
 <template>
-
   <header>
     <nav class="bg-white border-b border-black">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -35,13 +34,11 @@
         </button>
 
         <!-- Menu de navigation (visible en mode desktop et mobile) -->
-        <div :class="['w-full  uppercase  font-semibold		md:flex md:w-auto', isMenuOpen ? '' : 'hidden'] " id="navbar-menu">
-          <ul
-            class="flex flex-col p-4 md:p-0 mt-4 font-semibold	 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white"
-          >
+        <div :class="['w-full uppercase font-semibold md:flex md:w-auto', isMenuOpen ? '' : 'hidden']" id="navbar-menu">
+          <ul class="flex flex-col p-4 md:p-0 mt-4 font-semibold border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white">
             <!-- Liens de navigation -->
             <li>
-              <a href="#" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Actualité</a> 
+              <a href="#" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Actualité</a>
             </li>
             <li>
               <a href="/forum" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Forum</a>
@@ -51,25 +48,17 @@
             </li>
 
             <!-- Barre de recherche en mode mobile -->
-            <li class="mt-4 md:hidden">
-              <div class="relative">
-                <input
-                  type="text"
-                  id="search-navbar-mobile"
-                  class="block w-full p-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Search..."
-                />
-                <span class="absolute right-3 top-2.5 text-gray-500">
-                  <UIcon name="material-symbols:search-rounded" class="w-5 h-5 text-gray-500" />
-                </span>
-              </div>
-            </li>
+            
 
-            <!-- Connexion (Visible dans le menu mobile) -->
+            <!-- Connexion ou Déconnexion en mode mobile -->
             <li class="mt-4 md:hidden">
-              <a href="#" class="flex items-center space-x-2 text-black hover:text-blue-700">
-                <UIcon name="material-symbols:person hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]" class="w-5 h-5" />
-                <span class="uppercase font-semibold	hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]	">Connexion </span> 
+              <a v-if="!authStore.isAuthenticated" href="/login" class="flex items-center space-x-2 text-black hover:text-blue-700 icon-connect">
+                <UIcon name="material-symbols:person" class="w-5 h-5" />
+                <span class="uppercase font-semibold ">Connexion</span>
+              </a>
+              <a v-else @click="logout" class="flex items-center space-x-2 text-black hover:text-blue-700" style="cursor: pointer;">
+                <UIcon name="material-symbols:logout" class="w-5 h-5" />
+                <span class="uppercase font-semibold">Se déconnecter</span>
               </a>
             </li>
           </ul>
@@ -79,22 +68,21 @@
         <div class="hidden md:flex items-center space-x-4 md:order-2">
           <!-- Barre de recherche visible en desktop -->
           <div class="relative md:ml-8">
-            <input
-              type="text"
-              id="search-navbar"
-              class="block p-2 ps-5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Search..."
-            />
-            <span class="absolute right-3 top-2.5 text-gray-500">
-              <UIcon name="material-symbols:search-rounded" class="w-5 h-5 text-gray-500" />
-            </span>
+            
+            
           </div>
 
           <!-- Icône utilisateur visible en desktop uniquement -->
-          <div class="flex items-center space-x-2"><span class="text-black font-semibold	">|</span>
-          <a href="/login" style="display: flex;">
-            <UIcon name="material-symbols:person" class="w-5 h-5 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]" />
-             <p class="text-black uppercase font-semibold	hover:text-[rgb(52_211_153/var(--tw-bg-opacity))]	"> Connexion</p> </a>
+          <div class="flex items-center space-x-2">
+            <span class="text-black font-semibold">|</span>
+            <a v-if="!authStore.isAuthenticated" href="/login" style="display: flex;" class="icon-connect">
+              <UIcon name="material-symbols:person" class="w-5 h-5 text-black" />
+              <p class="text-black uppercase font-semibold ">Connexion</p>
+            </a>
+            <a v-else @click="logout" class="flex items-center space-x-2 text-black icon-connect" style="cursor: pointer;">
+                <UIcon name="material-symbols:logout" class="w-5 h-5" />
+                <span class="uppercase font-semibold">Se déconnecter</span>
+              </a>
           </div>
         </div>
       </div>
@@ -102,57 +90,63 @@
   </header>
 
   <main>
-    <slot>
-    </slot>
+    <slot></slot>
   </main>
 
-  
-
-<footer class="bg-black text-white ">
+  <footer class="bg-black text-white">
     <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-        <div class="sm:flex sm:items-start sm:justify-between ">
-            <!-- Logo et nom du site -->
-            <a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
-                <img src="@/assets/img/logo_GameStaker_white.webp" class="h-20" alt="GameStackers Logo" />
-            </a>
+      <div class="sm:flex sm:items-start sm:justify-between">
+        <!-- Logo et nom du site -->
+        <a href="/" class="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+          <img src="@/assets/img/logo_GameStaker_white.webp" class="h-20" alt="GameStackers Logo" />
+        </a>
 
-            <!-- Liens de navigation - section principale -->
-            <div class="flex flex-col md:flex-row text-sm font-medium space-y-6 md:space-y-0 md:gap-12 self-end ">
-                <div class="flex flex-wrap  gap-5">
-                    <a href="#" class="hover:underline block">Actualité</a>
-                    <a href="#" class="hover:underline block">Forum</a>
-                    <a href="#" class="hover:underline block">Annonces</a>
-
-                    <a href="#" class="hover:underline block">Contact</a>
-                    <a href="#" class="hover:underline block">Qui sommes-nous</a>
-                    <a href="#" class="hover:underline block">Mentions légales</a>
-                </div>
-            </div>
+        <!-- Liens de navigation - section principale -->
+        <div class="flex flex-col md:flex-row text-sm font-medium space-y-6 md:space-y-0 md:gap-12 self-end">
+          <div class="flex flex-wrap gap-5">
+            <a href="#" class="hover:underline block">Actualité</a>
+            <a href="#" class="hover:underline block">Forum</a>
+            <a href="#" class="hover:underline block">Annonces</a>
+            <a href="#" class="hover:underline block">Contact</a>
+            <a href="#" class="hover:underline block">Qui sommes-nous</a>
+            <a href="#" class="hover:underline block">Mentions légales</a>
+          </div>
         </div>
+      </div>
 
-        <!-- Ligne de séparation -->
-        <hr class="my-6 border-gray-700 sm:mx-auto lg:my-8" />
+      <!-- Ligne de séparation -->
+      <hr class="my-6 border-gray-700 sm:mx-auto lg:my-8" />
 
-        <!-- Copyright -->
-        <span class="block text-sm text-white sm:text-center">© 2024 GameStackers. Tous droits réservés.</span>
+      <!-- Copyright -->
+      <span class="block text-sm text-white sm:text-center">© 2024 GameStackers. Tous droits réservés.</span>
     </div>
-</footer>
-
-
-
+  </footer>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      isMenuOpen: false,
-    };
-  },
-  methods: {
-    toggleMenu() {
-      this.isMenuOpen = !this.isMenuOpen;
-    },
-  },
+<script setup>
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
+const isMenuOpen = ref(false);
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value;
+};
+
+const logout = () => {
+  authStore.logout();
 };
 </script>
+
+<style scoped>
+.icon-connect {
+  cursor: pointer;
+  color: black;
+}
+
+.icon-connect:hover span,
+.icon-connect:hover p {
+  color: rgb(52, 211, 153); /* Couleur de survol */
+}
+</style>

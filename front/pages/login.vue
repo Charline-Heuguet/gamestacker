@@ -1,27 +1,33 @@
 <template>
-    <div class="login-container min-h-screen flex items-center justify-center bg-white px-4 py-12">
-        <div class="w-full max-w-md p-8 bg-white rounded-lg shadow-neumorphism">
-            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Connectez-vous</h1>
-            <form @submit.prevent="login" class="space-y-6">
-                <div class="form-group">
-                    <label for="email" class="block text-sm font-medium text-gray-600">Email :</label>
-                    <input type="email" v-model="email" id="email" required class="input-field" />
-                </div>
-                <div class="form-group">
-                    <label for="password" class="block text-sm font-medium text-gray-600">Mot de passe :</label>
-                    <input type="password" v-model="password" id="password" required class="input-field" />
-                </div>
-                <button type="submit" class="btn">Se connecter</button>
-                <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-            </form>
-
-            <!-- Bouton pour créer un compte -->
-            <div class="mt-6 text-center">
-                <p class="text-gray-600 mb-2">Pas de compte ?</p>
-                <a href="/inscription" class="create-account-btn">Créer un compte</a>
-            </div>
-        </div>
+  <div class="login-container min-h-screen flex items-center justify-center bg-white px-4 py-12">
+    <div v-if="authStore.isAuthenticated" class="text-center">
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+        Bienvenue, {{ authStore.user?.email }} (ID: {{ authStore.user?.id }})
+      </h1>
+      <button @click="logout" class="btn">Se déconnecter</button>
     </div>
+    <div v-else class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-neumorphism">
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Connectez-vous</h1>
+      <form @submit.prevent="login" class="space-y-6">
+        <div class="form-group">
+          <label for="email" class="block text-sm font-medium text-gray-600">Email :</label>
+          <input type="email" v-model="email" id="email" required class="input-field" />
+        </div>
+        <div class="form-group">
+          <label for="password" class="block text-sm font-medium text-gray-600">Mot de passe :</label>
+          <input type="password" v-model="password" id="password" required class="input-field" />
+        </div>
+        <button type="submit" class="btn">Se connecter</button>
+        <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
+      </form>
+
+      <!-- Bouton pour créer un compte -->
+      <div class="mt-6 text-center">
+        <p class="text-gray-600 mb-2">Pas de compte ?</p>
+        <a href="/inscription" class="create-account-btn">Créer un compte</a>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -36,13 +42,18 @@ const password = ref('');
 const errorMessage = ref('');
 
 const login = async () => {
-    errorMessage.value = '';
-    try {
-        await authStore.login(email.value, password.value);
-        router.push('/forum');
-    } catch (error) {
-        errorMessage.value = 'Email ou mot de passe incorrect';
-    }
+  errorMessage.value = '';
+  try {
+    await authStore.login(email.value, password.value);
+    router.push('/forum'); // Redirection après la connexion réussie
+  } catch (error) {
+    errorMessage.value = 'Email ou mot de passe incorrect';
+  }
+};
+
+const logout = () => {
+  authStore.logout();
+  router.push('/login'); // Redirige vers /login après la déconnexion
 };
 </script>
 
