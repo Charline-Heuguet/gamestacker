@@ -105,9 +105,17 @@ class UserController extends AbstractController
 
         $token = $JWTManager->create($user);
 
-        // Retourner le token JWT
-        return $this->json(['token' => $token], Response::HTTP_OK);
+        // Inclure les informations utilisateur dans la réponse
+        return $this->json([
+            'token' => $token,
+            'user' => [
+                'id' => $user->getId(),
+                'email' => $user->getEmail(),
+                'pseudo' => $user->getPseudo(),
+            ]
+        ], Response::HTTP_OK);
     }
+
 
     #[Route('/logout', name: 'logout', methods: ['POST'])]
     public function logout(): JsonResponse

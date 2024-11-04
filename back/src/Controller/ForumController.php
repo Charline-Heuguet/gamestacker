@@ -72,7 +72,7 @@ class ForumController extends AbstractController
     {
         // remplacer par $user = $this->getUser(); pour récupérer l'utilisateur connecté
         // quand le login sera en place
-        $testUser = $userRepository->findOneBy(['id' => 31]);
+        $testUser = $userRepository->findOneBy(['id' => 30]);
         if (!$testUser) {
             throw new NotFoundHttpException('User "testUser" not found');
         }

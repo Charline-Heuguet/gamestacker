@@ -73,7 +73,6 @@ const fetchForums = async (pageNum = 1, term = '') => {
         }
 
         const data = await response.json();
-        console.log("Data received:", data); // Ajout pour vérifier la structure des données
 
         // Vérification si chaque élément contient un ID
         forums.value = data.items.map((forum) => {
