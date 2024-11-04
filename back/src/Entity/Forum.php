@@ -16,10 +16,12 @@ class Forum
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['forum:read', 'forum:details', 'user:forum:comments', 'user:forum'])]
+
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
-    #[Groups(['forum:read', 'forum:details', 'user:forum:comments','user:forum'])]
+    #[Groups(['forum:read', 'forum:details', 'user:forum:comments', 'user:forum'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]

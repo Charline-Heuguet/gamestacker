@@ -1,199 +1,248 @@
 <template>
-    <div class="announcement-container p-8">
-      <h1 class="text-black font-bold mb-6">Liste des Annonces</h1>
-      
-      <!-- Barre de recherche -->
-      <input
-        v-model="searchTerm"
-        @input="searchAnnouncements"
-        placeholder="Rechercher par #room ou jeu"
-        class="w-full p-3 mb-6 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:border-emerald-500"
-      />
+    <div class="announcement-container min-h-screen bg-white py-12 px-4">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Liste des Annonces</h1>
 
-  
-      <div v-if="announcements.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="announcement in announcements" :key="announcement.id" class="announcement-card relative bg-gray-800 text-white p-6 rounded-lg shadow-lg">
-          
-          <div class="user-image mb-4">
-            <img 
-              :src="announcement.user.image ? `${backendUrl}/images/users/${announcement.user.image}` : `${backendUrl}/images/users/default.jpg`" 
-              alt="Image de l'utilisateur" 
-              class="w-16 h-16 rounded-full object-cover" 
-            />
-          </div>
-
-          <!-- Room ID en haut à droite avec espacement -->
-          <span class="room-id absolute top-4 right-4 text-sm font-medium">
-            {{ announcement.roomId }}
-          </span>
-          
-          <h2 class="text-xl font-semibold mb-2 mt-8">{{ announcement.title }}</h2>
-          <p class="mb-1"><strong class="text-gray-400">Jeu :</strong> {{ announcement.game }}</p>
-          <p class="mb-1"><strong class="text-gray-400">Date :</strong> {{ formatDate(announcement.date) }}</p>
-          <p class="mb-1"><strong class="text-gray-400">Nb max de joueurs :</strong> {{ announcement.max_nb_players }}</p>
-          
-          <!-- Bouton pleine largeur en bas de la carte -->
-          <button @click="openModal(announcement)" class="mt-4 w-full bg-emerald-400 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded">
-          Rejoindre le salon
-        </button>
-      </div>
-    </div>
-
-    <!-- Modale -->
-    <div v-if="showModal" class=" fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div class="modal bg-emerald-500 text-white p-8 rounded-lg shadow-lg max-w-sm w-full">
-        <h3 class="text-xl font-semibold mb-4">Confirmer votre action.</h3>
-        <p class="mb-6">Voulez-vous rejoindre le salon "{{ selectedAnnouncement.title }}" ?</p>
-        <p class="mb-6">Restez respectueux, le créateur du salon aura le droit de vous expulser du salon.</p>
-        
-        <div class="flex justify-end space-x-4">
-          <button @click="confirmJoin" class="bg-emerald-800 hover:bg-teal-600 text-white font-semibold py-2 px-4 rounded">Rejoindre</button>
-          <button @click="closeModal" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded">Quitter</button>
+        <!-- Bouton pour créer une annonce -->
+        <div class="text-center mb-8">
+            <button @click="openCreateModal" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
+                Créer une annonce
+            </button>
         </div>
-      </div>
+
+        <!-- Barre de recherche -->
+        <input
+            v-model="searchTerm"
+            @input="searchAnnouncements"
+            placeholder="Rechercher par #room ou jeu"
+            class="w-full p-3 mb-8 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:border-emerald-500"
+        />
+
+        <!-- Liste des annonces -->
+        <div v-if="announcements.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div v-for="announcement in announcements" :key="announcement.id" class="announcement-card relative bg-gray-100 text-gray-800 p-6 rounded-lg shadow-neumorphism">
+                <div class="user-image mb-4">
+                    <img 
+                        :src="announcement.user.image ? `${backendUrl}/images/users/${announcement.user.image}` : `${backendUrl}/images/users/default.jpg`" 
+                        alt="Image de l'utilisateur" 
+                        class="w-16 h-16 rounded-full object-cover" 
+                    />
+                </div>
+                <span class="room-id absolute top-4 right-4 text-sm font-medium">
+                    {{ announcement.roomId }}
+                </span>
+                <h2 class="text-xl font-semibold mb-2 mt-8">{{ announcement.title }}</h2>
+                <p class="mb-1"><strong class="text-gray-500">Jeu :</strong> {{ announcement.game }}</p>
+                <p class="mb-1"><strong class="text-gray-500">Date :</strong> {{ formatDate(announcement.date) }}</p>
+                <p class="mb-1"><strong class="text-gray-500">Nb max de joueurs :</strong> {{ announcement.max_nb_players }}</p>
+                <a :href="`/announcement/${announcement.id}`" class="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded text-center block">
+                    Voir l'annonce
+                </a>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex justify-center space-x-4 mt-8">
+            <button @click="prevPage" :disabled="page <= 1" class="btn-pagination" :class="{ 'opacity-50 cursor-not-allowed': page <= 1 }">
+                Page précédente
+            </button>
+            <button @click="nextPage" :disabled="isLastPage" class="btn-pagination" :class="{ 'opacity-50 cursor-not-allowed': isLastPage }">
+                Page suivante
+            </button>
+        </div>
+
+        <!-- Message d'erreur -->
+        <p v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</p>
+
+        <!-- Modal de création d'annonce -->
+        <div v-if="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-md w-full">
+                <h3 class="text-xl font-semibold mb-4">Créer une annonce</h3>
+                <form @submit.prevent="createAnnouncement">
+                    <div class="mb-4">
+                        <label for="title" class="block text-gray-300">Titre</label>
+                        <input v-model="newAnnouncement.title" type="text" id="title" class="w-full p-2 mt-1 rounded bg-gray-700 text-white" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="content" class="block text-gray-300">Contenu</label>
+                        <textarea v-model="newAnnouncement.content" id="content" class="w-full p-2 mt-1 rounded bg-gray-700 text-white" required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="game" class="block text-gray-300">Jeu</label>
+                        <input v-model="newAnnouncement.game" type="text" id="game" class="w-full p-2 mt-1 rounded bg-gray-700 text-white" required />
+                    </div>
+                    <div class="mb-4">
+                        <label for="maxPlayers" class="block text-gray-300">Nombre maximum de joueurs</label>
+                        <input v-model.number="newAnnouncement.max_nb_players" type="number" id="maxPlayers" class="w-full p-2 mt-1 rounded bg-gray-700 text-white" required />
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
+                            Créer
+                        </button>
+                        <button @click="closeCreateModal" type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded">
+                            Annuler
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-      
-      <!-- Pagination -->
-      <div class="flex justify-center space-x-4 mt-6">
-        <button @click="prevPage" :disabled="page <= 1" class="btn-pagination" :class="{ 'opacity-50 cursor-not-allowed': page <= 1 }">
-          Page précédente
-        </button>
-        <button @click="nextPage" :disabled="isLastPage" class="btn-pagination" :class="{ 'opacity-50 cursor-not-allowed': isLastPage }">
-          Page suivante
-        </button>
-      </div>
-  
-      
-      <p v-if="errorMessage" class="text-red-500 text-center mt-4">{{ errorMessage }}</p>
-    </div>
-  </template>
-  
-  <script setup>
-  import { ref } from 'vue';
-  
-  const announcements = ref([]);
-  const errorMessage = ref(null);
-  const page = ref(1);
-  const isLastPage = ref(false);
-  const backendUrl = 'http://localhost:8000';
-  const totalItems = ref(0);
-  const itemsPerPage = 10;
-  const searchTerm = ref(''); 
-  const showModal = ref(false);
-const selectedAnnouncement = ref(null);
+</template>
 
-  // Fonction pour ouvrir la modale et sélectionner une annonce
-const openModal = (announcement) => {
-  selectedAnnouncement.value = announcement;
-  showModal.value = true;
-};
+<script setup>
+import { ref } from 'vue';
 
-// Fonction pour fermer la modale
-const closeModal = () => {
-  showModal.value = false;
-  selectedAnnouncement.value = null;
-};
+const announcements = ref([]);
+const errorMessage = ref(null);
+const page = ref(1);
+const isLastPage = ref(false);
+const backendUrl = 'http://localhost:8000';
+const totalItems = ref(0);
+const itemsPerPage = 10;
+const searchTerm = ref('');
 
-// Fonction de confirmation pour rejoindre
-const confirmJoin = () => {
-  console.log(`Vous avez rejoint le salon: ${selectedAnnouncement.value.title}`);
-  closeModal();
-};
-  
-  // Format de la date
-  const formatDate = (dateString) => {
+const showCreateModal = ref(false);
+const newAnnouncement = ref({
+    title: '',
+    content: '',
+    game: '',
+    max_nb_players: 1
+});
+
+const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
-  };
-  
-  // Fonction pour récupérer les annonces avec un terme de recherche et une page
-  const fetchAnnouncements = async (pageNum = 1, term = '') => {
-    try {
-      const response = await fetch(`http://localhost:8000/api/announcement?page=${pageNum}&search=${term}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP ! statut : ${response.status} (${response.statusText})`);
-      }
-  
-      const data = await response.json();
-      announcements.value = data.items;
-      totalItems.value = data.totalItems;
-      isLastPage.value = pageNum * itemsPerPage >= totalItems.value;
-    } catch (error) {
-      errorMessage.value = `Une erreur s'est produite : ${error.message}`;
-    }
-  };
-  
-  // Charger les annonces au montage et à chaque changement de recherche
-  fetchAnnouncements(page.value, searchTerm.value);
-  
-  const searchAnnouncements = () => {
-  page.value = 1;
-  isLastPage.value = false;  // Ajout pour forcer la pagination
-  fetchAnnouncements(page.value, searchTerm.value);
 };
-  
-  // Pagination
-  const nextPage = () => {
-  if (!isLastPage.value) {
-    page.value += 1;
+
+const openCreateModal = () => {
+    showCreateModal.value = true;
+};
+
+const closeCreateModal = () => {
+    showCreateModal.value = false;
+    newAnnouncement.value = {
+        title: '',
+        content: '',
+        game: '',
+        max_nb_players: 1
+    };
+};
+
+const createAnnouncement = async () => {
+    try {
+        const response = await fetch(`${backendUrl}/api/announcement/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newAnnouncement.value)
+        });
+
+        // Vérifiez si la réponse est en JSON avant de la lire
+        const contentType = response.headers.get("content-type");
+        if (!response.ok) {
+            let errorMessage;
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await response.json();
+                errorMessage = data.status || 'Erreur inconnue';
+            } else {
+                // Si la réponse n'est pas JSON, affichez le texte brut pour comprendre l'erreur
+                errorMessage = await response.text();
+            }
+            console.error(`Erreur lors de la création de l'annonce : ${errorMessage}`);
+            alert(`Erreur : ${errorMessage}`);
+        } else {
+            alert('Annonce créée avec succès !');
+            closeCreateModal();
+            fetchAnnouncements(page.value, searchTerm.value);
+        }
+    } catch (error) {
+        console.error("Erreur lors de la création de l'annonce :", error);
+        alert("Une erreur inattendue s'est produite.");
+    }
+};
+
+
+const fetchAnnouncements = async (pageNum = 1, term = '') => {
+    try {
+        const response = await fetch(`${backendUrl}/api/announcement?page=${pageNum}&search=${term}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP ! statut : ${response.status} (${response.statusText})`);
+        }
+
+        const data = await response.json();
+        announcements.value = data.items;
+        totalItems.value = data.totalItems;
+        isLastPage.value = pageNum * itemsPerPage >= totalItems.value;
+    } catch (error) {
+        errorMessage.value = `Une erreur s'est produite : ${error.message}`;
+    }
+};
+
+fetchAnnouncements(page.value, searchTerm.value);
+
+const searchAnnouncements = () => {
+    page.value = 1;
+    isLastPage.value = false;
     fetchAnnouncements(page.value, searchTerm.value);
-  }
+};
+
+const nextPage = () => {
+    if (!isLastPage.value) {
+        page.value += 1;
+        fetchAnnouncements(page.value, searchTerm.value);
+    }
 };
 
 const prevPage = () => {
-  if (page.value > 1) {
-    page.value -= 1;
-    fetchAnnouncements(page.value, searchTerm.value);
-    isLastPage.value = false;  // S'assurer de réinitialiser
-  }
+    if (page.value > 1) {
+        page.value -= 1;
+        fetchAnnouncements(page.value, searchTerm.value);
+        isLastPage.value = false;
+    }
 };
-  </script>
-  
-  <style scoped>
-  h1 {
+</script>
+
+<style scoped>
+h1 {
     font-size: 2.5rem;
     background: -webkit-linear-gradient(#08af7f, #aae498);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+}
 
-  }
-  .announcement-container {
+.announcement-container {
     max-width: 1300px;
     margin: 0 auto;
-  }
-  
-  .announcement-card {
-    background-color: #222;
-    border: 1px solid #444;
+}
+
+.announcement-card {
+    background-color: #f8fafc;
     border-radius: 8px;
-  }
-  
-  .btn-pagination {
+    box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff; /* Neumorphisme */
+}
+
+.room-id {
+    color: #10b981;
+    text-shadow: 0px 0 6px rgba(16, 185, 129, 0.5);
+}
+
+.btn-pagination {
     padding: 10px 20px;
-    background-color: rgb(8, 175, 127);
+    background-color: #34d399;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-  }
-  
-  .btn-pagination:disabled {
+    transition: background-color 0.3s;
+}
+
+.btn-pagination:disabled {
     opacity: 0.6;
     cursor: not-allowed;
-  }
-  
-  .modal {
-    max-width: 500px;
-  }
-
-  .room-id{
-    color: rgb(4 120 87);
-    text-shadow: rgb(8, 175, 127) 0px 0 30px;
-  }
-  </style>
-  
+}
+</style>

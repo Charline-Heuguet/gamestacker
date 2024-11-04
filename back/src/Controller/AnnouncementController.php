@@ -30,53 +30,53 @@ class AnnouncementController extends AbstractController
 
     //VOIR TOUTES LES ANNONCES
     #[Route('/', name: 'announcement', methods: ['GET'])]
-public function index(Request $request, PaginatorInterface $paginator): JsonResponse
-{
-    $searchTerm = $request->query->get('search', '');
+    public function index(Request $request, PaginatorInterface $paginator): JsonResponse
+    {
+        $searchTerm = $request->query->get('search', '');
 
-    // Construire la requête en fonction de la présence du terme de recherche
-    $query = $searchTerm 
-        ? $this->announcementRepository->findBySearchTerm($searchTerm)
-        : $this->announcementRepository->findAllOrderedByDate();
+        // Construire la requête en fonction de la présence du terme de recherche
+        $query = $searchTerm
+            ? $this->announcementRepository->findBySearchTerm($searchTerm)
+            : $this->announcementRepository->findAllOrderedByDate();
 
-    // Paginer les résultats
-    $pagination = $paginator->paginate(
-        $query,
-        $request->query->getInt('page', 1),
-        10
-    );
+        // Paginer les résultats
+        $pagination = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1),
+            10
+        );
 
-    return $this->json([
-        'items' => $pagination->getItems(),
-        'totalItems' => $pagination->getTotalItemCount(),
-    ], 200, [], ['groups' => 'announcement:read']);
-}
+        return $this->json([
+            'items' => $pagination->getItems(),
+            'totalItems' => $pagination->getTotalItemCount(),
+        ], 200, [], ['groups' => 'announcement:read']);
+    }
 
     //VOIR UNE ANNONCES
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function viewAnnouncement($id): JsonResponse
     {
         $announcement = $this->announcementRepository->find($id);
-        return $this->json( $announcement, 200, [], ['groups' => 'announcement:details']);
+        return $this->json($announcement, 200, [], ['groups' => 'announcement:details']);
     }
     #CREER UNE ANNONCE
     #[Route('/create', name: 'create', methods: ['POST'])]
     public function createAnnouncement(Request $request, UserRepository $userRepository, RoomIdGeneratorService $roomIdGenerator): JsonResponse
     {
-        $testUser = $userRepository->findBy(['id' => 338]);
+        $testUser = $userRepository->findBy(['id' => 31]);
 
         $data = json_decode($request->getContent(), true);
 
-        if (!$data){
+        if (!$data) {
             return $this->json(['message' => 'No data sent'], 400);
         }
 
         $announcement = new Announcement();
-        
+
         $form = $this->createForm(AnnouncementType::class, $announcement);
         $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $announcement->setUser($testUser[0]);
             $announcement->setDate(new \DateTime());
@@ -90,7 +90,7 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
         }
 
         return new JsonResponse([
-            'status' => 'Invalid data', 
+            'status' => 'Invalid data',
             'errors' => (string) $form->getErrors(true, false)
         ], 400);
     }
@@ -115,14 +115,14 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
 
         $data = json_decode($request->getContent(), true);
 
-        if (!$data){
+        if (!$data) {
             return $this->json(['message' => 'No data sent'], 400);
         }
 
         $form = $this->createForm(AnnouncementType::class, $announcement);
         $form->submit($data);
 
-        if ($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
 
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();
@@ -131,7 +131,7 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
         }
 
         return new JsonResponse([
-            'status' => 'Invalid data', 
+            'status' => 'Invalid data',
             'errors' => (string) $form->getErrors(true, false)
         ], 400);
     }
@@ -159,7 +159,7 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
     #[Route('/{id}/join', name: 'join', methods: ['POST'])]
     public function joinAnnouncement($id, Announcement $announcement, UserRepository $userRepository): JsonResponse
     {
-        $userTest = $userRepository->findBy(['id' => 218]);
+        $userTest = $userRepository->findBy(['id' => 31]);
 
         $announcement = $this->announcementRepository->find($id);
 
@@ -168,11 +168,11 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
 
         if ($diff <= 0) {
             return new JsonResponse(['status' => 'Nombre de joueurs maximum atteint'], 403);
-        }else {
+        } else {
             $announcement->addParticipant($userTest[0]);
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();
-        return new JsonResponse(['status' => 'Vous avez rejoint l\'annonce. Bon jeu'], 200);
+            return new JsonResponse(['status' => 'Vous avez rejoint l\'annonce. Bon jeu'], 200);
         }
     }
 
@@ -192,7 +192,7 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
             return new JsonResponse(['status' => 'Participant non trouvé'], 404);
         }
 
-        if($participant == $userTest[0]){
+        if ($participant == $userTest[0]) {
             return new JsonResponse(['status' => 'Vous ne pouvez pas vous expulser vous-même'], 403);
         }
 
@@ -205,5 +205,4 @@ public function index(Request $request, PaginatorInterface $paginator): JsonResp
 
         return new JsonResponse(['status' => 'Vous avez expulsé le joueur ' . $participant->getPseudo()], 200);
     }
-
 }
