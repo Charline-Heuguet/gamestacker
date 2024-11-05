@@ -1,5 +1,5 @@
 <template>
-  <div class="contact-container bg-white py-12 px-4 rounded-lg shadow-lg max-w-3xl mx-auto">
+  <div class="contact-container bg-white py-12 px-4 rounded-lg shadow-lg max-w-3xl mx-auto my-6 py-12">
     <h1 class="text-3xl font-bold text-emerald-500 mb-8 text-center">Contactez-nous</h1>
     <form @submit.prevent="sendMessage" class="space-y-6">
       <div class="form-group">
@@ -9,27 +9,27 @@
           id="name"
           v-model="name"
           required
-          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 bg-white"
         />
       </div>
       <div class="form-group">
-        <label for="email" class="block text-lg font-semibold text-gray-700 mb-2">Email :</label>
+        <label for="email" class="block text-lg font-semibold text-gray-700 mb-2 bg-white">Email :</label>
         <input
           type="email"
           id="email"
           v-model="email"
           required
-          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 bg-white"
         />
       </div>
       <div class="form-group">
-        <label for="message" class="block text-lg font-semibold text-gray-700 mb-2">Message :</label>
+        <label for="message" class="block text-lg font-semibold text-gray-700 mb-2 ">Message :</label>
         <textarea
           id="message"
           v-model="message"
           required
           rows="6"
-          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 resize-none"
+          class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 bg-white resize-none"
         ></textarea>
       </div>
       <button
@@ -76,4 +76,10 @@ export default {
 .contact-container {
   box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff;
 }
+
+input,
+textarea {
+    color:black
+}
+
 </style>
