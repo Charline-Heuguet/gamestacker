@@ -1,5 +1,36 @@
 <template>
-  <header>
+<header>
+  <div class="bg-emerald-600 w-full text-white py-2 px-4">
+    <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm  max-w-screen-xl">
+        <!-- Informations de contact -->
+        <div class="flex items-center space-x-4">
+            <span class="font-semibold">Contactez-nous :</span>
+            <a href="tel:+1234567890" class="hover:underline flex items-center space-x-1">
+                <UIcon name="material-symbols:phone" class="w-5 h-5 text-white" />
+                <span>+1 234 567 890</span>
+            </a>
+            <a href="mailto:contact@example.com" class="hover:underline flex items-center space-x-1">
+                <UIcon name="material-symbols:mail" class="w-5 h-5 text-white" />
+                <span>contact@example.com</span>
+            </a>
+        </div>
+
+        <!-- Réseaux sociaux -->
+        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+            <a href="https://facebook.com" target="_blank" class="hover:text-emerald-300" aria-label="Facebook">
+                <UIcon name="material-symbols:facebook" class="w-5 h-5 text-white" />
+            </a>
+            <a href="https://twitter.com" target="_blank" class="hover:text-emerald-300" aria-label="Twitter">
+                <UIcon name="material-symbols:twitter" class="w-5 h-5 text-white" />
+            </a>
+            <a href="https://linkedin.com" target="_blank" class="hover:text-emerald-300" aria-label="LinkedIn">
+                <UIcon name="material-symbols:linkedin" class="w-5 h-5 text-white" />
+            </a>
+        </div>
+    </div>
+  </div>
+
+
     <nav class="bg-white border-b border-black">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <!-- Logo et Nom du site -->
@@ -39,7 +70,9 @@
             <!-- Liens de navigation -->
             <LinkHeader page="Actualité" link="/article"/>
             <LinkHeader page="Forum" link="/forum"/>
-            <LinkHeader page="Annonces" link="/announcement"/>            
+            <LinkHeader page="Annonces" link="/announcement"/>
+            <LinkHeader page="Contact" link="/contact"/>            
+           
 
             <!-- Connexion ou Déconnexion en mode mobile -->
             <li class="mt-4 md:hidden">
