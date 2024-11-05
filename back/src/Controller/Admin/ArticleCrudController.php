@@ -52,7 +52,9 @@ class ArticleCrudController extends AbstractCrudController
                         $pseudo = $user ? $user->getPseudo() : 'Anonymous';
                         return sprintf('<strong>%s</strong>: %s', $pseudo, $comment->getContent());
                     }, $comments));
-                }),
+                })
+                ->onlyOnIndex(),
+
         ];
     }
 

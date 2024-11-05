@@ -28,7 +28,7 @@ class Article
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:create', 'article:details'])]
+    #[Groups(['article:read', 'article:create', 'article:details'])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -36,11 +36,11 @@ class Article
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['article:create', 'article:read','article:details'])]
+    #[Groups(['article:create', 'article:read', 'article:details'])]
     private ?string $image = null;
 
     #[Vich\UploadableField(mapping: 'articles', fileNameProperty: 'image')]
-   private ?File $imageFile = null;
+    private ?File $imageFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[Groups(['article:create', 'article:details'])]
@@ -66,9 +66,9 @@ class Article
         $this->comment = new ArrayCollection();
     }
 
-    
 
-    
+
+
 
     public function getId(): ?int
     {
@@ -191,9 +191,9 @@ class Article
 
     public function __toString(): string
     {
-        return $this->title;  
+        return $this->title;
     }
-    
+
 
     public function setImageFile(?File $imageFile = null): void
     {
