@@ -15,7 +15,7 @@
           class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
           @click="toggleMenu"
         >
-          <span class="sr-only">Open main menu</span>
+          <span class="sr-only">Ouvrir le meny</span>
           <svg
             class="w-5 h-5"
             aria-hidden="true"
@@ -37,18 +37,9 @@
         <div :class="['w-full uppercase font-semibold md:flex md:w-auto', isMenuOpen ? '' : 'hidden']" id="navbar-menu">
           <ul class="flex flex-col p-4 md:p-0 mt-4 font-semibold border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white">
             <!-- Liens de navigation -->
-            <li>
-              <a href="/article" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Actualité</a> 
-            </li>
-            <li>
-              <a href="/forum" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Forum</a>
-            </li>
-            <li>
-              <a href="/announcement" class="block py-2 px-3 text-black hover:text-[rgb(52_211_153/var(--tw-bg-opacity))] rounded md:bg-transparent md:p-0">Annonces</a>
-            </li>
-
-            <!-- Barre de recherche en mode mobile -->
-            
+            <LinkHeader page="Actualité" link="/article"/>
+            <LinkHeader page="Forum" link="/forum"/>
+            <LinkHeader page="Annonces" link="/announcement"/>            
 
             <!-- Connexion ou Déconnexion en mode mobile -->
             <li class="mt-4 md:hidden">
@@ -104,12 +95,12 @@
         <!-- Liens de navigation - section principale -->
         <div class="flex flex-col md:flex-row text-sm font-medium space-y-6 md:space-y-0 md:gap-12 self-end">
           <div class="flex flex-wrap gap-5">
-            <a href="#" class="hover:underline block">Actualité</a>
-            <a href="#" class="hover:underline block">Forum</a>
-            <a href="#" class="hover:underline block">Annonces</a>
-            <a href="#" class="hover:underline block">Contact</a>
-            <a href="#" class="hover:underline block">Qui sommes-nous</a>
-            <a href="#" class="hover:underline block">Mentions légales</a>
+            <LinkFooter page="Actualité" link="/article"/>
+            <LinkFooter page="Forum" link="/forum"/>
+            <LinkFooter page="Annonces" link="/annonces"/>
+            <LinkFooter page="Contact" link="/contact"/>
+            <LinkFooter page="Qui sommes-nous" link="/qui-sommes-nous"/>
+            <LinkFooter page="Mentions légales" link="/mentions-légales"/>
           </div>
         </div>
       </div>
@@ -147,6 +138,6 @@ const logout = () => {
 
 .icon-connect:hover span,
 .icon-connect:hover p {
-  color: rgb(52, 211, 153); /* Couleur de survol */
+  color: rgb(52, 211, 153);
 }
 </style>
