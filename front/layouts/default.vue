@@ -112,11 +112,13 @@
       <span class="block text-sm text-white sm:text-center">© 2024 GameStackers. Tous droits réservés.</span>
     </div>
   </footer>
+  <SupportContact />
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
+import SupportContact from '@/components/SupportContact.vue';
 
 const authStore = useAuthStore();
 const isMenuOpen = ref(false);
