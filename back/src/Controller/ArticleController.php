@@ -2,19 +2,17 @@
 
 namespace App\Controller;
 
-use App\Repository\AnnouncementRepository;
 use App\Repository\ArticleRepository;
-
+use App\Repository\AnnouncementRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('api/article', name: 'api_article_')]
 class ArticleController extends AbstractController
 {
-
     private $entityManager;
     private $articleRepository;
 
@@ -24,13 +22,21 @@ class ArticleController extends AbstractController
         $this->articleRepository = $articleRepository;
     }
 
-    /// VISUALISER TOUS LES ARTICLES ///
+    /// VISUALISER TOUS LES ARTICLES AVEC FILTRE CATEGORIE ///
     #[Route('/', name: 'index', methods: ['GET'])]
-    public function index(AnnouncementRepository $announcementRepository): Response
+    public function index(Request $request): Response
     {
-        $article = $this->articleRepository->findAll();
+        // Récupération de l'ID de la catégorie à partir des paramètres de requête
+        $categoryId = $request->query->get('category');
 
-        return $this->json($article, Response::HTTP_OK, [], ['groups' => 'article:read']);
+        // Vérifie si un ID de catégorie est fourni, sinon retourne tous les articles
+        if ($categoryId) {
+            $articles = $this->articleRepository->findByCategory($categoryId);
+        } else {
+            $articles = $this->articleRepository->findAll();
+        }
+
+        return $this->json($articles, Response::HTTP_OK, [], ['groups' => 'article:read']);
     }
 
     #[Route('/announce', name: 'announce', methods: ['GET'])]
@@ -44,7 +50,6 @@ class ArticleController extends AbstractController
     public function viewArticle($id): Response
     {
         $article = $this->articleRepository->find($id);
-        return $this->json( $article, 200, [], ['groups' => 'article:details', 'comment:details']);
+        return $this->json($article, 200, [], ['groups' => 'article:details', 'comment:details']);
     }
-
 }
