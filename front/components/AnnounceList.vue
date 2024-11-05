@@ -7,7 +7,7 @@
         <div
           v-for="announcement in announcements"
           :key="announcement.id"
-          class="announcement-item text-gray-500 p-4 my-4 relative"
+          class="announcement-item text-gray-500 p-4 my-4 relative shadow-lg rounded-lg bg-white p-6" 
         >
           <div class="flex items-center mb-4">
             <img
@@ -95,5 +95,9 @@ onMounted(() => {
 .announcements-list {
   max-width: 400px;
   margin: 0 auto;
+}
+
+a:hover {
+  color: rgb(16 185 129);
 }
 </style>

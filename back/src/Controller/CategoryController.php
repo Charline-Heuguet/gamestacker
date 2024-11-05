@@ -13,10 +13,9 @@ class CategoryController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(CategoryRepository $categoryRepository): Response
     {
-        // Récupère toutes les catégories
-        $categories = $categoryRepository->findAll();
+        // Utilise la nouvelle méthode pour récupérer uniquement les catégories avec articles
+        $categories = $categoryRepository->findCategoriesWithArticles();
 
-        // Retourne les catégories en JSON avec le groupe "article:read"
         return $this->json($categories, Response::HTTP_OK, [], ['groups' => 'article:read']);
     }
 }
