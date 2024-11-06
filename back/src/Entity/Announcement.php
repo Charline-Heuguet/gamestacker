@@ -23,7 +23,7 @@ class Announcement
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['announcement:details'])]
+    #[Groups(['announcement:details', 'announcement:read'])]
     private ?string $content = null;
 
     #[ORM\Column(length: 30)]

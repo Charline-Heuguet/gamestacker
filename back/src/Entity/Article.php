@@ -20,29 +20,30 @@ class Article
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['article:read','article:latest'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:create', 'article:read', 'article:details', 'user:article:comments'])]
+    #[Groups(['article:create', 'article:read','article:latest', 'article:details', 'user:article:comments'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['article:create', 'article:details'])]
+    #[Groups(['article:create', 'article:latest', 'article:details', 'article:read'])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    #[Groups(['article:create', 'article:read', 'article:details'])]
+    #[Groups(['article:create', 'article:read','article:latest', 'article:details', 'article:read'])]
     private ?\DateTimeInterface $date = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['article:create', 'article:read','article:details'])]
+    #[Groups(['article:create', 'article:read','article:latest','article:details'])]
     private ?string $image = null;
 
     #[Vich\UploadableField(mapping: 'articles', fileNameProperty: 'image')]
    private ?File $imageFile = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
-    #[Groups(['article:create', 'article:details'])]
+    #[Groups(['article:create', 'article:details', 'article:read','article:latest'])]
     private ?User $user = null;
 
     /**

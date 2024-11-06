@@ -33,7 +33,7 @@ class ForumController extends AbstractController
         $this->commentRepository = $commentRepository;
     }
 
-    /// VISUALISER TOUS LES TICKETS ///
+    /// VISUALISER TOUS LES TICKETS
     #[Route('/', name: 'forum', methods: ['GET'])]
     public function index(Request $request, PaginatorInterface $paginator): Response
     {
@@ -57,7 +57,15 @@ class ForumController extends AbstractController
         ], 200, [], ['groups' => 'forum:read']);
     }
 
-    /// VISUALISER UN TICKET ///
+    /// VISUALISER LES 5 DERNIERS TICKETS
+    #[Route('/last-five', name: 'last_five', methods: ['GET'])]
+    public function lastFive(): Response
+    {
+        $forums = $this->forumRepository->findLastFive();
+        return $this->json($forums, 200, [], ['groups' => 'forum:read']);
+    }
+
+    /// VISUALISER UN TICKET 
     #[Route('/{id}', name: 'view', methods: ['GET'])]
     public function viewForum($id): Response
     {
@@ -109,7 +117,7 @@ class ForumController extends AbstractController
         ], 400);
     }
 
-    /// MODIFIER UN TICKET DANS LES 10 PREMIERE MINUTE ///
+    /// MODIFIER UN TICKET DANS LES 10 PREMIERES MINUTES ///
     #[Route('/forum-edit/{id}', name: 'edit_forum', methods: ['PUT'])]
     public function editForum(int $id, Request $request, ForumRepository $forumRepository): JsonResponse
     {

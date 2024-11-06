@@ -1,10 +1,42 @@
 body {
-  background: white;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.6) 100%), #f9f9f9; 
   font-family: 'Poppins', sans-serif;
+}
 
+p, h1, h2, h3, h4, h5, h6{
+  color: #333;
+}
+
+h1{
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+h2{
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+p{
+  font-size: 1rem;
+  line-height: 1.5;
 }
 
 
 a:hover{
   color: rgb(52 211 153 / var(--tw-bg-opacity));
+}
+
+/* Rules for sections in the homepage, don't touch pleaz */
+section{
+  .home{
+    margin-top: 32px;
+    margin-bottom: 32px;
+
+    h2{
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      margin-top: 56px;
+    }
+  }
 }

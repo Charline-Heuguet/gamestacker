@@ -39,11 +39,21 @@ class ArticleController extends AbstractController
         return $this->json($article, Response::HTTP_OK, [], ['groups' => 'article:read']);
     }
 
+    // Pour avoir les 5 derniers articles
+    #[Route('/last-articles', name: 'last', methods: ['GET'])]
+    public function lastFiveArticles(): Response
+    {
+        $articles = $this->articleRepository->findLastFiveArticles();
+        return $this->json($articles, 200, [], ['groups' => 'article:latest']);
+    }
+
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function viewArticle($id): Response
     {
         $article = $this->articleRepository->find($id);
         return $this->json( $article, 200, [], ['groups' => 'article:details', 'comment:details']);
     }
+
+    
 
 }

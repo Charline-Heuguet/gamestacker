@@ -52,6 +52,14 @@ class AnnouncementController extends AbstractController
         ], 200, [], ['groups' => 'announcement:read']);
     }
 
+    //VOIR LES DERNIERES ANNONCES
+    #[Route('/latest', name: 'latest', methods: ['GET'])]
+    public function latestAnnouncements(): JsonResponse
+    {
+        $announcements = $this->announcementRepository->findLatestAnnouncements();
+        return $this->json($announcements, 200, [], ['groups' => 'announcement:read']);
+    }
+
     //VOIR UNE ANNONCES
     #[Route('/{id}', name: 'show', methods: ['GET'])]
     public function viewAnnouncement($id): JsonResponse
@@ -86,7 +94,7 @@ class AnnouncementController extends AbstractController
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();
 
-            return new JsonResponse(['status' => 'Annonce crée. Bon jeu !'], 201);
+            return new JsonResponse(['status' => 'Annonce créée. Bon jeu !'], 201);
         }
 
         return new JsonResponse([
