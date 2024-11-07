@@ -5,6 +5,7 @@
         <div class="article-container mx-auto text-gray-500 p-6 rounded-lg shadow-lg">
           <!-- Titre de l'article -->
           <h1 class="text-3xl font-bold mb-4 text-emerald-500">{{ article.title }}</h1>
+          
   
           <!-- Image de l'article -->
           <img
@@ -69,7 +70,7 @@
   import AddCommentArticle from '@/components/AddCommentArticle.vue'
   
   // URL de base pour l'API
-  const backendUrl = 'https://localhost:8000'
+  const backendUrl = 'http://localhost:8000'
   const route = useRoute()
   const article = ref(null)
   const loading = ref(true)
@@ -79,19 +80,13 @@
   try {
     const response = await fetch(`${backendUrl}/api/article/${route.params.id}`)
     if (!response.ok) {
-      throw new Error("Erreur lors de la récupération de l'article")
+      throw new Error('Erreur lors de la récupération de l\'article')
     }
-    const articleData = await response.json()
-
-    // Trier les commentaires par nombre de upvotes décroissant
-    if (articleData.comment && articleData.comment.length > 0) {
-      articleData.comment.sort((a, b) => b.upvote - a.upvote)
-    }
-
-    article.value = articleData
+    article.value = await response.json()
 
     // Scroll vers le nouveau commentaire si l'ID est fourni
     if (newCommentId) {
+      // Utilise $nextTick pour attendre le rendu des nouveaux commentaires
       await nextTick()
       document.getElementById(`comment-${newCommentId}`).scrollIntoView({ behavior: 'smooth' })
     }
@@ -101,7 +96,6 @@
     loading.value = false
   }
 }
-
   
   // Fonction pour formater la date
   const formatDate = (date) => {
