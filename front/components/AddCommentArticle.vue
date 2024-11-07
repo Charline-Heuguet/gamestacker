@@ -21,12 +21,17 @@
   <script setup>
   import { ref, defineEmits } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useAuthStore } from '@/stores/auth';
+
   
   const backendUrl = 'https://localhost:8000'
   const content = ref('')
   const errorMessage = ref('')
   const route = useRoute()
   const emit = defineEmits(['commentAdded'])
+
+  const authStore = useAuthStore()
+  const isAuthenticated = authStore.isAuthenticated
   
   // Fonction pour envoyer le commentaire
   const submitComment = async () => {
@@ -40,7 +45,8 @@
       const response = await fetch(`${backendUrl}/api/comment/${route.params.id}/add-article`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authStore.token}`
         },
         body: JSON.stringify({ content: content.value })
       })
