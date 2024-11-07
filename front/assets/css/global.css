@@ -4,7 +4,7 @@ body {
 }
 
 .gutter {
-    max-width: 1030px;
+    max-width: 80%;
     margin: 0 auto;
 }
 
@@ -41,8 +41,7 @@ section{
 
     h2{
       text-transform: uppercase;
-      margin-bottom: 16px;
-      margin-top: 56px;
     }
   }
 }
+

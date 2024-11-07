@@ -79,10 +79,8 @@ const handleRowClick = (row) => {
 /* Conteneur du tableau */
 .table-wrapper {
   width: 100%;
-  max-width: 1000px;
   overflow-x: auto;
   margin: 0 auto;
-  box-shadow: 10px 5px 5px gray;
 }
 
 /* Style global du tableau */
