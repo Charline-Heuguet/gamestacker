@@ -25,13 +25,23 @@ class ForumRepository extends ServiceEntityRepository
     }
 
     public function findBySearchTerm(string $term): Query #Rechercher un terme dans le titre
-{
-    return $this->createQueryBuilder('f') #Alias l'entité Forum (f)
-        ->where('f.title LIKE :term') #Rechercher le terme dans le titre	
-        ->setParameter('term', '%' . $term . '%') #Paramètre du terme, prends en compte des caractères avant et après
-        ->orderBy('f.date', 'DESC') #Ordonner par date décroissante
-        ->getQuery();
-}
+    {
+        return $this->createQueryBuilder('f') #Alias l'entité Forum (f)
+            ->where('f.title LIKE :term') #Rechercher le terme dans le titre	
+            ->setParameter('term', '%' . $term . '%') #Paramètre du terme, prends en compte des caractères avant et après
+            ->orderBy('f.date', 'DESC') #Ordonner par date décroissante
+            ->getQuery();
+    }
+
+    // Afficher les 5 derniers tickets postés
+    public function findLastFive(): array
+    {
+        return $this->createQueryBuilder('f') #Alias l'entité Forum (f)
+            ->orderBy('f.date', 'DESC') #Ordonner par date décroissante
+            ->setMaxResults(5) #Afficher les 5 derniers
+            ->getQuery()
+            ->getResult();
+    }
 
     //    /**
     //     * @return Forum[] Returns an array of Forum objects

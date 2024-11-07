@@ -20,22 +20,33 @@ class AnnouncementRepository extends ServiceEntityRepository
 
     // src/Repository/AnnouncementRepository.php
 
-public function findAllOrderedByDate(): Query
-{
-    return $this->createQueryBuilder('a')
-        ->orderBy('a.date', 'DESC')
-        ->getQuery();
-}
+    public function findAllOrderedByDate(): Query
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.date', 'DESC')
+            ->getQuery();
+    }
 
-public function findBySearchTerm(string $term): Query
-{
-    return $this->createQueryBuilder('a')
-        ->where('a.roomId LIKE :term')
-        ->orWhere('a.game LIKE :term')
-        ->setParameter('term', '%' . $term . '%')
-        ->orderBy('a.date', 'DESC')
-        ->getQuery();
-}
+    public function findBySearchTerm(string $term): Query
+    {
+        return $this->createQueryBuilder('a')
+            ->where('a.roomId LIKE :term')
+            ->orWhere('a.game LIKE :term')
+            ->setParameter('term', '%' . $term . '%')
+            ->orderBy('a.date', 'DESC')
+            ->getQuery();
+    }
+
+    // Les dernieres annonces publiées
+    public function findLatestAnnouncements(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.date', 'DESC')
+            ->setMaxResults(4)
+            ->getQuery()
+            ->getResult();
+    }
+
 
 public function findLatestAnnouncements(int $limit = 5)
     {

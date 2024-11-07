@@ -16,6 +16,16 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+    // Méthode pour récuperer les 5 derniers articles:
+    public function findLastFiveArticles(): array
+    {
+        return $this->createQueryBuilder('a')
+            ->orderBy('a.date', 'DESC')
+            ->setMaxResults(6)
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * Récupère les articles d'une catégorie spécifique
      *

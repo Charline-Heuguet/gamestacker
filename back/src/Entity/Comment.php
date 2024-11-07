@@ -16,7 +16,7 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['forum:details', 'comment:details','article:details', 'user:article:comments', 'user:forum:comments' ])]
+    #[Groups(['forum:details','forum:read', 'comment:details','article:details', 'user:article:comments', 'user:forum:comments' ])]
     private ?string $content = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
