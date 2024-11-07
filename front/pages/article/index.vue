@@ -9,31 +9,27 @@
       class="w-full h-96"
     >
       <swiper-slide
-        v-for="article in articles.slice(0, 3)"
-        :key="article.id"
-        class="relative flex items-center bg-gray-800 text-white"
-      >
-        <img
-          v-if="article.image"
-          :src="`${backendUrl}/images/articles/${article.image}`"
-          alt="Image de l'article"
-          class="absolute inset-0 w-full h-full object-cover opacity-50"
-        />
-        <div class="relative z-10 p-6 article-content-swiper">
-          <h2 class="title-swiper-big font-bold">{{ article.title }}</h2>
-          <p class="mt-2">{{ article.content ? article.content.slice(0, 100) : "Pas de contenu disponible" }}...</p>
-          <button
-            @click="viewArticle(article.id)"
-            class="rounded-3xl mt-4 bg-emerald-500 hover:bg-emerald-700 text-white py-2 px-4"
-          >
-            Lire l'article
-          </button>
-        </div>
-      </swiper-slide>
+  v-for="article in articles.slice(0, 3)"
+  :key="article.id"
+  class="relative flex items-end bg-gray-800 text-white bg-cover bg-center"
+  :style="{ backgroundImage: `url(${backendUrl}/images/articles/${article.image})`, height: '24rem' }"
+>
+  <div class="p-4 sm:p-6 max-w-full bg-opacity-70 bg-gray-900 w-full flex flex-col items-start space-y-2 sm:space-y-4 h-full justify-end	">
+    <h2 class="text-lg sm:text-2xl lg:text-3xl font-bold text-emerald-500">{{ article.title }}</h2>
+    <p class="text-sm sm:text-base mt-1 w-8/12 text-white">{{ article.content ? article.content.slice(0, 200) : "Pas de contenu disponible" }}...</p>
+    <button
+      @click="viewArticle(article.id)"
+      class="mt-3 sm:mt-4 bg-emerald-500 hover:bg-emerald-700 text-white py-1 px-3 sm:py-2 sm:px-4 rounded-3xl"
+    >
+      Lire l'article
+    </button>
+  </div>
+</swiper-slide>
+
     </swiper>
 
     <!-- Page Content -->
-    <div class="page-container flex p-8 gap-8">
+    <div class="page-container flex p-8 gap-8 mw-80">
       <!-- Liste des Articles -->
       <div class="articles-section flex-1">
         <h1 class="text-3xl font-bold mb-6 text-emerald-500">Liste des Articles</h1>
@@ -41,7 +37,7 @@
         <!-- Filtre par catégorie pour les articles -->
         <div class="filter-section mb-6">
           <label for="categoryFilter" class="block mb-2 text-emerald-500">Filtrer par catégorie :</label>
-          <select id="categoryFilter" v-model="selectedCategory" @change="filterArticles" class="p-2 border rounded">
+          <select id="categoryFilter" v-model="selectedCategory" @input="filterArticles" class="p-2 border rounded">
             <option value="">Toutes les catégories</option>
             <option v-for="cat in categories" :key="cat.id" :value="cat.id">
               {{ cat.name }}
@@ -141,14 +137,14 @@
 
       <!-- Section des Annonces - Intégration du composant AnnounceList -->
       <div class="announcements-section w-1/3 hidden md:block">
-      <AnnounceList />
+        <AnnounceList />
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AnnounceList from '@/components/AnnounceList.vue'
 
@@ -156,7 +152,7 @@ import AnnounceList from '@/components/AnnounceList.vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/swiper-bundle.css'
 
-const backendUrl = 'http://localhost:8000'
+const backendUrl = 'https://localhost:8000'
 const articles = ref([])
 const categories = ref([])
 const selectedCategory = ref('')
@@ -166,17 +162,14 @@ const router = useRouter()
 const currentPage = ref(1)
 const articlesPerPage = 6
 
-// Fonction pour obtenir les articles pour la page courante
 const paginatedArticles = computed(() => {
   const start = (currentPage.value - 1) * articlesPerPage
   const end = start + articlesPerPage
   return articles.value.slice(start, end)
 })
 
-// Total des pages
 const totalPages = computed(() => Math.ceil(articles.value.length / articlesPerPage))
 
-// Pagination navigation
 const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++
@@ -189,40 +182,42 @@ const prevPage = () => {
   }
 }
 
-// Fonction pour récupérer les articles
-const fetchArticles = async (categoryId = '') => {
-  loading.value = true
-  try {
-    const url = categoryId ? `${backendUrl}/api/article?category=${categoryId}` : `${backendUrl}/api/article`
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`Erreur lors de la récupération des articles : ${response.statusText}`)
-    }
-    articles.value = await response.json()
-    currentPage.value = 1  // Reset to first page on new fetch
-  } catch (error) {
-    console.error("Erreur lors de la récupération des articles :", error)
-  } finally {
-    loading.value = false
-  }
-}
+watch(selectedCategory, (newVal) => {
+  filterArticles();
+});
 
-// Fonction pour récupérer les catégories
-const fetchCategories = async () => {
+const fetchArticles = async (categoryId = '') => {
+  loading.value = true;
   try {
-    const response = await fetch(`${backendUrl}/api/category`)
+    const url = categoryId ? `${backendUrl}/api/article?category=${categoryId}` : `${backendUrl}/api/article`;
+    const response = await fetch(url);
     if (!response.ok) {
-      throw new Error('Erreur lors de la récupération des catégories')
+      throw new Error(`Erreur lors de la récupération des articles : ${response.statusText}`);
     }
-    categories.value = await response.json()
+    articles.value = await response.json();
+    currentPage.value = 1;
   } catch (error) {
-    console.error(error)
+    console.error("Erreur dans fetchArticles :", error);
+  } finally {
+    loading.value = false;
   }
-}
+};
+
+const fetchCategories = async () => {
+   try {
+      const response = await fetch(`${backendUrl}/api/category`);
+      if (!response.ok) {
+         throw new Error('Erreur lors de la récupération des catégories');
+      }
+      categories.value = await response.json();
+   } catch (error) {
+      console.error(error);
+   }
+};
 
 const filterArticles = () => {
-  fetchArticles(selectedCategory.value)
-}
+  fetchArticles(selectedCategory.value);
+};
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('fr-FR', {
@@ -250,10 +245,6 @@ onMounted(() => {
 .articles-section {
   flex: 2;
 }
-.article-item {
-  max-width: 1000px;
-  position: relative;
-}
 .shadow-neumorphism {
   box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff;
 }
@@ -265,15 +256,5 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
-.title-swiper-big {
-  text-transform: uppercase;
-  font-size: 2.5rem;
-  text-align: left;
-}
 
-.article-content-swiper {
-      position: absolute;
-    bottom: 0;
-    max-width: 60%;
-}
 </style>

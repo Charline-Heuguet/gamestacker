@@ -26,10 +26,8 @@ class ArticleController extends AbstractController
     #[Route('/', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        // Récupération de l'ID de la catégorie à partir des paramètres de requête
         $categoryId = $request->query->get('category');
 
-        // Vérifie si un ID de catégorie est fourni, sinon retourne tous les articles
         if ($categoryId) {
             $articles = $this->articleRepository->findByCategory($categoryId);
         } else {
@@ -61,7 +59,4 @@ class ArticleController extends AbstractController
         $article = $this->articleRepository->find($id);
         return $this->json($article, 200, [], ['groups' => 'article:details', 'comment:details']);
     }
-
-    
-
 }

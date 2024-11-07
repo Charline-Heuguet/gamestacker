@@ -7,7 +7,7 @@
       <div class="content mb-6">
         <p class="text-gray-700">{{ forum.content }}</p>
       </div>
-      
+
       <!-- Section des commentaires -->
       <div v-if="forum.comment && forum.comment.length" class="comments-section mt-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
@@ -23,6 +23,13 @@
         </div>
       </div>
       <p v-else class="text-gray-500">Aucun commentaire pour cet article.</p>
+
+      <!-- Composant d'ajout de commentaire -->
+      <AddCommentForum
+        targetType="forum"
+        :targetId="forum.id"
+        @commentAdded="fetchForum"
+      />
     </div>
 
     <!-- Message d'erreur -->
@@ -33,6 +40,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import AddCommentForum from '@/components/AddCommentForum.vue';
 
 const route = useRoute();
 const forum = ref(null);
@@ -46,18 +54,26 @@ const formatDate = (dateString) => {
 const fetchForum = async () => {
   const forumId = route.params.id;
   try {
-    const response = await fetch(`http://localhost:8000/api/forum/${forumId}`);
+    const response = await fetch(`https://localhost:8000/api/forum/${forumId}`);
     
     if (!response.ok) {
       throw new Error(`Erreur HTTP ! statut : ${response.status} (${response.statusText})`);
     }
 
-    forum.value = await response.json();
+    const forumData = await response.json();
+
+    // Trier les commentaires par nombre de upvotes décroissant
+    if (forumData.comment && forumData.comment.length > 0) {
+      forumData.comment.sort((a, b) => b.upvote - a.upvote);
+    }
+
+    forum.value = forumData;
   } catch (error) {
     errorMessage.value = `Une erreur s'est produite : ${error.message}`;
-    console.error('Erreur de récupération de l\'article du forum :', error);
+    console.error("Erreur de récupération de l'article du forum :", error);
   }
 };
+
 
 onMounted(fetchForum);
 </script>
@@ -91,10 +107,6 @@ h1 {
   border-radius: 5px;
   font-size: 16px;
   background-color: #f8fafc;
-}
-
-.comment .text-gray-600 span {
-  font-weight: bold;
 }
 
 /* Message d'erreur */

@@ -5,6 +5,7 @@
         <div class="article-container mx-auto text-gray-500 p-6 rounded-lg shadow-lg">
           <!-- Titre de l'article -->
           <h1 class="text-3xl font-bold mb-4 text-emerald-500">{{ article.title }}</h1>
+          
   
           <!-- Image de l'article -->
           <img

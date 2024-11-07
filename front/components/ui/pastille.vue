@@ -1,18 +1,7 @@
 <template>
-    <div class="pastille">
-        <slot />    
+    <div
+      class="inline-block text-center py-1 px-2.5 rounded-full bg-[#f78902] text-[#333333] text-xs uppercase"
+    >
+      <slot />
     </div>
-</template>
-
-<style scoped>
-.pastille {
-    display: inline-block;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 100px;
-    background-color: #f78902;
-    color: #333;
-    font-size: 12px;
-    text-transform: uppercase;
-}
-</style>
+  </template>

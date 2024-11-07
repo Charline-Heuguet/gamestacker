@@ -67,7 +67,7 @@ export default {
     },
     async sendSupportMessage() {
       try {
-        await axios.post('http://localhost:8000/api/contact', {
+        await axios.post('https://localhost:8000/api/contact', {
           name: this.name,
           email: this.email,
           message: this.message

@@ -4,8 +4,11 @@
 
         <!-- Bouton pour créer une annonce -->
         <div class="text-center mb-8">
-            <button @click="openCreateModal" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
+            <button v-if="authStore.isAuthenticated" @click="openCreateModal" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
                 Créer une annonce
+            </button>
+            <button v-else @click="showLoginAlert" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded">
+                Se connecter pour créer une annonce
             </button>
         </div>
 
@@ -56,7 +59,7 @@
         <!-- Modal de création d'annonce -->
         <div v-if="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-                <h3 class="text-xl font-semibold mb-4">Créer une annonce</h3>
+                <h3 class="text-xl font-semibold mb-4 text-white">Créer une annonce</h3>
                 <form @submit.prevent="createAnnouncement">
                     <div class="mb-4">
                         <label for="title" class="block text-gray-300">Titre</label>
@@ -90,12 +93,14 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';  // Importer le store auth pour l'état d'authentification
 
+const authStore = useAuthStore();  // Utiliser authStore pour vérifier l'état de connexion
 const announcements = ref([]);
 const errorMessage = ref(null);
 const page = ref(1);
 const isLastPage = ref(false);
-const backendUrl = 'http://localhost:8000';
+const backendUrl = 'https://localhost:8000';
 const totalItems = ref(0);
 const itemsPerPage = 10;
 const searchTerm = ref('');
@@ -108,6 +113,7 @@ const newAnnouncement = ref({
     max_nb_players: 1
 });
 
+// Format de la date
 const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
 };
@@ -131,7 +137,8 @@ const createAnnouncement = async () => {
         const response = await fetch(`${backendUrl}/api/announcement/create`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authStore.token}`  // Envoie du token d'authentification
             },
             body: JSON.stringify(newAnnouncement.value)
         });
@@ -142,7 +149,6 @@ const createAnnouncement = async () => {
         } else {
             alert('Annonce créée avec succès !');
             closeCreateModal();
-            // Redirection automatique vers l'annonce nouvellement créée
             window.location.href = `/announcement/${data.id}`;
         }
     } catch (error) {
@@ -150,7 +156,7 @@ const createAnnouncement = async () => {
     }
 };
 
-
+// Récupération des annonces
 const fetchAnnouncements = async (pageNum = 1, term = '') => {
     try {
         const response = await fetch(`${backendUrl}/api/announcement?page=${pageNum}&search=${term}`, {
@@ -173,6 +179,7 @@ const fetchAnnouncements = async (pageNum = 1, term = '') => {
     }
 };
 
+// Charger les annonces initialement
 fetchAnnouncements(page.value, searchTerm.value);
 
 const searchAnnouncements = () => {
@@ -195,6 +202,12 @@ const prevPage = () => {
         isLastPage.value = false;
     }
 };
+
+// Afficher une alerte de connexion si l'utilisateur n'est pas authentifié
+const showLoginAlert = () => {
+    alert("Veuillez vous connecter pour créer une annonce.");
+};
+
 </script>
 
 <style scoped>

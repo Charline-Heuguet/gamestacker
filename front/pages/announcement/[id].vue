@@ -14,8 +14,8 @@
                             class="w-16 h-16 rounded-full object-cover mr-4"
                         />
                         <div>
-                            <h2 class="text-lg font-semibold text-emerald-500">{{ announcement.user.pseudo }}</h2>
-                            <p class="text-gray-400">Discord : <span class="text-emerald-500 hover:text-emerald-300">{{ announcement.user.discord }}</span></p>
+                            <h2 class=" text-white text-lg font-semibold text-emerald-500">{{ announcement.user.pseudo }}</h2>
+                            <p class="text-white ">Discord : <span class="text-emerald-500 hover:text-emerald-300">{{ announcement.user.discord }}</span></p>
                         </div>
                     </div>
 
@@ -66,7 +66,7 @@
         <!-- Modal de confirmation pour rejoindre le salon -->
         <div v-if="showJoinModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-                <h3 class="text-xl font-semibold mb-4">Confirmer l'action</h3>
+                <h3 class="text-xl font-semibold mb-4 text-white">Confirmer l'action</h3>
                 <p class="mb-6">Voulez-vous rejoindre le salon "{{ announcement.title }}" ?</p>
                 <div class="flex justify-end space-x-4">
                     <button @click="confirmJoin" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
@@ -82,7 +82,7 @@
         <!-- Modal de confirmation pour expulsion -->
         <div v-if="showKickModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-                <h3 class="text-xl font-semibold mb-4">Confirmer l'expulsion</h3>
+                <h3 class="text-xl font-semibold mb-4 text-white">Confirmer l'expulsion</h3>
                 <p class="mb-6">Êtes-vous sûr de vouloir expulser le joueur "{{ selectedParticipant.pseudo }}" ?</p>
                 <div class="flex justify-end space-x-4">
                     <button @click="kickConfirmed" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
@@ -103,7 +103,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const backendUrl = 'http://localhost:8000';
+const backendUrl = 'https://localhost:8000';
 const announcement = ref(null);
 const loading = ref(true);
 const route = useRoute();
@@ -274,5 +274,9 @@ onMounted(() => {
 
 .modal p {
     color: #cbd5e0;
+}
+
+p {
+  color: white;
 }
 </style>
