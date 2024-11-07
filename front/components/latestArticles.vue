@@ -61,7 +61,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/swiper-bundle.css';
 import defaultImage from '/medias/img-par-defaut.webp';
 
-const backendUrl = 'http://localhost:8000';
+const backendUrl = 'https://localhost:8000';
 const article = ref([]);
 
 const getSlidesPerView = computed(() => {

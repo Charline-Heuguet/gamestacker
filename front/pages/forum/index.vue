@@ -128,7 +128,7 @@ const showLoginAlert = () => {
 // Envoyer la requête pour créer un nouveau forum
 const createForum = async () => {
     try {
-        const response = await fetch('http://localhost:8000/api/forum/add', {
+        const response = await fetch('https://localhost:8000/api/forum/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -154,7 +154,7 @@ const createForum = async () => {
 // Récupération des forums
 const fetchForums = async (pageNum = 1, term = '') => {
   try {
-    const response = await fetch(`http://localhost:8000/api/forum?page=${pageNum}&search=${term}`);
+    const response = await fetch(`https://localhost:8000/api/forum?page=${pageNum}&search=${term}`);
     if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
     const data = await response.json();
     forums.value = data.items || [];

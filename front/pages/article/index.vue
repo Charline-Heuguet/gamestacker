@@ -156,7 +156,7 @@ import AnnounceList from '@/components/AnnounceList.vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/swiper-bundle.css'
 
-const backendUrl = 'http://localhost:8000'
+const backendUrl = 'https://localhost:8000'
 const articles = ref([])
 const categories = ref([])
 const selectedCategory = ref('')
@@ -210,7 +210,7 @@ const fetchArticles = async (categoryId = '') => {
 // Fonction pour récupérer les catégories
 const fetchCategories = async () => {
   try {
-    const response = await fetch(`${backendUrl}/api/categories`)
+    const response = await fetch(`${backendUrl}/api/category`)
     if (!response.ok) {
       throw new Error('Erreur lors de la récupération des catégories')
     }
