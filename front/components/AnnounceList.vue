@@ -57,7 +57,7 @@
 import { ref, onMounted } from 'vue'
 
 // URL de base pour l'API
-const backendUrl = 'http://localhost:8000'
+const backendUrl = 'https://localhost:8000'
 const announcements = ref([])
 const loading = ref(true)
 

@@ -156,7 +156,7 @@ import AnnounceList from '@/components/AnnounceList.vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import 'swiper/swiper-bundle.css'
 
-const backendUrl = 'http://localhost:8000'
+const backendUrl = 'https://localhost:8000'
 const articles = ref([])
 const categories = ref([])
 const selectedCategory = ref('')

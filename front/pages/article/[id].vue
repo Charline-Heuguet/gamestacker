@@ -69,7 +69,7 @@
   import AddCommentArticle from '@/components/AddCommentArticle.vue'
   
   // URL de base pour l'API
-  const backendUrl = 'http://localhost:8000'
+  const backendUrl = 'https://localhost:8000'
   const route = useRoute()
   const article = ref(null)
   const loading = ref(true)

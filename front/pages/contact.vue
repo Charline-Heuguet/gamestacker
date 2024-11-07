@@ -58,7 +58,7 @@ export default {
   methods: {
     async sendMessage() {
       try {
-        const response = await axios.post('http://localhost:8000/api/contact', {
+        const response = await axios.post('https://localhost:8000/api/contact', {
           name: this.name,
           email: this.email,
           message: this.message

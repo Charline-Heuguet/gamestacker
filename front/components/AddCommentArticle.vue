@@ -22,7 +22,7 @@
   import { ref, defineEmits } from 'vue'
   import { useRoute } from 'vue-router'
   
-  const backendUrl = 'http://localhost:8000'
+  const backendUrl = 'https://localhost:8000'
   const content = ref('')
   const errorMessage = ref('')
   const route = useRoute()

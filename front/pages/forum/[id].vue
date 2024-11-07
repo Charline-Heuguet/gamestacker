@@ -54,7 +54,7 @@ const formatDate = (dateString) => {
 const fetchForum = async () => {
   const forumId = route.params.id;
   try {
-    const response = await fetch(`http://localhost:8000/api/forum/${forumId}`);
+    const response = await fetch(`https://localhost:8000/api/forum/${forumId}`);
     
     if (!response.ok) {
       throw new Error(`Erreur HTTP ! statut : ${response.status} (${response.statusText})`);

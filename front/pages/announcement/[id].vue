@@ -103,7 +103,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 
-const backendUrl = 'http://localhost:8000';
+const backendUrl = 'https://localhost:8000';
 const announcement = ref(null);
 const loading = ref(true);
 const route = useRoute();
