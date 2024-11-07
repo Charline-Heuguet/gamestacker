@@ -1,21 +1,19 @@
 <template>
   <!-- Bannière et message de bienvenue -->
-  <div class="w-full mb-8 relative shadow-lg banner">
-    <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-center items-start px-8 py-16">
-      <!-- Titre de bienvenue -->
-      <h1 class="text-4xl font-bold text-emerald-500 mb-4">
+<div class="w-full mb-8 relative shadow-lg banner bg-black flex flex-col items-start justify-center px-6 md:px-12 py-16 text-center md:text-left">
+    <!-- Titre de bienvenue -->
+    <h1 class="text-2xl md:text-4xl font-bold text-emerald-500 mb-4">
         Bienvenue sur le forum des passionnés de jeux vidéo
-      </h1>
-      <!-- Texte d'introduction -->
-      <p class="text-lg text-gray-100">
+    </h1>
+    <!-- Texte d'introduction -->
+    <p class="text-base md:text-lg text-gray-100 max-w-2xl">
         Posez vos questions, partagez vos expériences et trouvez des partenaires de jeu. Rejoignez la communauté pour découvrir et discuter des derniers sujets et tendances dans l’univers du gaming.
-      </p>
-      <!-- Bouton d'appel à l'action -->
-      <button class="mt-4 bg-emerald-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-emerald-600">
+    </p>
+    <!-- Bouton d'appel à l'action -->
+    <button class="mt-4 bg-emerald-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-emerald-600">
         Commencer une discussion
-      </button>
-    </div>
-  </div>
+    </button>
+</div>
 
   <!-- Contenu principal (Forums) -->
   <div class="forum-container bg-white py-12 px-4 rounded-lg ">
@@ -114,42 +112,49 @@ const prevPage = () => {
 <style scoped>
 /* Style général */
 .forum-container {
-  max-width: 900px;
-  margin: 0 auto;
+    max-width: 900px;
+    margin: 0 auto;
 }
 
 /* Effet de Neumorphisme */
 .shadow-neumorphism {
-  box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff;
+    box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff;
 }
 
 /* Style des boutons de pagination */
 .btn-pagination {
-  padding: 10px 20px;
-  background-color: #34d399;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
+    padding: 10px 20px;
+    background-color: #34d399;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
+
 .btn-pagination:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 /* Message d'erreur */
 .error-message {
-  color: #f87171;
-  margin-top: 15px;
-  text-align: center;
+    color: #f87171;
+    margin-top: 15px;
+    text-align: center;
 }
 
 /* Styles pour la bannière */
 .banner {
-  background-image: url('@/assets/img/banner.png');
-  background-size: cover;
-  background-position: center;
-  height: 400px; /* Hauteur de la bannière */
+    background-image: url('@/assets/img/banner.png');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+}
+
+@media (max-width: 768px) {
+    .banner {
+        height: 300px;
+    }
 }
 </style>
