@@ -27,10 +27,7 @@
         </button>
 
         <!-- Menu de navigation (visible en mode desktop et mobile) -->
-        <div :class="['w-full  uppercase  font-semibold		md:flex md:w-auto', isMenuOpen ? '' : 'hidden']"
-          id="navbar-menu">
-          <ul
-            class="flex flex-col p-4 md:p-0 mt-4 font-semibold	 border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white">
+        
         <div :class="['w-full uppercase font-semibold md:flex md:w-auto', isMenuOpen ? '' : 'hidden']" id="navbar-menu">
           <ul class="flex flex-col p-4 md:p-0 mt-4 font-semibold border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white">
             <!-- Liens de navigation -->
@@ -38,8 +35,6 @@
             <LinkHeader page="Forum" link="/forum"/>
             <LinkHeader page="Annonces" link="/announcement"/>
             <LinkHeader page="Contact" link="/contact"/>            
-           
-
             <!-- Connexion ou Déconnexion en mode mobile -->
             <li class="mt-4 md:hidden">
               <a v-if="!authStore.isAuthenticated" href="/login" class="flex items-center space-x-2 text-black hover:text-blue-700 icon-connect">
@@ -107,11 +102,6 @@
 
       <!-- Ligne de séparation -->
       <hr class="my-6 border-gray-700 sm:mx-auto lg:my-8" />
-      <!-- Ligne de séparation -->
-      <hr class="my-6 border-gray-700 sm:mx-auto lg:my-8" />
-
-      <!-- Copyright -->
-      <span class="block text-sm text-white sm:text-center">© 2024 GameStackers. Tous droits réservés.</span>
       <!-- Copyright -->
       <span class="block text-sm text-white sm:text-center">© 2024 GameStackers. Tous droits réservés.</span>
     </div>

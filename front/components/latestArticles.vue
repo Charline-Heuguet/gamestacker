@@ -5,7 +5,7 @@
                 <img src="/medias/icons/news.svg" alt="megaphone">
                 <h2>Nos derniers articles</h2>
             </div>
-            <UButton to="/articles" color="gray" variant="solid" class="mb-4 mt-14">
+            <UButton to="/article" color="gray" variant="solid" class="mb-4 mt-14">
                 Voir nos articles
             </UButton>
         </div>

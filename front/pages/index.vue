@@ -10,8 +10,6 @@
             <!-- <categories /> -->
              <announcement/>
              <LatestForum/>
-
-
         </section>
     </div>
 </template>
