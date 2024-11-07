@@ -60,12 +60,20 @@ const fetchForum = async () => {
       throw new Error(`Erreur HTTP ! statut : ${response.status} (${response.statusText})`);
     }
 
-    forum.value = await response.json();
+    const forumData = await response.json();
+
+    // Trier les commentaires par nombre de upvotes décroissant
+    if (forumData.comment && forumData.comment.length > 0) {
+      forumData.comment.sort((a, b) => b.upvote - a.upvote);
+    }
+
+    forum.value = forumData;
   } catch (error) {
     errorMessage.value = `Une erreur s'est produite : ${error.message}`;
-    console.error('Erreur de récupération de l\'article du forum :', error);
+    console.error("Erreur de récupération de l'article du forum :", error);
   }
 };
+
 
 onMounted(fetchForum);
 </script>

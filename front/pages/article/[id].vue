@@ -79,13 +79,19 @@
   try {
     const response = await fetch(`${backendUrl}/api/article/${route.params.id}`)
     if (!response.ok) {
-      throw new Error('Erreur lors de la récupération de l\'article')
+      throw new Error("Erreur lors de la récupération de l'article")
     }
-    article.value = await response.json()
+    const articleData = await response.json()
+
+    // Trier les commentaires par nombre de upvotes décroissant
+    if (articleData.comment && articleData.comment.length > 0) {
+      articleData.comment.sort((a, b) => b.upvote - a.upvote)
+    }
+
+    article.value = articleData
 
     // Scroll vers le nouveau commentaire si l'ID est fourni
     if (newCommentId) {
-      // Utilise $nextTick pour attendre le rendu des nouveaux commentaires
       await nextTick()
       document.getElementById(`comment-${newCommentId}`).scrollIntoView({ behavior: 'smooth' })
     }
@@ -95,6 +101,7 @@
     loading.value = false
   }
 }
+
   
   // Fonction pour formater la date
   const formatDate = (date) => {
