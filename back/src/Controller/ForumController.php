@@ -34,7 +34,7 @@ class ForumController extends AbstractController
     }
 
     /// VISUALISER TOUS LES TICKETS
-    #[Route('/', name: 'forum', methods: ['GET'])]
+    #[Route('/', name: 'forum', methods: ['GET', 'OPTIONS'])]
     public function index(Request $request, PaginatorInterface $paginator): Response
     {
         $searchTerm = $request->query->get('search', '');

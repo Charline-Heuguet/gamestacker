@@ -1,10 +1,19 @@
 // nuxt.config.ts
 export default defineNuxtConfig({
   ssr: false,
+  nitro: {
+    devProxy: {
+      '/api': {
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        prependPath: true,
+      }
+    }
+  },
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
   modules: [
-    '@nuxt/ui', 
+    '@nuxt/ui',
     'nuxt-swiper'],
   css: [
     '@/assets/css/global.css'

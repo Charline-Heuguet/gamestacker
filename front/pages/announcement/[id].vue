@@ -156,6 +156,7 @@ const confirmJoin = async () => {
         'Authorization': `Bearer ${authStore.token}`,
       },
     });
+    console.log(authStore.token);
     const data = await response.json();
 
     if (!response.ok) {

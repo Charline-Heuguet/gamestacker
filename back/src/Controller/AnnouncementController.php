@@ -167,8 +167,9 @@ class AnnouncementController extends AbstractController
     #[Route('/{id}/join', name: 'join', methods: ['POST'])]
     public function joinAnnouncement($id, Announcement $announcement, UserRepository $userRepository): JsonResponse
     {
-        $userTest = $userRepository->findBy(['id' => 30]);
-
+        $userTest = $this->getUser();  // Récupère l'utilisateur connecté
+        dump($userTest);
+        
         $announcement = $this->announcementRepository->find($id);
 
         $getMaxPlayers = $announcement->getMaxNbPlayers();
@@ -177,7 +178,7 @@ class AnnouncementController extends AbstractController
         if ($diff <= 0) {
             return new JsonResponse(['status' => 'Nombre de joueurs maximum atteint'], 403);
         } else {
-            $announcement->addParticipant($userTest[0]);
+            $announcement->addParticipant($userTest);
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();
             return new JsonResponse(['status' => 'Vous avez rejoint l\'annonce. Bon jeu'], 200);

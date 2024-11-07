@@ -157,7 +157,12 @@ const createForum = async () => {
 // Récupération des forums
 const fetchForums = async (pageNum = 1, term = '') => {
   try {
-    const response = await fetch(`https://localhost:8000/api/forum?page=${pageNum}&search=${term}`);
+    const response = await fetch(`http://localhost:8000/api/forum?page=${pageNum}&search=${term}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
     if (!response.ok) throw new Error(`Erreur HTTP : ${response.status}`);
     const data = await response.json();
     forums.value = data.items || [];
