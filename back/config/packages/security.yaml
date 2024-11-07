@@ -28,6 +28,7 @@ security:
     api:
       pattern: ^/api
       stateless: true
+      
 
       # activate different ways to authenticate
       # https://symfony.com/doc/current/security.html#the-firewall

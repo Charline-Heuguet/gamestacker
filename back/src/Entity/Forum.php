@@ -40,11 +40,11 @@ class Forum
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'forum')]
-    #[Groups(['forum:details'])]
+    #[Groups(['forum:details', 'forum:read'])]
     private Collection $comment;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    #[Groups(['user:forum'])]
+    #[Groups(['user:forum', 'forum:read'])]
     private ?\DateTimeInterface $updatedAt = null;
 
     public function __construct()
