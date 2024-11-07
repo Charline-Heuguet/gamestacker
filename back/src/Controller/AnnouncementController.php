@@ -68,10 +68,15 @@ class AnnouncementController extends AbstractController
         return $this->json($announcement, 200, [], ['groups' => 'announcement:details']);
     }
     #CREER UNE ANNONCE
+    // CRÉER UNE ANNONCE
     #[Route('/create', name: 'create', methods: ['POST'])]
-    public function createAnnouncement(Request $request, UserRepository $userRepository, RoomIdGeneratorService $roomIdGenerator): JsonResponse
+    public function createAnnouncement(Request $request, RoomIdGeneratorService $roomIdGenerator): JsonResponse
     {
-        $testUser = $userRepository->findBy(['id' => 30]);
+        $user = $this->getUser();  // Récupère l'utilisateur connecté
+
+        if (!$user) {
+            return new JsonResponse(['status' => 'Utilisateur non connecté'], 403);
+        }
 
         $data = json_decode($request->getContent(), true);
 
@@ -86,9 +91,9 @@ class AnnouncementController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            $announcement->setUser($testUser[0]);
+            $announcement->setUser($user);
             $announcement->setDate(new \DateTime());
-            $announcement->addParticipant($testUser[0]);
+            $announcement->addParticipant($user);
             $announcement->setRoomId($roomIdGenerator->generateUniqueId(14));
 
             $this->entityManager->persist($announcement);
@@ -103,22 +108,21 @@ class AnnouncementController extends AbstractController
         ], 400);
     }
 
-    //MODIFIER UNE ANNONCE
+    // MODIFIER UNE ANNONCE
     #[Route('/{id}/edit', name: 'edit', methods: ['PUT'])]
-    public function editAnnouncement(int $id, Request $request, UserRepository $userRepository): JsonResponse
+    public function editAnnouncement(int $id, Request $request): JsonResponse
     {
+        $user = $this->getUser();  // Récupère l'utilisateur connecté
 
-        $testUser = $userRepository->findBy(['id' => 212]);
+        if (!$user) {
+            return new JsonResponse(['status' => 'Utilisateur non connecté'], 403);
+        }
 
         $announcement = $this->announcementRepository->find($id);
 
-        //Permet que seul le créateur de l'annonce puisse la modifiée
-        if ($announcement->getUser() !== $testUser[0]) {
+        // Vérifie si l'utilisateur connecté est bien le créateur de l'annonce
+        if (!$announcement || $announcement->getUser() !== $user) {
             return new JsonResponse(['status' => 'Vous n\'êtes pas autorisé à modifier cette annonce'], 403);
-        }
-
-        if (!$announcement) {
-            return new JsonResponse(['status' => 'Annonce non trouvée'], 404);
         }
 
         $data = json_decode($request->getContent(), true);
@@ -131,7 +135,6 @@ class AnnouncementController extends AbstractController
         $form->submit($data);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->entityManager->persist($announcement);
             $this->entityManager->flush();
 
@@ -144,16 +147,20 @@ class AnnouncementController extends AbstractController
         ], 400);
     }
 
-    //SUPPRIMER UNE ANNONCE
+    // SUPPRIMER UNE ANNONCE
     #[Route('/{id}/delete', name: 'delete', methods: ['DELETE'])]
-    public function deleteAnnouncement($id, UserRepository $userRepository): JsonResponse
+    public function deleteAnnouncement($id): JsonResponse
     {
+        $user = $this->getUser();  // Récupère l'utilisateur connecté
 
-        $userTest = $userRepository->findBy(['id' => 211]);
+        if (!$user) {
+            return new JsonResponse(['status' => 'Utilisateur non connecté'], 403);
+        }
 
         $announcement = $this->announcementRepository->find($id);
 
-        if ($announcement && $announcement->getUser() === $userTest[0]) {
+        // Vérifie si l'utilisateur connecté est bien le créateur de l'annonce
+        if ($announcement && $announcement->getUser() === $user) {
             $this->entityManager->remove($announcement);
             $this->entityManager->flush();
 
@@ -163,27 +170,36 @@ class AnnouncementController extends AbstractController
         }
     }
 
-    //REJOINDRE UNE ANNONCE
+    // REJOINDRE UNE ANNONCE
     #[Route('/{id}/join', name: 'join', methods: ['POST'])]
-    public function joinAnnouncement($id, Announcement $announcement, UserRepository $userRepository): JsonResponse
+    public function joinAnnouncement($id): JsonResponse
     {
-        $userTest = $this->getUser();  // Récupère l'utilisateur connecté
-        dump($userTest);
-        
+        $user = $this->getUser();  // Récupère l'utilisateur connecté
+
+        if (!$user) {
+            return new JsonResponse(['status' => 'Utilisateur non connecté'], 403);
+        }
+
         $announcement = $this->announcementRepository->find($id);
 
-        $getMaxPlayers = $announcement->getMaxNbPlayers();
-        $diff = $getMaxPlayers - count($announcement->getParticipants());
-
-        if ($diff <= 0) {
-            return new JsonResponse(['status' => 'Nombre de joueurs maximum atteint'], 403);
-        } else {
-            $announcement->addParticipant($userTest);
-            $this->entityManager->persist($announcement);
-            $this->entityManager->flush();
-            return new JsonResponse(['status' => 'Vous avez rejoint l\'annonce. Bon jeu'], 200);
+        if (!$announcement) {
+            return new JsonResponse(['status' => 'Annonce non trouvée'], 404);
         }
+
+        $maxPlayers = $announcement->getMaxNbPlayers();
+        $currentPlayers = count($announcement->getParticipants());
+
+        if ($currentPlayers >= $maxPlayers) {
+            return new JsonResponse(['status' => 'Nombre de joueurs maximum atteint'], 403);
+        }
+
+        $announcement->addParticipant($user);
+        $this->entityManager->persist($announcement);
+        $this->entityManager->flush();
+
+        return new JsonResponse(['status' => 'Vous avez rejoint l\'annonce. Bon jeu'], 200);
     }
+
 
     //EXPULSER UN PARTICIPANT D'UNE ANNONCE
     #[Route('/{id}/kick/{participant_id}', name: 'kick', methods: ['POST'])]

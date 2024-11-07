@@ -76,13 +76,12 @@ class ForumController extends AbstractController
 
     /// AJOUTE UN TICKET ///
     #[Route('/add', name: 'add_forum', methods: ['POST'])]
-    public function forumAdd(Request $request, UserRepository $userRepository): JsonResponse
+    public function forumAdd(Request $request): JsonResponse
     {
-        // remplacer par $user = $this->getUser(); pour récupérer l'utilisateur connecté
-        // quand le login sera en place
-        $testUser = $userRepository->findOneBy(['id' => 30]);
-        if (!$testUser) {
-            throw new NotFoundHttpException('User "testUser" not found');
+        $user = $this->getUser();
+
+        if (!$user) {
+            throw new NotFoundHttpException('Utilisateur non connecté');
         }
 
         // Décodage des données JSON envoyées dans la requête
@@ -102,7 +101,7 @@ class ForumController extends AbstractController
 
         // Vérification de la validité du formulaire
         if ($form->isSubmitted() && $form->isValid()) {
-            $forum->setUser($testUser);  // A changer lors du login
+            $forum->setUser($user);  // Attribution de l'utilisateur connecté
             $forum->setDate(new \DateTime());  // Attribution de la date actuelle
             $this->entityManager->persist($forum);
             $this->entityManager->flush();
@@ -116,6 +115,7 @@ class ForumController extends AbstractController
             'errors' => (string) $form->getErrors(true, false)
         ], 400);
     }
+
 
     /// MODIFIER UN TICKET DANS LES 10 PREMIERES MINUTES ///
     #[Route('/forum-edit/{id}', name: 'edit_forum', methods: ['PUT'])]
