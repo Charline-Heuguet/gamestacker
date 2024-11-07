@@ -74,7 +74,7 @@
     </nav>
   </header>
 
-  <main class="gutter">
+  <main>
     <slot>
     </slot>
   </main>
@@ -127,10 +127,6 @@ const logout = () => {
 </script>
 
 <style scoped>
-.gutter {
-    max-width: 1030px;
-    margin: 0 auto;
-}
 
 .icon-connect {
   cursor: pointer;

@@ -61,7 +61,4 @@ class ArticleController extends AbstractController
         $article = $this->articleRepository->find($id);
         return $this->json($article, 200, [], ['groups' => 'article:details', 'comment:details']);
     }
-
-    
-
 }

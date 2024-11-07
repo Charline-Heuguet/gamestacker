@@ -20,8 +20,8 @@
           class="absolute inset-0 w-full h-full object-cover opacity-50"
         />
         <div class="relative z-10 p-6 article-content-swiper">
-          <h2 class="title-swiper-big font-bold">{{ article.title }}</h2>
-          <p class="mt-2">{{ article.content ? article.content.slice(0, 100) : "Pas de contenu disponible" }}...</p>
+          <h2 class="title-swiper-big font-bold text-emerald-500 ">{{ article.title }}</h2>
+          <p class="mt-2 text-white">{{ article.content ? article.content.slice(0, 100) : "Pas de contenu disponible" }}...</p>
           <button
             @click="viewArticle(article.id)"
             class="rounded-3xl mt-4 bg-emerald-500 hover:bg-emerald-700 text-white py-2 px-4"
