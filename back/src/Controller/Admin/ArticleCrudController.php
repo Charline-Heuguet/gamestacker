@@ -30,13 +30,14 @@ class ArticleCrudController extends AbstractCrudController
 
             // Utilisation de VichFileField pour l'upload de l'image
             VichFileField::new('imageFile', 'Image')
-                ->onlyOnForms(), // Pour afficher seulement dans les formulaires
+                ->onlyOnForms() // Pour afficher seulement dans les formulaires
+                ->setHelp('Attention : taille des images autorisée à 2 Mo maximum.'),
 
             // Affiche l'image actuelle sur la page d'index et les détails
             ImageField::new('image')
                 ->setBasePath('/images/articles')
                 ->onlyOnIndex(),
-
+                
             AssociationField::new('category', 'Categories')
                 ->formatValue(function ($value, $entity) {
                     return implode(', ', array_map(function ($category) {
