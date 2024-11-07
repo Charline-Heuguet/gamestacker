@@ -210,7 +210,7 @@ const fetchArticles = async (categoryId = '') => {
 // Fonction pour récupérer les catégories
 const fetchCategories = async () => {
   try {
-    const response = await fetch(`${backendUrl}/api/categories`)
+    const response = await fetch(`${backendUrl}/api/category`)
     if (!response.ok) {
       throw new Error('Erreur lors de la récupération des catégories')
     }
