@@ -45,3 +45,7 @@ section{
   }
 }
 
+.mw-80 {
+  max-width: 80%;
+  justify-self: center;
+}

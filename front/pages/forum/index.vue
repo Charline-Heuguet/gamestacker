@@ -1,26 +1,29 @@
 <template>
   <!-- Bannière et message de bienvenue -->
-  <!-- Bannière et message de bienvenue -->
-  <div class="w-full mb-8 relative shadow-lg banner bg-black flex flex-col items-start justify-center px-6 md:px-12 py-16 text-center md:text-left">
-      <h1 class="text-2xl md:text-4xl font-bold text-emerald-500 mb-4">
-          Bienvenue sur le forum des passionnés de jeux vidéo
-      </h1>
-      <p class="text-base md:text-lg text-gray-100 max-w-2xl">
-          Posez vos questions, partagez vos expériences et trouvez des partenaires de jeu.
-      </p>
-      <!-- Bouton pour créer une nouvelle discussion -->
-      <button v-if="authStore.isAuthenticated" @click="openCreateModal" class="mt-4 bg-emerald-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-emerald-600">
-          Commencer une discussion
-      </button>
-      <button v-else @click="showLoginAlert" class="mt-4 bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600">
-          Se connecter pour créer une discussion
-      </button>
-  </div>
+  <div 
+  class="w-full mb-8 relative shadow-lg banner bg-cover bg-center flex flex-col items-start justify-center px-6 md:px-12 py-16 text-center md:text-left"
+  :style="{ backgroundImage: `url('https://i.ibb.co/gSdyxm3/codmobile-hero2.jpg')`, backgroundColor: 'rgba(0, 0, 0, 0.7)', backgroundBlendMode: 'overlay' }"
+>
+  <h1 class="text-2xl md:text-4xl font-bold text-emerald-500 mb-4">
+      Bienvenue sur le forum des passionnés de jeux vidéo
+  </h1>
+  <p class="text-base md:text-lg text-gray-100 max-w-2xl">
+      Posez vos questions, partagez vos expériences et trouvez des partenaires de jeu.
+  </p>
+  <!-- Bouton pour créer une nouvelle discussion -->
+  <button v-if="authStore.isAuthenticated" @click="openCreateModal" class="mt-4 bg-emerald-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-emerald-600">
+      Commencer une discussion
+  </button>
+  <button v-else @click="showLoginAlert" class="mt-4 bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600">
+      Se connecter pour créer une discussion
+  </button>
+</div>
+
 
   <!-- Modale de création de forum -->
   <div v-if="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-          <h3 class="text-xl font-semibold mb-4">Créer une discussion</h3>
+          <h3 class="text-xl font-semibold mb-4 text-white">Créer une discussion</h3>
           <form @submit.prevent="createForum">
               <div class="mb-4">
                   <label for="title" class="block text-gray-300">Titre</label>
@@ -43,7 +46,7 @@
   </div>
 
   <!-- Contenu principal (Forums) -->
-  <div class="forum-container bg-white py-12 px-4 rounded-lg ">
+  <div class="forum-container bg-white py-12 px-4 rounded-lg mw-80 w-full ">
     <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Liste des Forums</h1>
 
     <!-- Barre de recherche -->
@@ -190,11 +193,6 @@ const prevPage = () => {
 </script>
 
 <style scoped>
-/* Style général */
-.forum-container {
-    max-width: 900px;
-    margin: 0 auto;
-}
 
 /* Effet de Neumorphisme */
 .shadow-neumorphism {
@@ -226,15 +224,13 @@ const prevPage = () => {
 
 /* Styles pour la bannière */
 .banner {
-    background-image: url('@/assets/img/banner.png');
-    background-size: cover;
-    background-position: center;
-    height: 400px;
+  padding: 15vh;
+   
 }
 
 @media (max-width: 768px) {
     .banner {
-        height: 300px;
+      padding: 5vh;
     }
 }
 </style>

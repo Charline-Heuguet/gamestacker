@@ -59,7 +59,7 @@
         <!-- Modal de création d'annonce -->
         <div v-if="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-                <h3 class="text-xl font-semibold mb-4">Créer une annonce</h3>
+                <h3 class="text-xl font-semibold mb-4 text-white">Créer une annonce</h3>
                 <form @submit.prevent="createAnnouncement">
                     <div class="mb-4">
                         <label for="title" class="block text-gray-300">Titre</label>

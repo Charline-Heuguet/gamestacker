@@ -1,5 +1,5 @@
 <template>
-  <div class="contact-container bg-white py-12 px-4 rounded-lg shadow-lg max-w-3xl mx-auto my-6 py-12">
+  <div class="contact-container mw-80 bg-white py-12 px-4 rounded-lg shadow-lg  mx-auto my-6 py-12">
     <h1 class="text-3xl font-bold text-emerald-500 mb-8 text-center">Contactez-nous</h1>
     <form @submit.prevent="sendMessage" class="space-y-6">
       <div class="form-group">
