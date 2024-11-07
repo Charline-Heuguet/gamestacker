@@ -1,10 +1,9 @@
 <template>
   <div class="login-container min-h-screen flex items-center justify-center bg-white px-4 py-12">
-    <div v-if="authStore.isAuthenticated" class="text-center">
-      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
-        Bienvenue, {{ authStore.user?.email }} (ID: {{ authStore.user?.id }})
+    <div v-if="authStore.isAuthenticated" class="text-center max-w-screen-lg ">
+      <h1 class="text-2xl font-bold text-center text-gray-800 mb-6 leading-relaxed">
+        Bienvenue, {{ authStore.user?.pseudo }}, vous pouvez désormais profiter à 100% de notre site !
       </h1>
-      <button @click="logout" class="btn">Se déconnecter</button>
     </div>
     <div v-else class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-neumorphism">
       <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Connectez-vous</h1>
@@ -45,7 +44,7 @@ const login = async () => {
   errorMessage.value = '';
   try {
     await authStore.login(email.value, password.value);
-    router.push('/forum'); // Redirection après la connexion réussie
+    // router.push('/forum'); // Redirection après la connexion réussie
   } catch (error) {
     errorMessage.value = 'Email ou mot de passe incorrect';
   }

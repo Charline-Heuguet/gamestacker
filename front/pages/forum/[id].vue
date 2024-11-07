@@ -7,7 +7,7 @@
       <div class="content mb-6">
         <p class="text-gray-700">{{ forum.content }}</p>
       </div>
-      
+
       <!-- Section des commentaires -->
       <div v-if="forum.comment && forum.comment.length" class="comments-section mt-8">
         <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
@@ -23,6 +23,13 @@
         </div>
       </div>
       <p v-else class="text-gray-500">Aucun commentaire pour cet article.</p>
+
+      <!-- Composant d'ajout de commentaire -->
+      <AddCommentForum
+        targetType="forum"
+        :targetId="forum.id"
+        @commentAdded="fetchForum"
+      />
     </div>
 
     <!-- Message d'erreur -->
@@ -33,6 +40,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import AddCommentForum from '@/components/AddCommentForum.vue';
 
 const route = useRoute();
 const forum = ref(null);
@@ -91,10 +99,6 @@ h1 {
   border-radius: 5px;
   font-size: 16px;
   background-color: #f8fafc;
-}
-
-.comment .text-gray-600 span {
-  font-weight: bold;
 }
 
 /* Message d'erreur */

@@ -18,12 +18,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-
-// #[IsGranted('ROLE_USER')]
 #[Route('/api')]
 class CommentController extends AbstractController
 {
-
     private $entityManager;
     private $commentRepository;
 
@@ -33,14 +30,14 @@ class CommentController extends AbstractController
         $this->commentRepository = $commentRepository;
     }
 
-    
-    //Ajouter +1 au nombre de votes sur un commentaire 
+    // Ajouter +1 au nombre de votes sur un commentaire
     #[Route('/comment/{id}/upvote', name: 'comment_upvote', methods: ['POST'])]
-    public function commentForumUpvote($id, UserRepository $userRepository, CommentRepository $commentRepository, Request $request): JsonResponse
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function commentForumUpvote($id, CommentRepository $commentRepository, Request $request): JsonResponse
     {
-        $user = $userRepository->findOneBy(['id' => 217]);
+        $user = $this->getUser();
         if (!$user) {
-            return new JsonResponse(['message' => 'Utilisateur non trouvé'], 403);
+            return new JsonResponse(['message' => 'Utilisateur non connecté'], 403);
         }
 
         $comment = $commentRepository->find($id);
@@ -52,26 +49,25 @@ class CommentController extends AbstractController
         $upvotedComments = $session->get('upvoted_comments', []);
 
         if (in_array($comment->getId(), $upvotedComments)) {
-            // Annuler l'upvote
             $comment->setUpvote($comment->getUpvote() - 1);
             $upvotedComments = array_diff($upvotedComments, [$comment->getId()]);
         } else {
-            // Ajouter un upvote
             $comment->setUpvote($comment->getUpvote() + 1);
             $upvotedComments[] = $comment->getId();
         }
 
         $session->set('upvoted_comments', $upvotedComments);
         $this->entityManager->flush();
+
         return new JsonResponse(['upvotes' => $comment->getUpvote()]);
-        
     }
-    
-    //Ajouter -1 au nombre de votes sur un commentaire
+
+    // Ajouter -1 au nombre de votes sur un commentaire
     #[Route('/comment/{id}/downvote', name: 'comment_downvote', methods: ['POST'])]
-    public function commentForumDownvote($id, UserRepository $userRepository, CommentRepository $commentRepository, EntityManagerInterface $entityManager, Request $request): JsonResponse
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function commentForumDownvote($id, CommentRepository $commentRepository, Request $request): JsonResponse
     {
-        $user = $userRepository->findOneBy(['id' => 217]); // Remplacez 218 par l'ID de l'utilisateur actuel
+        $user = $this->getUser();
         if (!$user) {
             return new JsonResponse(['message' => 'Connectez-vous pour participer'], 403);
         }
@@ -85,40 +81,36 @@ class CommentController extends AbstractController
         $downvotedComments = $session->get('downvoted_comments', []);
 
         if (in_array($comment->getId(), $downvotedComments)) {
-            // Annuler le downvote
             $comment->setDownvote($comment->getDownvote() + 1);
             $downvotedComments = array_diff($downvotedComments, [$comment->getId()]);
         } else {
-            // Ajouter un downvote
             $comment->setDownvote($comment->getDownvote() - 1);
             $downvotedComments[] = $comment->getId();
         }
 
         $session->set('downvoted_comments', $downvotedComments);
-        $entityManager->flush();
+        $this->entityManager->flush();
+
         return new JsonResponse(['downvotes' => $comment->getDownvote()]);
     }
 
-
+    // Ajouter un commentaire à un article
     #[Route('/comment/{id}/add-article', name: 'add_article_comment', methods: ['POST'])]
-    public function addArticleComment(Request $request, int $id, UserRepository $userRepository, CommentFilterService $commentFilterService, ArticleRepository $articleRepository): JsonResponse
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function addArticleComment(Request $request, int $id, CommentFilterService $commentFilterService, ArticleRepository $articleRepository): JsonResponse
     {
-        // Récupérer l'article par ID
         $article = $articleRepository->find($id);
         if (!$article) {
             return new JsonResponse(['status' => 'Article non trouvé'], 404);
         }
 
-        // Utilisateur test temporaire
-        $userTest = $userRepository->findOneBy(['id' => 1]);
-        if (!$userTest) {
-            return new JsonResponse(['status' => 'Utilisateur non trouvé'], 404);
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['status' => 'Utilisateur non connecté'], 403);
         }
 
-        // Récupérer les données du commentaire depuis la requête
         $data = json_decode($request->getContent(), true);
 
-        // Créer et valider le formulaire de commentaire
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->submit($data);
@@ -127,40 +119,34 @@ class CommentController extends AbstractController
             $filteredContent = $commentFilterService->filterProhibitedContent($comment->getContent());
             $comment->setContent($filteredContent);
             $comment->setDate(new \DateTime());
-            $comment->setUser($userTest);
+            $comment->setUser($user);
         } else {
             return new JsonResponse(['status' => 'Invalid data'], 400);
         }
 
-        // Associer le commentaire à l'article
         $article->addComment($comment);
-
-        // Persister les changements
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
         return new JsonResponse(['status' => 'Comment added successfully'], 201);
     }
 
+    // Ajouter un commentaire à un forum
     #[Route('/comment/{id}/add-forum', name: 'add_forum_comment', methods: ['POST'])]
-    public function addForumComment(Request $request, int $id, UserRepository $userRepository, CommentFilterService $commentFilterService, ForumRepository $forumRepository): JsonResponse
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function addForumComment(Request $request, int $id, CommentFilterService $commentFilterService, ForumRepository $forumRepository): JsonResponse
     {
-        // Récupérer l'article par ID
         $forum = $forumRepository->find($id);
         if (!$forum) {
-            return new JsonResponse(['status' => 'Ticket non trouvé'], 404);
+            return new JsonResponse(['status' => 'Forum non trouvé'], 404);
         }
 
-        // Utilisateur test temporaire
-        $userTest = $userRepository->findOneBy(['id' => 211]);
-        if (!$userTest) {
-            return new JsonResponse(['status' => 'Utilisateur non trouvé'], 404);
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['status' => 'Utilisateur non connecté'], 403);
         }
 
-        // Récupérer les données du commentaire depuis la requête
         $data = json_decode($request->getContent(), true);
-
-        // Créer et valider le formulaire de commentaire
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->submit($data);
@@ -169,15 +155,12 @@ class CommentController extends AbstractController
             $filteredContent = $commentFilterService->filterProhibitedContent($comment->getContent());
             $comment->setContent($filteredContent);
             $comment->setDate(new \DateTime());
-            $comment->setUser($userTest);
+            $comment->setUser($user);
         } else {
             return new JsonResponse(['status' => 'Invalid data'], 400);
         }
 
-        // Associer le commentaire à l'article
         $forum->addComment($comment);
-
-        // Persister les changements
         $this->entityManager->persist($comment);
         $this->entityManager->flush();
 
