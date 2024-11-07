@@ -1,36 +1,13 @@
 <template>
 <header>
-  <div class="bg-emerald-600 w-full text-white py-2 px-4">
-    <div class="container mx-auto flex flex-col sm:flex-row justify-between items-center text-sm  max-w-screen-xl">
-        <!-- Informations de contact -->
-        <div class="flex items-center space-x-4">
-            <span class="font-semibold">Contactez-nous :</span>
-            <a href="tel:+1234567890" class="hover:underline flex items-center space-x-1">
-                <UIcon name="material-symbols:phone" class="w-5 h-5 text-white" />
-                <span>+1 234 567 890</span>
-            </a>
-            <a href="mailto:contact@example.com" class="hover:underline flex items-center space-x-1">
-                <UIcon name="material-symbols:mail" class="w-5 h-5 text-white" />
-                <span>contact@example.com</span>
-            </a>
-        </div>
-
-        <!-- Réseaux sociaux -->
-        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
-            <a href="https://facebook.com" target="_blank" class="hover:text-emerald-300" aria-label="Facebook">
-                <UIcon name="material-symbols:facebook" class="w-5 h-5 text-white" />
-            </a>
-            <a href="https://twitter.com" target="_blank" class="hover:text-emerald-300" aria-label="Twitter">
-                <UIcon name="material-symbols:twitter" class="w-5 h-5 text-white" />
-            </a>
-            <a href="https://linkedin.com" target="_blank" class="hover:text-emerald-300" aria-label="LinkedIn">
-                <UIcon name="material-symbols:linkedin" class="w-5 h-5 text-white" />
-            </a>
-        </div>
+    <div class="bg-emerald-600 text-white text-center py-2 overflow-hidden">
+      <div class="animate-marquee whitespace-nowrap">
+          <span class="mx-4">
+              🚀 Ne manquez rien ! Rejoignez des joueurs passionnés et découvrez nos dernières actus jeux vidéos.
+              <a href="/announcement" class="underline font-semibold hover:text-emerald-200">Cliquez ici pour les annonces 🎮</a>
+          </span>
+      </div>
     </div>
-  </div>
-
-
     <nav class="bg-white border-b border-black">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <!-- Logo et Nom du site -->
@@ -175,4 +152,18 @@ const logout = () => {
 .icon-connect:hover p {
   color: rgb(52, 211, 153);
 }
+
+.animate-marquee {
+        display: inline-block;
+        animation: marquee 15s linear infinite;
+    }
+
+    @keyframes marquee {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(-100%);
+        }
+    }
 </style>
