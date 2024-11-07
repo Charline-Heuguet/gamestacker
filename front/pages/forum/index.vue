@@ -1,19 +1,46 @@
 <template>
   <!-- Bannière et message de bienvenue -->
-<div class="w-full mb-8 relative shadow-lg banner bg-black flex flex-col items-start justify-center px-6 md:px-12 py-16 text-center md:text-left">
-    <!-- Titre de bienvenue -->
-    <h1 class="text-2xl md:text-4xl font-bold text-emerald-500 mb-4">
-        Bienvenue sur le forum des passionnés de jeux vidéo
-    </h1>
-    <!-- Texte d'introduction -->
-    <p class="text-base md:text-lg text-gray-100 max-w-2xl">
-        Posez vos questions, partagez vos expériences et trouvez des partenaires de jeu. Rejoignez la communauté pour découvrir et discuter des derniers sujets et tendances dans l’univers du gaming.
-    </p>
-    <!-- Bouton d'appel à l'action -->
-    <button class="mt-4 bg-emerald-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-emerald-600">
-        Commencer une discussion
-    </button>
-</div>
+  <!-- Bannière et message de bienvenue -->
+  <div class="w-full mb-8 relative shadow-lg banner bg-black flex flex-col items-start justify-center px-6 md:px-12 py-16 text-center md:text-left">
+      <h1 class="text-2xl md:text-4xl font-bold text-emerald-500 mb-4">
+          Bienvenue sur le forum des passionnés de jeux vidéo
+      </h1>
+      <p class="text-base md:text-lg text-gray-100 max-w-2xl">
+          Posez vos questions, partagez vos expériences et trouvez des partenaires de jeu.
+      </p>
+      <!-- Bouton pour créer une nouvelle discussion -->
+      <button v-if="authStore.isAuthenticated" @click="openCreateModal" class="mt-4 bg-emerald-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-emerald-600">
+          Commencer une discussion
+      </button>
+      <button v-else @click="showLoginAlert" class="mt-4 bg-gray-500 text-white font-semibold py-2 px-4 rounded-full hover:bg-gray-600">
+          Se connecter pour créer une discussion
+      </button>
+  </div>
+
+  <!-- Modale de création de forum -->
+  <div v-if="showCreateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
+          <h3 class="text-xl font-semibold mb-4">Créer une discussion</h3>
+          <form @submit.prevent="createForum">
+              <div class="mb-4">
+                  <label for="title" class="block text-gray-300">Titre</label>
+                  <input v-model="newForum.title" type="text" id="title" class="w-full p-2 mt-1 rounded bg-gray-700 text-white" required />
+              </div>
+              <div class="mb-4">
+                  <label for="content" class="block text-gray-300">Contenu</label>
+                  <textarea v-model="newForum.content" id="content" class="w-full p-2 mt-1 rounded bg-gray-700 text-white" required></textarea>
+              </div>
+              <div class="flex justify-end space-x-4">
+                  <button type="submit" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
+                      Créer
+                  </button>
+                  <button @click="closeCreateModal" type="button" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded">
+                      Annuler
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
 
   <!-- Contenu principal (Forums) -->
   <div class="forum-container bg-white py-12 px-4 rounded-lg ">
@@ -57,7 +84,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore();  // Accéder au store d'authentification
 const forums = ref([]);
 const errorMessage = ref(null);
 const page = ref(1);
@@ -66,10 +95,60 @@ const totalItems = ref(0);
 const itemsPerPage = 10;
 const searchTerm = ref('');
 
+const showCreateModal = ref(false);
+const newForum = ref({
+    title: '',
+    content: ''
+});
+
 // Format de date
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+// Ouvrir/fermer la modale de création
+const openCreateModal = () => {
+    showCreateModal.value = true;
+};
+
+const closeCreateModal = () => {
+    showCreateModal.value = false;
+    newForum.value = {
+        title: '',
+        content: ''
+    };
+};
+
+// Afficher une alerte si l'utilisateur n'est pas connecté
+const showLoginAlert = () => {
+    alert("Veuillez vous connecter pour créer une discussion.");
+};
+
+// Envoyer la requête pour créer un nouveau forum
+const createForum = async () => {
+    try {
+        const response = await fetch('http://localhost:8000/api/forum/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${authStore.token}`
+            },
+            body: JSON.stringify(newForum.value)
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            alert(`Erreur : ${data.status}`);
+        } else {
+            alert('Discussion créée avec succès !');
+            closeCreateModal();
+            // Actualisez les forums ou redirigez l'utilisateur vers la discussion nouvellement créée
+            fetchForums();  // Rafraîchit la liste des forums
+        }
+    } catch (error) {
+        console.error("Erreur lors de la création de la discussion :", error);
+    }
 };
 
 // Récupération des forums
@@ -107,6 +186,7 @@ const prevPage = () => {
     fetchForums(page.value, searchTerm.value);
   }
 };
+
 </script>
 
 <style scoped>
