@@ -1,29 +1,53 @@
 <template>
     <section class="home">
-        <div class="title">
-            <img src="/medias/icons/annonce.svg" alt="megaphone">
-            <h2>Les annonces</h2>
-        </div>
-        <p>Compagnons d’aventure recherchés ! Rejoins ou crée une équipe pour affronter ensemble les défis de Baldur’s
-            Gate ou les mystères de Star Citizen.<br />
-            <NuxtLink to="/announcement">Pour voir toutes les annonces, c'est par ici</NuxtLink>
-        </p>
-
-        <div class="annonces" v-if="latestAnnouncement && latestAnnouncement.length > 0">
-            <div class="annonce" v-for="(annonce, index) in latestAnnouncement.slice(1)" :key="index">
-                <NuxtLink :to="'/announcement/' + annonce.id">
-                    <div class="content-annonce">
-                        <div class="title-pastille">
-                            <h3 class="line-clamp-2">{{ annonce.title }}</h3>
-                            <Pastille>{{ annonce.game }}</Pastille>
-                        </div>
-                        <p class="line-clamp-3">{{ annonce.content }}</p>
-                    </div>
-                </NuxtLink>
+      <div class="flex items-end">
+        <img
+          src="/medias/icons/annonce.svg"
+          alt="megaphone"
+          class="mb-4 w-12 h-12 mr-2.5"
+        />
+        <h2>Les annonces</h2>
+      </div>
+      <p class="mb-5">
+        Compagnons d’aventure recherchés ! Rejoins ou crée une équipe pour
+        affronter ensemble les défis de Baldur’s Gate ou les mystères de Star
+        Citizen.<br />
+        <NuxtLink to="/announcement"
+          >Pour voir toutes les annonces, c'est par ici</NuxtLink
+        >
+      </p>
+  
+      <div
+        class="grid grid-cols-2 gap-5"
+        v-if="latestAnnouncement && latestAnnouncement.length > 0"
+      >
+        <div
+          class="flex"
+          v-for="(annonce, index) in latestAnnouncement.slice(1)"
+          :key="index"
+        >
+          <NuxtLink :to="'/announcement/' + annonce.id" class="flex-1">
+            <div
+              class="flex flex-col h-full border border-gray-300 p-2.5 rounded-md shadow"
+            >
+              <div
+                class="flex justify-between items-center mb-2.5"
+              >
+                <h3
+                  class="line-clamp-2 w-1/2 font-bold"
+                >
+                  {{ annonce.title }}
+                </h3>
+                <Pastille class="ml-5">{{ annonce.game }}</Pastille>
+              </div>
+              <p class="line-clamp-3">{{ annonce.content }}</p>
             </div>
+          </NuxtLink>
         </div>
+      </div>
     </section>
-</template>
+  </template>
+  
 
 <script setup>
 import { useAsyncData } from '#app';
@@ -37,53 +61,3 @@ const { data: latestAnnouncement, pending, error } = await useAsyncData('latest-
 });
 
 </script>
-
-<style scoped>
-.title {
-    display: flex;
-    align-items: end;
-
-    img {
-        margin-bottom: 16px;
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
-    }
-}
-
-p {
-    margin-bottom: 20px;
-}
-
-.annonces {
-    display: flex;
-    gap: 20px;
-
-    .annonce {
-        flex: 1;
-    }
-
-    .content-annonce {
-        border: 1px solid #ccc;
-        padding: 10px;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        box-shadow: 2px 2px 5px #ccc;
-
-        .pastille {
-            margin-left: 20px;
-        }
-
-        .title-pastille {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-
-            h3 {
-                font-weight: bold;
-            }
-        }
-    }
-}
-</style>
