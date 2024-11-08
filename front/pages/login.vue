@@ -44,11 +44,12 @@ const login = async () => {
   errorMessage.value = '';
   try {
     await authStore.login(email.value, password.value);
-    // router.push('/forum'); // Redirection après la connexion réussie
+    router.push('/profile'); // Redirection vers /profile après la connexion réussie
   } catch (error) {
     errorMessage.value = 'Email ou mot de passe incorrect';
   }
 };
+
 
 const logout = () => {
   authStore.logout();

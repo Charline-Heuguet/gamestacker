@@ -6,7 +6,7 @@
             <p>Nom du Site : GAME STACKERS </p>
             <p>Adresse : 2 Esplanade de la Gare, 33110 Le Bouscat</p>
             <p>Adresse mail de contact: gamestackers@gmail.com</p>
-            <p>Directeur de publication : Vincent COMPARATO</p>
+            <p>Directeur de publication : /</p>
             <p>Hébergeur : PLANET HOSTER 4416 Louis-B. -Mayer, Laval, Québec, Canada H7P 0G1 (numéro de téléphone : 01
                 76 60 41 43)</p>
 
