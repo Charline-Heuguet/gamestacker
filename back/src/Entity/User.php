@@ -54,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: "Le pseudo doit contenir au moins {{ limit }} caractères.",
         maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['user:read', 'user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read','announcement:details', 'article:annonce'])]
+    #[Groups(['user:read', 'user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read', 'announcement:details', 'article:annonce'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -65,8 +65,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments'])]
+    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments', 'user:read'])]
     private ?string $image = null;
+
 
     #[Vich\UploadableField(mapping: 'users', fileNameProperty: 'image')]
     private ?File $imageFile = null;
@@ -78,7 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $age = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read' ,'user:signup', 'announcement:details'])]
+    #[Groups(['user:read', 'user:signup', 'announcement:details'])]
     private ?string $discord = null;
 
     #[ORM\Column(length: 30)]
@@ -249,7 +250,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->imageFile = $imageFile;
 
-        if(null !== $imageFile) {
+        if (null !== $imageFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
 
@@ -469,13 +470,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    
+
     public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
