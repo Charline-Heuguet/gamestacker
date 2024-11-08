@@ -17,8 +17,10 @@
           </p>
           <p class="text-gray-700">{{ comment.content }}</p>
           <div class="text-gray-600 mt-2">
-            <span class="mr-4">👍 {{ comment.upvote }}</span>
-            <span>👎 {{ comment.downvote }}</span>
+            <button @click="upvoteComment(comment.id)" :disabled="isCommentUpvoted(comment.id) || isLoading" :class="{ 'upvoted': isCommentUpvoted(comment.id) }">
+              <UIcon name="lucide:arrow-big-up" class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
+              <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2" />
+            </button>
           </div>
         </div>
       </div>
@@ -41,10 +43,14 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import AddCommentForum from '@/components/AddCommentForum.vue';
+import { useAuthStore } from '@/stores/auth';
 
 const route = useRoute();
 const forum = ref(null);
 const errorMessage = ref(null);
+const authStore = useAuthStore();
+const isLoading = ref(false);
+const currentUpvoteId = ref(null);
 
 const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -55,7 +61,7 @@ const fetchForum = async () => {
   const forumId = route.params.id;
   try {
     const response = await fetch(`https://localhost:8000/api/forum/${forumId}`);
-    
+
     if (!response.ok) {
       throw new Error(`Erreur HTTP ! statut : ${response.status} (${response.statusText})`);
     }
@@ -74,6 +80,44 @@ const fetchForum = async () => {
   }
 };
 
+const isCommentUpvoted = (commentId) => {
+  const upvotedComments = JSON.parse(localStorage.getItem('upvoted_comments')) || [];
+  return upvotedComments.includes(commentId);
+};
+
+const upvoteComment = async (commentId) => {
+  isLoading.value = true;
+  currentUpvoteId.value = commentId;
+  try {
+    const response = await fetch(`https://localhost:8000/api/comment/${commentId}/upvote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Erreur lors de l\'upvote du commentaire');
+    }
+    const data = await response.json();
+    const comment = forum.value.comment.find(c => c.id === commentId);
+    if (comment) {
+      comment.upvote = data.upvotes;
+    }
+
+    // Mettre à jour les commentaires upvotés dans le localStorage
+    let upvotedComments = JSON.parse(localStorage.getItem('upvoted_comments')) || [];
+    if (!upvotedComments.includes(commentId)) {
+      upvotedComments.push(commentId);
+      localStorage.setItem('upvoted_comments', JSON.stringify(upvotedComments));
+    }
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+    currentUpvoteId.value = null;
+  }
+};
 
 onMounted(fetchForum);
 </script>
@@ -113,5 +157,9 @@ h1 {
 .error-message {
   color: #f87171;
   text-align: center;
+}
+
+.upvoted {
+  color: green; /* Ou toute autre couleur pour indiquer que le commentaire est upvoté */
 }
 </style>

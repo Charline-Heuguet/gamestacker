@@ -39,60 +39,80 @@ class CommentController extends AbstractController
         if (!$user) {
             return new JsonResponse(['message' => 'Utilisateur non connecté'], 403);
         }
-
+    
         $comment = $commentRepository->find($id);
         if (!$comment) {
             return new JsonResponse(['message' => 'Commentaire non trouvé'], 404);
         }
-
+    
         $session = $request->getSession();
         $upvotedComments = $session->get('upvoted_comments', []);
-
+    
         if (in_array($comment->getId(), $upvotedComments)) {
-            $comment->setUpvote($comment->getUpvote() - 1);
-            $upvotedComments = array_diff($upvotedComments, [$comment->getId()]);
-        } else {
-            $comment->setUpvote($comment->getUpvote() + 1);
-            $upvotedComments[] = $comment->getId();
+            return new JsonResponse(['message' => 'Vous avez déjà voté pour ce commentaire'], 400);
         }
-
+    
+        $comment->setUpvote($comment->getUpvote() + 1);
+        $upvotedComments[] = $comment->getId();
         $session->set('upvoted_comments', $upvotedComments);
-        $this->entityManager->flush();
-
+    
+        try {
+            $this->entityManager->persist($comment);
+            $this->entityManager->flush();
+        } catch (\Exception $e) {
+            return new JsonResponse(['message' => 'Erreur lors de la mise à jour : ' . $e->getMessage()], 500);
+        }
+    
         return new JsonResponse(['upvotes' => $comment->getUpvote()]);
     }
 
+
+
+
     // Ajouter -1 au nombre de votes sur un commentaire
     #[Route('/comment/{id}/downvote', name: 'comment_downvote', methods: ['POST'])]
-    #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function commentForumDownvote($id, CommentRepository $commentRepository, Request $request): JsonResponse
-    {
-        $user = $this->getUser();
-        if (!$user) {
-            return new JsonResponse(['message' => 'Connectez-vous pour participer'], 403);
-        }
-
-        $comment = $commentRepository->find($id);
-        if (!$comment) {
-            return new JsonResponse(['message' => 'Commentaire non trouvé'], 404);
-        }
-
-        $session = $request->getSession();
-        $downvotedComments = $session->get('downvoted_comments', []);
-
-        if (in_array($comment->getId(), $downvotedComments)) {
-            $comment->setDownvote($comment->getDownvote() + 1);
-            $downvotedComments = array_diff($downvotedComments, [$comment->getId()]);
-        } else {
-            $comment->setDownvote($comment->getDownvote() - 1);
-            $downvotedComments[] = $comment->getId();
-        }
-
-        $session->set('downvoted_comments', $downvotedComments);
-        $this->entityManager->flush();
-
-        return new JsonResponse(['downvotes' => $comment->getDownvote()]);
+#[IsGranted('IS_AUTHENTICATED_FULLY')]
+public function commentForumDownvote($id, CommentRepository $commentRepository, Request $request): JsonResponse
+{
+    $user = $this->getUser();
+    if (!$user) {
+        return new JsonResponse(['message' => 'Connectez-vous pour participer'], 403);
     }
+
+    $comment = $commentRepository->find($id);
+    if (!$comment) {
+        return new JsonResponse(['message' => 'Commentaire non trouvé'], 404);
+    }
+
+    $session = $request->getSession();
+    $upvotedComments = $session->get('upvoted_comments', []);
+    $downvotedComments = $session->get('downvoted_comments', []);
+
+    if (in_array($comment->getId(), $downvotedComments)) {
+        $comment->setDownvote($comment->getDownvote() - 1);
+        $downvotedComments = array_diff($downvotedComments, [$comment->getId()]);
+    } else {
+        $comment->setDownvote($comment->getDownvote() + 1);
+        $downvotedComments[] = $comment->getId();
+        if (in_array($comment->getId(), $upvotedComments)) {
+            $comment->setUpvote($comment->getUpvote() - 1);
+            $upvotedComments = array_diff($upvotedComments, [$comment->getId()]);
+        }
+    }
+
+    $session->set('upvoted_comments', $upvotedComments);
+    $session->set('downvoted_comments', $downvotedComments);
+    try {
+        $this->entityManager->persist($comment);
+        $this->entityManager->flush();
+    } catch (\Exception $e) {
+        return new JsonResponse(['message' => 'Erreur lors de la mise à jour : ' . $e->getMessage()], 500);
+    }
+
+    return new JsonResponse(['upvotes' => $comment->getUpvote(), 'downvotes' => $comment->getDownvote()]);
+}
+
+    
 
     // Ajouter un commentaire à un article
     #[Route('/comment/{id}/add-article', name: 'add_article_comment', methods: ['POST'])]
