@@ -95,7 +95,7 @@
             <LinkFooter page="Annonces" link="/annonces"/>
             <LinkFooter page="Contact" link="/contact"/>
             <LinkFooter page="Qui sommes-nous" link="/qui-sommes-nous"/>
-            <LinkFooter page="Mentions légales" link="/mentions-légales"/>
+            <LinkFooter page="Mentions légales" link="/mentions-legales"/>
           </div>
         </div>
       </div>

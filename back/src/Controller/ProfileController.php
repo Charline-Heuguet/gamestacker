@@ -6,8 +6,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use App\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
+use App\Entity\User;
 
 #[Route('/api')]
 class ProfileController extends AbstractController
@@ -19,32 +20,19 @@ class ProfileController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/profile', name: 'api_profile', methods: ['GET'])]
+    #[Route('/profile/', name: 'api_profile_trailing', methods: ['GET'])]
     #[IsGranted('IS_AUTHENTICATED_FULLY')]
-    public function viewProfile(): JsonResponse
+    public function viewProfile(): Response
     {
         $user = $this->getUser();
 
-        // Vérifie si l'utilisateur est bien une instance de User
-        if (!$user instanceof User) {
-            return new JsonResponse(['error' => 'User not authenticated or invalid user type'], 401);
+        if (!$user) {
+            return new JsonResponse(['message' => 'Veuillez vous connecter ou créer un compte pour voir votre profil.'], Response::HTTP_UNAUTHORIZED);
         }
 
-        // Utilisation d'une URL de base statique pour l'image
-        $imageUrl = $user->getImage() ? 'http://localhost:8000/bundles/images/users/' . $user->getImage() : null;
+        // Sérialiser les données de l'utilisateur avec le groupe "user:read"
+        $data = $this->serializer->serialize($user, 'json', ['groups' => 'user:read']);
 
-        // Données de l'utilisateur avec l'URL complète de l'image
-        $data = [
-            'id' => $user->getId(),
-            'email' => $user->getEmail(),
-            'pseudo' => $user->getPseudo(),
-            'description' => $user->getDescription(),
-            'age' => $user->getAge(),
-            'discord' => $user->getDiscord(),
-            'gender' => $user->getGender(),
-            'image' => $imageUrl,
-        ];
-
-        return new JsonResponse($data, 200);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 }
