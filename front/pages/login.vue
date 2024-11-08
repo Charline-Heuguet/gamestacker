@@ -1,6 +1,6 @@
 <template>
   <div class="login-container min-h-screen flex items-center justify-center bg-white px-4 py-12">
-    <div v-if="authStore.isAuthenticated" class="text-center max-w-screen-lg ">
+    <div v-if="authStore.isAuthenticated" class="text-center max-w-screen-lg">
       <h1 class="text-2xl font-bold text-center text-gray-800 mb-6 leading-relaxed">
         Bienvenue, {{ authStore.user?.pseudo }}, vous pouvez désormais profiter à 100% de notre site !
       </h1>
@@ -16,7 +16,10 @@
           <label for="password" class="block text-sm font-medium text-gray-600">Mot de passe :</label>
           <input type="password" v-model="password" id="password" required class="input-field" />
         </div>
-        <button type="submit" class="btn">Se connecter</button>
+        <button type="submit" class="btn" :disabled="isLoading">
+          <span v-if="isLoading" class="loader"></span>
+          <span v-else>Se connecter</span>
+        </button>
         <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
       </form>
 
@@ -39,17 +42,20 @@ const authStore = useAuthStore();
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
+const isLoading = ref(false);
 
 const login = async () => {
   errorMessage.value = '';
+  isLoading.value = true; // Activer le chargement
   try {
     await authStore.login(email.value, password.value);
     router.push('/profile'); // Redirection vers /profile après la connexion réussie
   } catch (error) {
     errorMessage.value = 'Email ou mot de passe incorrect';
+  } finally {
+    isLoading.value = false; // Désactiver le chargement
   }
 };
-
 
 const logout = () => {
   authStore.logout();
@@ -115,17 +121,36 @@ label {
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.btn:hover {
-    background-color: #059669;
+.btn:disabled {
+    background-color: #a7f3d0;
+    cursor: not-allowed;
+}
+
+/* Style pour le loader */
+.loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #34d399;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Bouton de création de compte */
 .create-account-btn {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #10b981; /* Vert émeraude */
+    background-color: #10b981;
     color: white;
     font-weight: bold;
     font-size: 16px;
