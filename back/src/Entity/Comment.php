@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
@@ -13,6 +15,8 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['forum:details','forum:read', 'comment:details','article:details', 'user:article:comments', 'user:forum:comments' ])]
+
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -43,6 +47,17 @@ class Comment
     #[ORM\Column(options: ['default' => 0])]
     #[Groups(['forum:details', 'comment:details', 'article:details' ])]
     private ?int $downvote = 0;
+
+    /**
+     * @var Collection<int, ReportComment>
+     */
+    #[ORM\OneToMany(targetEntity: ReportComment::class, mappedBy: 'comment')]
+    private Collection $reportComments;
+
+    public function __construct()
+    {
+        $this->reportComments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -135,6 +150,36 @@ class Comment
     public function setDownvote(int $downvote): static
     {
         $this->downvote = $downvote;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReportComment>
+     */
+    public function getReportComments(): Collection
+    {
+        return $this->reportComments;
+    }
+
+    public function addReportComment(ReportComment $reportComment): static
+    {
+        if (!$this->reportComments->contains($reportComment)) {
+            $this->reportComments->add($reportComment);
+            $reportComment->setComment($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportComment(ReportComment $reportComment): static
+    {
+        if ($this->reportComments->removeElement($reportComment)) {
+            // set the owning side to null (unless already changed)
+            if ($reportComment->getComment() === $this) {
+                $reportComment->setComment(null);
+            }
+        }
 
         return $this;
     }
