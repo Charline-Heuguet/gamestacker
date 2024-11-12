@@ -123,6 +123,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['comment:details', 'user:article:comments', 'user:forum:comments'])]
     private Collection $comment;
 
+    /**
+     * @var Collection<int, ReportComment>
+     */
+    #[ORM\OneToMany(targetEntity: ReportComment::class, mappedBy: 'user')]
+    private Collection $reportComments;
+
 
     public function __construct()
     {
@@ -132,6 +138,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->announcements = new ArrayCollection();
         $this->announcementsParticipated = new ArrayCollection();
         $this->comment = new ArrayCollection();
+        $this->reportComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -479,6 +486,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReportComment>
+     */
+    public function getReportComments(): Collection
+    {
+        return $this->reportComments;
+    }
+
+    public function addReportComment(ReportComment $reportComment): static
+    {
+        if (!$this->reportComments->contains($reportComment)) {
+            $this->reportComments->add($reportComment);
+            $reportComment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportComment(ReportComment $reportComment): static
+    {
+        if ($this->reportComments->removeElement($reportComment)) {
+            // set the owning side to null (unless already changed)
+            if ($reportComment->getUser() === $this) {
+                $reportComment->setUser(null);
+            }
+        }
 
         return $this;
     }

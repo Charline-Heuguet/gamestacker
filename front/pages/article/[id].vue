@@ -3,35 +3,19 @@
     <div v-if="loading" class="text-center text-gray-500">Chargement de l'article...</div>
     <div v-else-if="article">
       <div class="article-container mx-auto text-gray-500 p-6 rounded-lg shadow-lg">
-        <!-- Titre de l'article -->
         <h1 class="text-3xl font-bold mb-4 text-emerald-500">{{ article.title }}</h1>
 
-        <!-- Image de l'article -->
-        <img
-          v-if="article.image"
-          :src="`${backendUrl}/images/articles/${article.image}`"
-          alt="Image de l'article"
-          class="w-full h-64 object-cover rounded mb-4"
-        />
+        <img v-if="article.image" :src="`${backendUrl}/images/articles/${article.image}`" alt="Image de l'article" class="w-full h-64 object-cover rounded mb-4" />
 
-        <!-- Détails de l'article -->
         <p class="text-gray-400 mb-4">Date de publication : {{ formatDate(article.date) }}</p>
 
-        <!-- Catégories -->
         <div v-if="article.category && article.category.length > 0" class="mb-4">
           <h3 class="text-lg font-semibold">Catégories :</h3>
           <div class="flex gap-2 mt-2">
-            <span
-              v-for="cat in article.category"
-              :key="cat.name"
-              class="inline-block bg-emerald-500 rounded-full px-2 py-1 text-sm font-semibold text-white"
-            >
-              {{ cat.name }}
-            </span>
+            <span v-for="cat in article.category" :key="cat.name" class="inline-block bg-emerald-500 rounded-full px-2 py-1 text-sm font-semibold text-white">{{ cat.name }}</span>
           </div>
         </div>
 
-        <!-- Contenu de l'article -->
         <p class="text-gray-600 mb-6">{{ article.content }}</p>
 
         <div>
@@ -41,19 +25,21 @@
         <!-- Section des commentaires -->
         <div v-if="article.comment && article.comment.length > 0" class="comments-section mt-6">
           <h3 class="text-2xl font-bold text-emerald-500 mb-4">Discussion:</h3>
-          <div
-            v-for="comment in article.comment"
-            :key="comment.id"
-            class="comment-item bg-emerald-50 p-4 gap-3 rounded-lg mt-4"
-            :id="`comment-${comment.id}`"
-          >
+          <div v-for="comment in article.comment" :key="comment.id" class="comment-item bg-emerald-50 p-4 gap-3 rounded-lg mt-4 relative" :id="`comment-${comment.id}`">
             <p class="text-gray-500">{{ comment.content }}</p>
             <p class="text-sm text-gray-400 mt-2">Posté le : {{ formatDate(comment.date) }}</p>
             <p>{{ comment.user.pseudo }}</p>
-            <div>
-              <button @click="upvoteComment(comment.id)" :disabled="isCommentUpvoted(comment.id) || isLoading" :class="{ 'upvoted': isCommentUpvoted(comment.id) }">
+            <div class="flex items-center gap-4">
+              <button 
+                @click="upvoteComment(comment.id)" 
+                :disabled="isCommentUpvoted(comment.id) || isLoading" 
+                :class="{ 'upvoted': isCommentUpvoted(comment.id) }"
+              >
                 <UIcon name="lucide:arrow-big-up" class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
                 <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2" />
+              </button>
+              <button class="absolute top-5 right-5" @click="openReportModal(comment.id)">
+                <UIcon name="lucide:message-square-warning" class="w-6 h-6 text-red-500" />
               </button>
             </div>
           </div>
@@ -62,6 +48,21 @@
       </div>
     </div>
     <div v-else class="text-center text-red-500">Article non trouvé.</div>
+
+    <!-- Modale de signalement -->
+    <div v-if="showReportModal" class="modal-backdrop">
+      <div class="modal">
+        <h2 class="text-xl font-semibold mb-4">Signaler un commentaire</h2>
+        <label for="category" class="block mb-2">Sélectionnez la catégorie du signalement :</label>
+        <select v-model="selectedCategory" id="category" class="p-2 border rounded w-full">
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+        <button @click="submitReport" class="mt-4 bg-red-500 text-white p-2 rounded">Envoyer signalement</button>
+        <button @click="closeReportModal" class="mt-2 text-gray-500">Annuler</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -69,36 +70,119 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AddCommentArticle from '@/components/AddCommentArticle.vue'
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore } from '@/stores/auth'
 
-// URL de base pour l'API
 const backendUrl = 'http://localhost:8000'
 const route = useRoute()
 const article = ref(null)
 const loading = ref(true)
-const authStore = useAuthStore();
-const isLoading = ref(false);
-const currentUpvoteId = ref(null);
+const authStore = useAuthStore()
+const isLoading = ref(false)
+const currentUpvoteId = ref(null)
+
+// État pour le signalement
+const showReportModal = ref(false)
+const selectedCommentId = ref(null)
+const selectedCategory = ref(null)
+const categories = ref([]) // Contient les catégories de signalement
 
 // Fonction pour récupérer les détails de l'article
-const fetchArticle = async (newCommentId = null) => {
+const fetchArticle = async () => {
   try {
     const response = await fetch(`${backendUrl}/api/article/${route.params.id}`)
-    if (!response.ok) {
-      throw new Error('Erreur lors de la récupération de l\'article')
-    }
+    if (!response.ok) throw new Error("Erreur lors de la récupération de l'article")
     article.value = await response.json()
-
-    // Scroll vers le nouveau commentaire si l'ID est fourni
-    if (newCommentId) {
-      // Utilise $nextTick pour attendre le rendu des nouveaux commentaires
-      await nextTick()
-      document.getElementById(`comment-${newCommentId}`).scrollIntoView({ behavior: 'smooth' })
-    }
   } catch (error) {
     console.error(error)
   } finally {
     loading.value = false
+  }
+}
+
+// Fonction pour vérifier si le commentaire a été upvoté
+const isCommentUpvoted = (commentId) => {
+  const upvotedComments = JSON.parse(localStorage.getItem('upvotedComments')) || []
+  return upvotedComments.includes(commentId)
+}
+
+// Fonction pour gérer les upvotes
+const upvoteComment = async (commentId) => {
+  isLoading.value = true
+  currentUpvoteId.value = commentId
+
+  try {
+    const response = await fetch(`${backendUrl}/api/comment/${commentId}/upvote`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authStore.token}`
+      }
+    })
+
+    if (!response.ok) throw new Error("Erreur lors de l'upvote du commentaire")
+    
+    // Ajouter l'ID du commentaire dans le localStorage pour éviter un nouvel upvote
+    let upvotedComments = JSON.parse(localStorage.getItem('upvotedComments')) || []
+    if (!upvotedComments.includes(commentId)) {
+      upvotedComments.push(commentId)
+      localStorage.setItem('upvotedComments', JSON.stringify(upvotedComments))
+    }
+
+    await fetchArticle() // Rafraîchit les commentaires après l'upvote
+  } catch (error) {
+    console.error(error)
+  } finally {
+    isLoading.value = false
+    currentUpvoteId.value = null
+  }
+}
+
+// Ouvre la modale de signalement
+const openReportModal = (commentId) => {
+  selectedCommentId.value = commentId
+  showReportModal.value = true
+}
+
+// Ferme la modale de signalement
+const closeReportModal = () => {
+  showReportModal.value = false
+  selectedCategory.value = null
+  selectedCommentId.value = null
+}
+
+const fetchCategories = async () => {
+  try {
+    const response = await fetch(`${backendUrl}/api/categories`)
+    if (!response.ok) throw new Error("Erreur lors de la récupération des catégories")
+    categories.value = await response.json()
+  } catch (error) {
+    console.error("Erreur lors de la récupération des catégories:", error)
+  }
+}
+
+// Fonction pour envoyer le signalement
+const submitReport = async () => {
+  if (!selectedCategory.value) {
+    alert("Veuillez sélectionner une catégorie de signalement.")
+    return
+  }
+
+  try {
+    const response = await fetch(`${backendUrl}/api/comment/${selectedCommentId.value}/report`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authStore.token}`
+      },
+      body: JSON.stringify({ categoryId: selectedCategory.value })
+    })
+
+    if (!response.ok) throw new Error("Erreur lors de l'envoi du signalement")
+
+    alert("Commentaire signalé avec succès")
+    closeReportModal()
+  } catch (error) {
+    console.error(error)
+    alert("Une erreur s'est produite lors du signalement.")
   }
 }
 
@@ -111,50 +195,10 @@ const formatDate = (date) => {
   })
 }
 
-// Fonction pour vérifier si un commentaire a déjà été upvoté
-const isCommentUpvoted = (commentId) => {
-  const upvotedComments = JSON.parse(localStorage.getItem('upvoted_comments')) || []
-  return upvotedComments.includes(commentId)
-}
-
-// Fonction pour upvoter un commentaire
-const upvoteComment = async (commentId) => {
-  isLoading.value = true;
-  currentUpvoteId.value = commentId;
-  try {
-    const response = await fetch(`${backendUrl}/api/comment/${commentId}/upvote`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authStore.token}`
-      }
-    })
-    if (!response.ok) {
-      throw new Error('Erreur lors de l\'upvote du commentaire')
-    }
-    const data = await response.json()
-    const comment = article.value.comment.find(c => c.id === commentId)
-    if (comment) {
-      comment.upvote = data.upvotes
-    }
-
-    // Mettre à jour les commentaires upvotés dans le localStorage
-    let upvotedComments = JSON.parse(localStorage.getItem('upvoted_comments')) || []
-    if (!upvotedComments.includes(commentId)) {
-      upvotedComments.push(commentId)
-      localStorage.setItem('upvoted_comments', JSON.stringify(upvotedComments))
-    }
-  } catch (error) {
-    console.error(error)
-  } finally {
-    isLoading.value = false;
-    currentUpvoteId.value = null;
-  }
-}
-
-// Récupérer les données de l'article au montage
+// Récupérer les données de l'article et les catégories au montage
 onMounted(() => {
   fetchArticle()
+  fetchCategories()
 })
 </script>
 
@@ -172,6 +216,26 @@ onMounted(() => {
 }
 
 .upvoted {
-  color: green; /* Ou toute autre couleur pour indiquer que le commentaire est upvoté */
+  color: green;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
 }
 </style>
