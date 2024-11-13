@@ -98,6 +98,9 @@ const totalItems = ref(0);
 const itemsPerPage = 10;
 const searchTerm = ref('');
 
+const { $toast } = useNuxtApp();
+
+
 const showCreateModal = ref(false);
 const newForum = ref({
     title: '',
@@ -125,7 +128,7 @@ const closeCreateModal = () => {
 
 // Afficher une alerte si l'utilisateur n'est pas connecté
 const showLoginAlert = () => {
-    alert("Veuillez vous connecter pour créer une discussion.");
+    $toast.warning("Veuillez vous connecter pour créer une discussion.");
 };
 
 // Envoyer la requête pour créer un nouveau forum
@@ -142,11 +145,10 @@ const createForum = async () => {
 
         const data = await response.json();
         if (!response.ok) {
-            alert(`Erreur : ${data.status}`);
+            $toast.error("Une erreur est survenue lors de la création de la discussion.");
         } else {
-            alert('Discussion créée avec succès !');
             closeCreateModal();
-            // Actualisez les forums ou redirigez l'utilisateur vers la discussion nouvellement créée
+            $toast.success("Ticket créé avec succès !");
             fetchForums();  // Rafraîchit la liste des forums
         }
     } catch (error) {

@@ -1,49 +1,57 @@
 <template>
-  <div class="forum-article-container min-h-screen bg-white py-12 px-4">
-    <div v-if="forum" class="max-w-4xl mx-auto bg-gray-100 p-8 rounded-lg shadow-neumorphism">
-      <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ forum.title }}</h1>
-      <p class="text-gray-600 mb-4"><strong>Date :</strong> {{ formatDate(forum.date) }}</p>
-      <p class="text-gray-600 mb-4"><strong>Auteur :</strong> {{ forum.user ? forum.user.pseudo : 'Anonyme' }}</p>
-      <div class="content mb-6">
-        <p class="text-gray-700">{{ forum.content }}</p>
+  <div class="forum-page-container min-h-screen bg-white py-12 px-4">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+      <!-- Colonne de gauche pour les forums sans commentaires -->
+      <div class="no-comments-section col-span-1  p-4 rounded-lg ">
+        <NoCommentsForums />
       </div>
 
-      <!-- Section des commentaires -->
-      <div v-if="forum.comment && forum.comment.length" class="comments-section mt-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
-        <div v-for="(comment, index) in forum.comment" :key="index" class="comment bg-gray-50 p-4 mb-4 rounded-lg shadow relative">
-          <p class="text-gray-600 mb-1">
-            <strong>{{ comment.user ? comment.user.pseudo : 'Anonyme' }}</strong> le {{ formatDate(comment.date) }}
-          </p>
-          <p class="text-gray-700">{{ comment.content }}</p>
-          <div class="flex items-center gap-4 mt-2">
-            <button 
-              @click="upvoteComment(comment.id)" 
-              :disabled="isCommentUpvoted(comment.id) || isLoading" 
-              :class="{ 'upvoted': isCommentUpvoted(comment.id) }"
-            >
-              <UIcon name="lucide:arrow-big-up" class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
-              <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2" />
-            </button>
+      <!-- Colonne principale pour afficher le forum sélectionné -->
+      <div v-if="forum" class="forum-details col-span-1 lg:col-span-3 bg-gray-100 p-8 rounded-lg shadow-neumorphism">
+        <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ forum.title }}</h1>
+        <p class="text-gray-600 mb-4"><strong>Date :</strong> {{ formatDate(forum.date) }}</p>
+        <p class="text-gray-600 mb-4"><strong>Auteur :</strong> {{ forum.user ? forum.user.pseudo : 'Anonyme' }}</p>
+        <div class="content mb-6">
+          <p class="text-gray-700">{{ forum.content }}</p>
+        </div>
 
-            <!-- Bouton de signalement avec positionnement absolu -->
-            <button 
-              @click="openReportModal(comment.id)" 
-              class="absolute top-5 right-5"
-            >
-              <UIcon name="lucide:message-square-warning" class="w-6 h-6 text-red-500" />
-            </button>
+        <!-- Section des commentaires -->
+        <div v-if="forum.comment && forum.comment.length" class="comments-section mt-8">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
+          <div v-for="(comment, index) in forum.comment" :key="index" class="comment bg-gray-50 p-4 mb-4 rounded-lg shadow relative">
+            <p class="text-gray-600 mb-1">
+              <strong>{{ comment.user ? comment.user.pseudo : 'Anonyme' }}</strong> le {{ formatDate(comment.date) }}
+            </p>
+            <p class="text-gray-700">{{ comment.content }}</p>
+            <div class="flex items-center gap-4 mt-2">
+              <button 
+                @click="upvoteComment(comment.id)" 
+                :disabled="isCommentUpvoted(comment.id) || isLoading" 
+                :class="{ 'upvoted': isCommentUpvoted(comment.id) }"
+              >
+                <UIcon name="lucide:arrow-big-up" class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
+                <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2" />
+              </button>
+
+              <!-- Bouton de signalement avec positionnement absolu -->
+              <button 
+                @click="openReportModal(comment.id)" 
+                class="absolute top-5 right-5"
+              >
+                <UIcon name="lucide:message-square-warning" class="w-6 h-6 text-red-500" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-      <p v-else class="text-gray-500">Aucun commentaire pour cet article.</p>
+        <p v-else class="text-gray-500">Aucun commentaire pour cet article.</p>
 
-      <!-- Composant d'ajout de commentaire -->
-      <AddCommentForum
-        targetType="forum"
-        :targetId="forum.id"
-        @commentAdded="fetchForum"
-      />
+        <!-- Composant d'ajout de commentaire -->
+        <AddCommentForum
+          targetType="forum"
+          :targetId="forum.id"
+          @commentAdded="fetchForum"
+        />
+      </div>
     </div>
 
     <!-- Message d'erreur -->
@@ -71,6 +79,8 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import AddCommentForum from '@/components/AddCommentForum.vue';
 import { useAuthStore } from '@/stores/auth';
+import NoCommentsForums from '@/components/NoCommentsForums.vue';
+
 
 const route = useRoute();
 const forum = ref(null);

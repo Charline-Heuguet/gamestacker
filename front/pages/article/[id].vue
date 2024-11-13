@@ -17,7 +17,7 @@
         </div>
 
         <p class="text-gray-600 mb-6">{{ article.content }}</p>
-
+        <RecommendedArticles />
         <div>
           <AddCommentArticle @commentAdded="fetchArticle" />
         </div>
@@ -71,6 +71,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AddCommentArticle from '@/components/AddCommentArticle.vue'
 import { useAuthStore } from '@/stores/auth'
+import RecommendedArticles from '~/components/RecommendedArticles.vue'
 
 const backendUrl = 'http://localhost:8000'
 const route = useRoute()
