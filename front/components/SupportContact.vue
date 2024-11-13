@@ -40,7 +40,12 @@
               class="input-field"
             ></textarea>
           </div>
-          <button type="submit" class="submit-button">Envoyer</button>
+          <button type="submit" class="submit-button" :disabled="isLoading">
+            <span v-if="isLoading">
+              <UIcon name="svg-spinners:ring-resize" class="w-7 h-7 text-white-500" />
+            </span>
+            <span v-else>Envoyer</span>
+          </button>
         </form>
         <button class="close-button" @click="toggleModal">Fermer</button>
       </div>
@@ -50,6 +55,7 @@
 
 <script>
 import axios from 'axios';
+const { $toast } = useNuxtApp();
 
 export default {
   data() {
@@ -58,7 +64,8 @@ export default {
       name: '',
       email: '',
       message: '',
-      statusMessage: ''
+      statusMessage: '',
+      isLoading: false, // Variable pour contrôler l'état de chargement
     };
   },
   methods: {
@@ -66,16 +73,22 @@ export default {
       this.showModal = !this.showModal;
     },
     async sendSupportMessage() {
+      this.isLoading = true; // Commence le chargement
+
       try {
         await axios.post('https://localhost:8000/api/contact', {
           name: this.name,
           email: this.email,
-          message: this.message
+          message: this.message,
         });
         this.statusMessage = 'Votre message a bien été envoyé !';
         this.toggleModal();
+        $toast.success('Message envoyé avec succès !');
       } catch (error) {
         this.statusMessage = 'Erreur lors de l\'envoi du message.';
+        $toast.error('Une erreur s\'est produite lors de l\'envoi du message.');
+      } finally {
+        this.isLoading = false; // Fin du chargement
       }
     }
   }
@@ -83,6 +96,7 @@ export default {
 </script>
 
 <style scoped>
+/* Style général */
 .support-icon {
   position: fixed;
   bottom: 20px;
@@ -142,8 +156,8 @@ export default {
   border-radius: 4px;
   margin-top: 5px;
   margin-bottom: 10px;
-  background-color: white; /* Fond blanc */
-  color: black; /* Texte noir */
+  background-color: white;
+  color: black;
   transition: border-color 0.3s;
 }
 
@@ -180,6 +194,6 @@ export default {
 }
 
 label {
-    color: black;
+  color: black;
 }
 </style>

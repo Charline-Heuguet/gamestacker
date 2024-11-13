@@ -31,7 +31,7 @@ const logout = async () => {
   }
 
   // Redirigez vers la page d'accueil ou la page de connexion
-  router.push('/');
+  router.push('/login');
 };
 
 // Appelez la fonction de déconnexion automatiquement lorsque le composant est monté

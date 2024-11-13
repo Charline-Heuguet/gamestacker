@@ -116,6 +116,10 @@ const selectedParticipant = ref(null);
 
 const userReady = ref(false); // Indique si les données utilisateur sont chargées
 
+// Récupérer l'objet $toast
+const { $toast } = useNuxtApp();
+
+
 // Détermine si l'utilisateur actuel est le créateur de l'annonce
 const isOwner = computed(() => {
   if (!userReady.value || !announcement.value?.user) {
@@ -160,15 +164,19 @@ const confirmJoin = async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      alert(`Erreur : ${data.status}`);
+      $toast.error('Erreur lors de la tentative de rejoindre le salon');
     } else {
-      alert(`Succès : Vous avez rejoint le salon`);
-      window.location.reload();
+      $toast.success('Vous avez rejoint le salon avec succès. Restez respecteux envers les autres participants. Vous allez être redirigé vers le salon dans 5 secondes. Bon jeu !');
+      $toast.info('Si vous n’êtes pas redirigé, veuillez recharger la page.');
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
     }
   } catch (error) {
     console.error('Erreur lors de la tentative de rejoindre le salon :', error);
   } finally {
     closeJoinModal();
+
   }
 };
 
@@ -195,9 +203,9 @@ const kickConfirmed = async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      alert(`Erreur : ${data.status}`);
+      $toast.error('Erreur lors de l’expulsion du participant');
     } else {
-      alert(`Succès : Vous avez expulsé le participant`);
+      $toast.success('Participant expulsé avec succès');
       removeParticipant(selectedParticipant.value.id);
     }
   } catch (error) {
