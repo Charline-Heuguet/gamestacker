@@ -43,6 +43,24 @@ class ForumRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findForumsWithoutComments(): array
+    {
+        $twoWeeksAgo = new \DateTime();
+        $twoWeeksAgo->modify('-2 weeks');
+
+        return $this->createQueryBuilder('f')
+            ->leftJoin('f.comment', 'c')
+            ->andWhere('c.id IS NULL') // Vérifie l'absence de commentaires
+            ->andWhere('f.date >= :twoWeeksAgo') // Vérifie la date
+            ->setParameter('twoWeeksAgo', $twoWeeksAgo)
+            ->orderBy('f.date', 'DESC')
+            ->setMaxResults(5)
+            ->getQuery()
+            ->getResult();
+    }
+
+
+
     //    /**
     //     * @return Forum[] Returns an array of Forum objects
     //     */

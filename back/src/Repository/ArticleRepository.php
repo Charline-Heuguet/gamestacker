@@ -41,4 +41,19 @@ class ArticleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findArticlesByCommonCategories(Article $currentArticle, int $limit = 5): array
+{
+    $categories = $currentArticle->getCategory()->toArray();
+
+    return $this->createQueryBuilder('a')
+        ->innerJoin('a.category', 'c')
+        ->where('c IN (:categories)')
+        ->andWhere('a.id != :currentId') // Exclure l'article actuel
+        ->setParameter('categories', $categories)
+        ->setParameter('currentId', $currentArticle->getId())
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+}
 }

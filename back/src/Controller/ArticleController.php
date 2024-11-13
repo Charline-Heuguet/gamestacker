@@ -2,12 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Article;
 use App\Repository\ArticleRepository;
-use App\Repository\AnnouncementRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\AnnouncementRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('api/article', name: 'api_article_')]
@@ -35,6 +37,14 @@ class ArticleController extends AbstractController
         }
 
         return $this->json($articles, Response::HTTP_OK, [], ['groups' => 'article:read']);
+    }
+
+    #[Route('/{id}/recommendations', name: 'article_recommendations', methods: ['GET'])]
+    public function getArticleRecommendations(Article $article): JsonResponse
+    {
+        $recommendedArticles = $this->articleRepository->findArticlesByCommonCategories($article);
+
+        return $this->json($recommendedArticles, 200, [], ['groups' => 'article:read']);
     }
 
     #[Route('/announce', name: 'announce', methods: ['GET'])]
