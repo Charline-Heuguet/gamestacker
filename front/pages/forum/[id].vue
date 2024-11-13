@@ -84,6 +84,9 @@ const showReportModal = ref(false);
 const selectedCommentId = ref(null);
 const selectedCategory = ref(null);
 const categories = ref([]);
+// Récupération de l'objet $toast depuis le contexte Nuxt
+const { $toast } = useNuxtApp();
+
 
 // Fonctions de gestion du forum et des commentaires
 const formatDate = (dateString) => {
@@ -139,6 +142,7 @@ const upvoteComment = async (commentId) => {
   } finally {
     isLoading.value = false;
     currentUpvoteId.value = null;
+    $toast.success('Commentaire aimé avec succès !');
   }
 };
 
@@ -179,11 +183,11 @@ const submitReport = async () => {
       body: JSON.stringify({ categoryId: selectedCategory.value })
     });
     if (!response.ok) throw new Error("Erreur lors de l'envoi du signalement");
-    alert("Commentaire signalé avec succès");
     closeReportModal();
+    $toast.success('Commentaire signalé avec succès !');
   } catch (error) {
     console.error(error);
-    alert("Une erreur s'est produite lors du signalement.");
+    $toast.error('Erreur lors du signalement du commentaire');
   }
 };
 

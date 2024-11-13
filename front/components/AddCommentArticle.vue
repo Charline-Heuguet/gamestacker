@@ -32,6 +32,9 @@
 
   const authStore = useAuthStore()
   const isAuthenticated = authStore.isAuthenticated
+
+  const { $toast } = useNuxtApp();
+
   
   // Fonction pour envoyer le commentaire
   const submitComment = async () => {
@@ -62,9 +65,11 @@
       content.value = ''
       errorMessage.value = ''
       emit('commentAdded', newCommentId) // Émet un événement lorsque le commentaire est ajouté
+      $toast.success('Commentaire ajouté avec succès !')
     } catch (error) {
       console.error('Erreur lors de l\'ajout du commentaire:', error)
       errorMessage.value = error.message
+      $toast.error('Une erreur s\'est produite lors de l\'ajout du commentaire.')
     }
   }
   </script>

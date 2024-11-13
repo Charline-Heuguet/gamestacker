@@ -19,7 +19,8 @@ export default defineNuxtConfig({
     '@/assets/css/global.css'
   ],
   plugins: [
-    '~/plugins/pinia.js'
+    '~/plugins/pinia.js',
+    '~/plugins/toast.client.js',
   ],
   app: {
     head: {

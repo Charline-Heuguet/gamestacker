@@ -118,6 +118,7 @@ const toggleMenu = () => {
 
 const logout = () => {
     authStore.logout();
+    window.location.href = '/login';
 };
 </script>
 

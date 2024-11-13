@@ -18,7 +18,8 @@
     "pinia": "^2.2.4",
     "swiper": "^11.1.14",
     "vue": "latest",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vue-toastification": "^2.0.0-rc.5"
   },
   "devDependencies": {
     "@iconify-json/material-symbols": "^1.2.4"

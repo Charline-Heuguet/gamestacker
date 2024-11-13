@@ -86,6 +86,10 @@ const selectedCommentId = ref(null)
 const selectedCategory = ref(null)
 const categories = ref([]) // Contient les catégories de signalement
 
+// Récupérer l'objet $toast
+const { $toast } = useNuxtApp();
+
+
 // Fonction pour récupérer les détails de l'article
 const fetchArticle = async () => {
   try {
@@ -133,6 +137,7 @@ const upvoteComment = async (commentId) => {
   } finally {
     isLoading.value = false
     currentUpvoteId.value = null
+    $toast.success("Commentaire aimé avec succès !")
   }
 }
 
@@ -178,11 +183,11 @@ const submitReport = async () => {
 
     if (!response.ok) throw new Error("Erreur lors de l'envoi du signalement")
 
-    alert("Commentaire signalé avec succès")
     closeReportModal()
+    $toast.success("Commentaire signalé avec succès !")
   } catch (error) {
     console.error(error)
-    alert("Une erreur s'est produite lors du signalement.")
+    $toast.error("Une erreur s'est produite lors du signalement.")
   }
 }
 

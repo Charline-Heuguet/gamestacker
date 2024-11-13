@@ -42,6 +42,9 @@ const errorMessage = ref('');
 const route = useRoute();
 const emit = defineEmits(['commentAdded']);
 
+// Récupérer la fonction $toast depuis le contexte de l'application
+const { $toast } = useNuxtApp();
+
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
@@ -62,6 +65,9 @@ const apiUrl = computed(() => {
 });
 
 const submitComment = async () => {
+  
+  $toast.success("Commentaire ajouté avec succès !");
+
     errorMessage.value = '';
     if (!content.value.trim()) {
         errorMessage.value = 'Le contenu du commentaire ne peut pas être vide.';
@@ -94,6 +100,7 @@ const submitComment = async () => {
     } catch (error) {
         console.error("Erreur lors de l'ajout du commentaire:", error);
         errorMessage.value = error.message;
+        $toast.error("Une erreur s'est produite !")
     }
 };
 

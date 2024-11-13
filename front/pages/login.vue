@@ -43,15 +43,20 @@ const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
 const isLoading = ref(false);
+const { $toast } = useNuxtApp();
+
 
 const login = async () => {
   errorMessage.value = '';
   isLoading.value = true; // Activer le chargement
   try {
     await authStore.login(email.value, password.value);
+    $toast.info('Connexion réussie ! Bienvenue sur notre site.');
     router.push('/profile'); // Redirection vers /profile après la connexion réussie
   } catch (error) {
     errorMessage.value = 'Email ou mot de passe incorrect';
+    $toast.error("Une erreur s'est produite ! Veuillez vérifier vos identifiants de connexion.");
+
   } finally {
     isLoading.value = false; // Désactiver le chargement
   }
