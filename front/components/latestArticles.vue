@@ -26,6 +26,8 @@
         :slides-per-view="getSlidesPerView"
         space-between="20"
         :loop="true"
+        :modules="[Autoplay]"
+        :autoplay="{ delay: 2000, disableOnInteraction: false }"
         class="mySwiper"
       >
         <swiper-slide
@@ -58,6 +60,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper/modules';
 import 'swiper/swiper-bundle.css';
 import defaultImage from '/medias/img-par-defaut.webp';
 

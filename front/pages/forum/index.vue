@@ -56,6 +56,8 @@
       placeholder="Rechercher un forum"
       class="w-full p-3 mb-8 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:border-emerald-500"
     />
+    <div v-if="isLoading" class="text-center text-xl text-emerald-500 mt-8">Un peu de patience ! Ca arrive <UIcon name="svg-spinners:90-ring-with-bg" class="w-6 h-6" />
+    </div>
 
     <div v-if="forums.length" class="space-y-8">
       <div v-for="forum in forums" :key="forum.id" class="forum-item bg-gray-100 p-6 rounded-lg shadow-neumorphism">
@@ -97,7 +99,7 @@ const isLastPage = ref(false);
 const totalItems = ref(0);
 const itemsPerPage = 10;
 const searchTerm = ref('');
-
+const isLoading = ref(false);  // Variable de chargement
 const { $toast } = useNuxtApp();
 
 
@@ -158,6 +160,7 @@ const createForum = async () => {
 
 // Récupération des forums
 const fetchForums = async (pageNum = 1, term = '') => {
+  isLoading.value = true;  // Début du chargement
   try {
     const response = await fetch(`http://localhost:8000/api/forum?page=${pageNum}&search=${term}`, {
       headers: {
@@ -172,6 +175,8 @@ const fetchForums = async (pageNum = 1, term = '') => {
     isLastPage.value = pageNum * itemsPerPage >= totalItems.value;
   } catch (error) {
     errorMessage.value = `Erreur : ${error.message}`;
+  } finally {
+    isLoading.value = false;  // Fin du chargement
   }
 };
 

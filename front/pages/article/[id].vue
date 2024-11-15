@@ -22,10 +22,10 @@
           <AddCommentArticle @commentAdded="fetchArticle" />
         </div>
 
-        <!-- Section des commentaires -->
-        <div v-if="article.comment && article.comment.length > 0" class="comments-section mt-6">
+        <!-- Section des commentaires avec pagination -->
+        <div v-if="paginatedComments.length" class="comments-section mt-6">
           <h3 class="text-2xl font-bold text-emerald-500 mb-4">Discussion:</h3>
-          <div v-for="comment in article.comment" :key="comment.id" class="comment-item bg-emerald-50 p-4 gap-3 rounded-lg mt-4 relative" :id="`comment-${comment.id}`">
+          <div v-for="comment in paginatedComments" :key="comment.id" class="comment-item bg-emerald-50 p-4 gap-3 rounded-lg mt-4 relative" :id="`comment-${comment.id}`">
             <p class="text-gray-500">{{ comment.content }}</p>
             <p class="text-sm text-gray-400 mt-2">Posté le : {{ formatDate(comment.date) }}</p>
             <p>{{ comment.user.pseudo }}</p>
@@ -43,7 +43,17 @@
               </button>
             </div>
           </div>
+
+          <!-- Pagination controls -->
+          <div class="flex justify-center mt-4 space-x-2">
+            <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 bg-emerald-500 text-white rounded">Précédent</button>
+            <button v-for="page in totalPages" :key="page" @click="setPage(page)" :class="['px-3 py-2 rounded', page === currentPage ? 'bg-emerald-700 text-white' : 'bg-gray-200 text-gray-700']">
+              {{ page }}
+            </button>
+            <button @click="nextPage" :disabled="currentPage === totalPages" class="px-4 py-2 bg-emerald-500 text-white rounded">Suivant</button>
+          </div>
         </div>
+
         <div v-else class="text-gray-400 text-center mt-6">Aucun commentaire pour cet article.</div>
       </div>
     </div>
@@ -67,7 +77,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import AddCommentArticle from '@/components/AddCommentArticle.vue'
 import { useAuthStore } from '@/stores/auth'
@@ -80,6 +90,8 @@ const loading = ref(true)
 const authStore = useAuthStore()
 const isLoading = ref(false)
 const currentUpvoteId = ref(null)
+const currentPage = ref(1)
+const commentsPerPage = 5
 
 // État pour le signalement
 const showReportModal = ref(false)
@@ -87,9 +99,28 @@ const selectedCommentId = ref(null)
 const selectedCategory = ref(null)
 const categories = ref([]) // Contient les catégories de signalement
 
-// Récupérer l'objet $toast
-const { $toast } = useNuxtApp();
+// Calcul des commentaires paginés
+const paginatedComments = computed(() => {
+  if (!article.value || !article.value.comment) return []
+  const start = (currentPage.value - 1) * commentsPerPage
+  return article.value.comment.slice(start, start + commentsPerPage)
+})
 
+const totalPages = computed(() => {
+  return article.value ? Math.ceil(article.value.comment.length / commentsPerPage) : 0
+})
+
+const setPage = (page) => {
+  currentPage.value = page
+}
+
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
 
 // Fonction pour récupérer les détails de l'article
 const fetchArticle = async () => {
