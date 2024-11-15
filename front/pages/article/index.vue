@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Slider Swiper Full Width -->
-    <swiper v-if="articles.length > 0" :slides-per-view="1" loop autoplay class="w-full h-96">
+    <swiper v-if="articles.length > 0" :modules="[Autoplay]" :autoplay="{ delay: 3000, disableOnInteraction: false }" :loop="true" :slides-per-view="1" class="w-full h-96">
       <swiper-slide v-for="article in articles.slice(0, 3)" :key="article.id"
         class="relative flex items-end bg-gray-800 text-white bg-cover bg-center"
         :style="{ backgroundImage: `url(${backendUrl}/images/articles/${article.image})`, height: '24rem' }">
@@ -110,8 +110,10 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AnnounceList from '@/components/AnnounceList.vue'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import 'swiper/swiper-bundle.css'
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
+
 
 const backendUrl = 'https://localhost:8000'
 const articles = ref([])
@@ -130,6 +132,7 @@ const paginatedArticles = computed(() => {
   return articles.value.slice(start, end)
 })
 
+
 const totalPages = computed(() => Math.ceil(articles.value.length / articlesPerPage))
 
 const nextPage = () => {
@@ -147,6 +150,8 @@ const prevPage = () => {
 watch(selectedCategory, (newVal) => {
   filterArticles();
 });
+
+
 
 const fetchArticles = async (categoryId = '') => {
   loading.value = true;

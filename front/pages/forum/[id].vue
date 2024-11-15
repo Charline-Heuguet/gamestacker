@@ -17,19 +17,22 @@
 
         <!-- Section des commentaires -->
         <div v-if="forum.comment && forum.comment.length" class="comments-section mt-8">
-          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
+          <div class="flex justify-between">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
+            <button><a href="#new-comment-anchor" class="text-gray-500">Ajouter un commentaire</a></button>
+          </div>
           <div v-for="(comment, index) in forum.comment" :key="index" class="comment bg-gray-50 p-4 mb-4 rounded-lg shadow relative">
             <p class="text-gray-600 mb-1">
               <strong>{{ comment.user ? comment.user.pseudo : 'Anonyme' }}</strong> le {{ formatDate(comment.date) }}
             </p>
             <p class="text-gray-700">{{ comment.content }}</p>
-            <div class="flex items-center gap-4 mt-2">
+            <div class="flex items-center gap-4 mt-2 text-gray-400 hover:text-emerald-400">
               <button 
                 @click="upvoteComment(comment.id)" 
                 :disabled="isCommentUpvoted(comment.id) || isLoading" 
                 :class="{ 'upvoted': isCommentUpvoted(comment.id) }"
               >
-                <UIcon name="lucide:arrow-big-up" class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
+                <UIcon name="lucide:arrow-big-up " class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
                 <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2" />
               </button>
 
@@ -46,6 +49,7 @@
         <p v-else class="text-gray-500">Aucun commentaire pour cet article.</p>
 
         <!-- Composant d'ajout de commentaire -->
+        <p id="new-comment-anchor"></p>
         <AddCommentForum
           targetType="forum"
           :targetId="forum.id"

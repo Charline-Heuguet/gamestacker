@@ -40,6 +40,10 @@
               class="input-field"
             ></textarea>
           </div>
+          <!-- reCAPTCHA -->
+          <div class="form-group">
+            <div id="g-recaptcha-support" class="g-recaptcha" data-sitekey="6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz"></div>
+          </div>
           <button type="submit" class="submit-button" :disabled="isLoading">
             <span v-if="isLoading">
               <UIcon name="svg-spinners:ring-resize" class="w-7 h-7 text-white-500" />
@@ -65,30 +69,56 @@ export default {
       email: '',
       message: '',
       statusMessage: '',
-      isLoading: false, // Variable pour contrôler l'état de chargement
+      isLoading: false,
+      isRecaptchaRendered: false, // Variable pour contrôler si reCAPTCHA est déjà rendu
     };
   },
   methods: {
     toggleModal() {
       this.showModal = !this.showModal;
+
+      // Vérifie si la modale est ouverte et si reCAPTCHA n'est pas encore rendu
+      if (this.showModal && !this.isRecaptchaRendered) {
+        if (typeof grecaptcha !== 'undefined') {
+          grecaptcha.ready(() => {
+            grecaptcha.render('g-recaptcha-support', {
+              sitekey: '6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz',
+            });
+            this.isRecaptchaRendered = true; // Marque reCAPTCHA comme rendu
+          });
+        } else {
+          console.error("reCAPTCHA n'est pas chargé correctement.");
+        }
+      }
     },
     async sendSupportMessage() {
-      this.isLoading = true; // Commence le chargement
+      this.isLoading = true;
+
+      // Récupère le jeton reCAPTCHA
+      const recaptchaResponse = grecaptcha.getResponse();
+
+      if (!recaptchaResponse) {
+        this.statusMessage = 'Veuillez valider le reCAPTCHA.';
+        this.isLoading = false;
+        return;
+      }
 
       try {
         await axios.post('https://localhost:8000/api/contact', {
           name: this.name,
           email: this.email,
           message: this.message,
+          recaptchaToken: recaptchaResponse,
         });
         this.statusMessage = 'Votre message a bien été envoyé !';
         this.toggleModal();
         $toast.success('Message envoyé avec succès !');
+        grecaptcha.reset(); // Réinitialise le reCAPTCHA après l'envoi
       } catch (error) {
         this.statusMessage = 'Erreur lors de l\'envoi du message.';
         $toast.error('Une erreur s\'est produite lors de l\'envoi du message.');
       } finally {
-        this.isLoading = false; // Fin du chargement
+        this.isLoading = false;
       }
     }
   }
