@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen">
+  <div>
     <div
       class="max-w-5xl mx-auto p-6 bg-gray-100 dark:bg-neutral-800 rounded-lg my-10 shadow-lg"
     >

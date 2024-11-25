@@ -1,6 +1,6 @@
 <template>
   <div
-    class="shadow-lg mw-80 bg-white py-12 px-4 rounded-lg shadow-lg mx-auto my-6 py-12 dark:bg-neutral-800"
+    class="shadow mw-50 bg-white px-4 rounded-lg py-12 dark:bg-neutral-800 my-20"
   >
     <h1 class="text-3xl font-bold text-emerald-500 mb-8 text-center">
       Contactez-nous

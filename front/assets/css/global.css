@@ -72,3 +72,8 @@ section {
   max-width: 80%;
   justify-self: center;
 }
+
+.mw-50 {
+  max-width: 50%;
+  justify-self: center;
+}
