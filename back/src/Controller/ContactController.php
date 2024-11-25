@@ -39,7 +39,7 @@ class ContactController extends AbstractController
         // Création du message email
         $email = (new Email())
             ->from($data['email'])
-            ->to('votre@email.com')
+            ->to('contact@gamestakers.fr')
             ->subject('Nouveau message de contact')
             ->html("
                 <html>
