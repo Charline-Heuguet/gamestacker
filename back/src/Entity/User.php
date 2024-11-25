@@ -39,12 +39,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    /**
-     * @var string The hashed password
-     */
-    #[ORM\Column]
-    #[Assert\NotBlank(message: "Le mot de passe ne doit pas être vide.")]
-    private ?string $password = null;
+/**
+ * @var string The hashed password
+ */
+#[ORM\Column]
+#[Assert\NotBlank(message: "Le mot de passe ne doit pas être vide.")]
+#[Assert\Regex(
+    pattern: "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/",
+    message: "Le mot de passe doit contenir au moins 8 caractèreZE, une majuscule, une minuscule, un chiffre et un caractère spécial."
+)]
+private ?string $password = null;
 
     #[ORM\Column(length: 30)]
     #[Assert\NotBlank(message: "Le pseudo ne doit pas être vide.")]
@@ -65,7 +69,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['announcement:read','article:details', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments', 'user:read'])]
+    #[Groups(['announcement:read', 'article:details', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments', 'user:read'])]
     private ?string $image = null;
 
 
