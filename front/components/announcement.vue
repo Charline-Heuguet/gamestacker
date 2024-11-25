@@ -6,9 +6,9 @@
           alt="megaphone"
           class="mb-4 w-12 h-12 mr-2.5"
         />
-        <h2>Les annonces</h2>
+        <h2 class="uppercase text-2xl font-bold text-gray-800">Les annonces</h2>
       </div>
-      <p class="mb-5">
+      <p class="text-gray-600 mb-5">
         Compagnons d’aventure recherchés ! Rejoins ou crée une équipe pour
         affronter ensemble les défis de Baldur’s Gate ou les mystères de Star
         Citizen.<br />

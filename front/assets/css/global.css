@@ -1,16 +1,10 @@
 body {
-  background-color: white;
   font-family: 'Poppins', sans-serif;
 }
 
 .gutter {
     max-width: 80%;
     margin: 0 auto;
-}
-
-
-p, h1, h2, h3, h4, h5, h6{
-  color: #333;
 }
 
 h1{
@@ -24,25 +18,12 @@ h2{
 }
 
 p{
-  font-size: 1rem;
   line-height: 1.5;
 }
 
 
 a:hover{
   color: rgb(52 211 153 / var(--tw-bg-opacity));
-}
-
-/* Rules for sections in the homepage, don't touch pleaz */
-section{
-  .home{
-    margin-top: 32px;
-    margin-bottom: 32px;
-
-    h2{
-      text-transform: uppercase;
-    }
-  }
 }
 
 .mw-80 {

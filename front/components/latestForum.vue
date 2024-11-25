@@ -1,8 +1,8 @@
 <template>
-  <section class="home py-4">
+  <section class="my-12 py-4">
     <div class="title">
       <img src="/medias/icons/chat.svg" alt="deux bulles de discussion">
-      <h2 class="text-xl font-bold mb-4">Le Forum</h2>
+      <h2 class="uppercase text-2xl font-bold text-gray-800">Le Forum</h2>
     </div>
     <p class="text-gray-600 mb-6">
       Besoin d'un coup de pouce pour progresser ? Visite notre forum où joueurs novices et experts échangent
