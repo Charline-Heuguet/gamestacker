@@ -12,27 +12,29 @@
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <!-- Logo et Nom du site -->
             <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <img src="@/assets/img/logo_GameStaker_black.webp" class="h-10" alt="GameStaker Logo" />
+                <img
+    :src="colorMode === 'dark' ? logoWhite : logoBlack"
+    class="h-10 transition-all duration-300"
+    :alt="colorMode === 'dark' ? 'Logo blanc GameStaker' : 'Logo noir GameStaker'"
+  />
             </a>
-            
-        <div class="flex items-center space-x-3">
-            <UIcon name="material-symbols:mode-night" class="w-5 h-5 dark:text-amber-400" />
-            <label class="relative inline-flex items-center cursor-pointer">
-            <input
-                type="checkbox"
-                class="sr-only peer"
-                :checked="colorMode === 'dark'"
-                @change="toggleColorMode"
-            />
-            <div
-                class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-400 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-500"
-            ></div>
-            </label>
-            <UIcon name="material-symbols:clear-day-rounded" class="w-5 h-5 text-amber-400 dark:text-white" />
-            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
-            {{ colorMode === 'dark' ? '' : '' }}
-            </span>
-        </div>
+
+            <div class="flex items-center space-x-3">
+                <UIcon name="material-symbols:clear-day-rounded" class="w-5 h-5 text-amber-400 dark:text-white" />
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input
+                    type="checkbox"
+                    class="sr-only peer"
+                    :checked="colorMode === 'dark'"
+                    @change="toggleColorMode"
+                    />
+                    <div
+                    class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-400 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-500"
+                    ></div>
+                </label>
+                    <UIcon name="material-symbols:mode-night" class="w-5 h-5 dark:text-amber-400" />
+            </div>
+
 
             <!-- Bouton menu burger (visible en mode mobile) -->
             <button type="button" aria-controls="navbar-menu" aria-expanded="false"
@@ -124,29 +126,48 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import SupportContact from '@/components/SupportContact.vue';
+import logoBlack from '@/assets/img/logo_GameStaker_black.webp';
+import logoWhite from '@/assets/img/logo_GameStaker_white.webp';
 
-// Accéder au composable useColorMode
-const colorMode = useColorMode();
 
-const authStore = useAuthStore();
+// Référence pour le mode
 const isMenuOpen = ref(false);
+const colorMode = ref(localStorage.getItem('colorMode') || 'light'); // Récupérer depuis localStorage
 
+// Toggle pour le menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value;
 };
 
+// Gestion de la déconnexion
 const logout = () => {
   authStore.logout();
   window.location.href = '/login';
 };
 
+// Fonction pour basculer entre clair et sombre
 const toggleColorMode = () => {
   colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('colorMode', colorMode.value); // Stocker dans localStorage
+  document.documentElement.classList.toggle('dark', colorMode.value === 'dark');
 };
+
+// Appliquer le mode au montage
+onMounted(() => {
+  if (colorMode.value === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+});
+
+const authStore = useAuthStore();
 </script>
+
+
 
 
 <style scoped>
