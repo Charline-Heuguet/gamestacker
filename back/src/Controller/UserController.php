@@ -46,17 +46,10 @@ class UserController extends AbstractController
         $user->setGender($data['gender'] ?? null);
         $user->setDiscord($data['discord'] ?? null);
         $user->setDescription($data['description'] ?? null);
+        $user->setPassword($data['password'] ?? null);
         $user->setRoles(['ROLE_USER']);
 
-        // Étape 4 : Hasher le mot de passe
-        if (isset($data['password'])) {
-            $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
-            $user->setPassword($hashedPassword);
-        } else {
-            return new JsonResponse(['error' => "Le mot de passe est requis"], JsonResponse::HTTP_BAD_REQUEST);
-        }
-
-        // Étape 5 : Valider l'entité User
+        // Étape 4 : Valider l'entité User
         $errors = $validator->validate($user);
         if (count($errors) > 0) {
             $errorMessages = [];
@@ -65,6 +58,14 @@ class UserController extends AbstractController
             }
 
             return new JsonResponse(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        // Étape 5 : Hasher le mot de passe
+        if (isset($data['password'])) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
+            $user->setPassword($hashedPassword);
+        } else {
+            return new JsonResponse(['error' => "Le mot de passe est requis"], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         // Étape 6 : Sauvegarder l'utilisateur en BDD
