@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 
 class ArticleCrudController extends AbstractCrudController
 {
@@ -25,7 +26,7 @@ class ArticleCrudController extends AbstractCrudController
     {
         return [
             TextField::new('title'),
-            TextField::new('content'),
+            TextareaField::new('content'),
             DateTimeField::new('date'),
 
             // Utilisation de VichFileField pour l'upload de l'image
@@ -37,7 +38,7 @@ class ArticleCrudController extends AbstractCrudController
             ImageField::new('image')
                 ->setBasePath('/images/articles')
                 ->onlyOnIndex(),
-                
+
             AssociationField::new('category', 'Categories')
                 ->formatValue(function ($value, $entity) {
                     return implode(', ', array_map(function ($category) {

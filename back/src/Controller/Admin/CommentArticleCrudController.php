@@ -11,6 +11,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+
 
 class CommentArticleCrudController extends AbstractCrudController
 {
@@ -22,7 +24,7 @@ class CommentArticleCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('content'),
+            TextareaField::new('content'),
             AssociationField::new('article')->setLabel('Article'),
             AssociationField::new('user')->setLabel('User'),
         ];
@@ -36,7 +38,7 @@ class CommentArticleCrudController extends AbstractCrudController
 
         // Ajouter une condition pour récupérer uniquement les commentaires associés à un article
         $qb->andWhere('entity.article IS NOT NULL')
-           ->andWhere('entity.forum IS NULL'); // Exclure les commentaires liés aux forums
+            ->andWhere('entity.forum IS NULL'); // Exclure les commentaires liés aux forums
 
         return $qb;
     }
