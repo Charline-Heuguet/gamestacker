@@ -33,6 +33,48 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findUserAnnouncements(int $userId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        $sql = '
+        SELECT id, title
+        FROM announcement
+        WHERE user_id = :userId
+    ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+
+    public function findCommentedArticlesAndForumsWithTitles(int $userId): array
+    {
+        $conn = $this->getEntityManager()->getConnection();
+
+        // Requête SQL pour récupérer les articles et forums commentés avec leurs titres
+        $sql = '
+        SELECT DISTINCT 
+            a.id AS article_id, 
+            a.title AS article_title,
+            f.id AS forum_id, 
+            f.title AS forum_title
+        FROM comment c
+        LEFT JOIN article a ON c.article_id = a.id
+        LEFT JOIN forum f ON c.forum_id = f.id
+        WHERE c.user_id = :userId
+    ';
+
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery(['userId' => $userId]);
+
+        return $resultSet->fetchAllAssociative();
+    }
+
+
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

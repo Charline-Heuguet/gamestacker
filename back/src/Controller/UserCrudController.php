@@ -32,6 +32,8 @@ class UserCrudController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
+
+
     #[Route('/', name: 'profile', methods: ['GET'])]
     public function viewProfile(): JsonResponse
     {
