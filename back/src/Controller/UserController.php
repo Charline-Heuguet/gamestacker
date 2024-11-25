@@ -85,6 +85,80 @@ class UserController extends AbstractController
             ]
         ], JsonResponse::HTTP_CREATED);
     }
+    #[Route('/profile/comments', name: 'profile_comments', methods: ['GET'])]
+    public function getCommentedArticlesAndForumsWithTitles(UserRepository $userRepository): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        $comments = $userRepository->findCommentedArticlesAndForumsWithTitles($user->getId());
+
+        return $this->json($comments);
+    }
+
+    #[Route('/profile/announcements', name: 'profile_announcements', methods: ['GET'])]
+    public function getUserAnnouncements(UserRepository $userRepository): JsonResponse
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        $announcements = $userRepository->findUserAnnouncements($user->getId());
+
+        return $this->json($announcements);
+    }
+
+
+    #[Route('/profile/update', name: 'profile_update', methods: ['PUT'])]
+    public function updateProfile(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ValidatorInterface $validator
+    ): JsonResponse {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->json(['error' => 'Utilisateur non authentifié'], 401);
+        }
+
+        $data = json_decode($request->getContent(), true);
+
+        // Mettre à jour les informations du profil
+        if (isset($data['pseudo'])) {
+            $user->setPseudo($data['pseudo']);
+        }
+        if (isset($data['description'])) {
+            $user->setDescription($data['description']);
+        }
+        if (isset($data['age'])) {
+            $user->setAge($data['age']);
+        }
+        if (isset($data['gender'])) {
+            $user->setGender($data['gender']);
+        }
+        if (isset($data['discord'])) {
+            $user->setDiscord($data['discord']);
+        }
+
+        // Valider les données
+        $errors = $validator->validate($user);
+        if (count($errors) > 0) {
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+
+            return $this->json(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+        return $this->json(['message' => 'Profil mis à jour avec succès']);
+    }
+
 
     #[Route('/login', name: 'login', methods: ['POST', 'GET'])]
     public function login(
