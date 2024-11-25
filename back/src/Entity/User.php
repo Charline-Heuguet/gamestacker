@@ -65,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments', 'user:read'])]
+    #[Groups(['announcement:read','article:details', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments', 'user:read'])]
     private ?string $image = null;
 
 

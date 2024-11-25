@@ -34,17 +34,12 @@
               {{ cat.name }}
             </option>
           </select>
-
-
-
-
-
         </div>
 
-        <div v-if="loading" class="text-center text-gray-500">Chargement des articles...</div>
+        <div v-if="loading" class="text-center text-gray-500 dark:text-white">Chargement des articles...</div>
         <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div v-for="article in paginatedArticles" :key="article.id"
-            class="bg-white border border-gray-200 rounded-lg shadow-lg">
+            class="bg-white border dark:border-gray-800 rounded-lg shadow-lg dark:bg-neutral-800">
             <a @click.prevent="viewArticle(article.id)" href="#">
               <img v-if="article.image" :src="`${backendUrl}/images/articles/${article.image}`" alt="Image de l'article"
                 class="rounded-t-lg w-full h-36 object-cover" />
@@ -52,7 +47,7 @@
 
             <div class="p-5">
               <a @click.prevent="viewArticle(article.id)" href="#">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {{ article.title }}
                 </h5>
               </a>
@@ -64,7 +59,7 @@
                 </span>
               </div>
 
-              <p class="mb-3 font-normal text-gray-700">
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-100">
                 {{ article.content ? article.content.slice(0, 250) : "Pas de contenu disponible" }}...
               </p>
 

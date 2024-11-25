@@ -1,17 +1,17 @@
 <template>
     <div class="no-comments-forum sticky top-4">
-      <h2 class="text-xl font-semibold mb-4">Ils ont aussi besoin de votre aide !</h2>
-      <small>Voici une liste de ticket sans commentaires.</small>
+      <h2 class="text-xl font-semibold mb-4 dark:text-gray-100">Ils ont aussi besoin de votre aide !</h2>
+      <small class="text-emerald-600 dark:text-emerald-500">Voici une liste de ticket sans commentaires.</small>
       <div v-if="forums.length">
         <ul>
-          <li v-for="forum in forums" :key="forum.id" class="forum-item bg-gray-100 p-4 rounded mb-4 shadow">
+          <li v-for="forum in forums" :key="forum.id" class="forum-item bg-neutral-100 dark:bg-neutral-800 p-4 rounded mb-4 mt-4 shadow">
             <h3 class="text-lg font-bold">
               <!-- Utilise le router-link pour naviguer vers la page du forum -->
               <router-link :to="`/forum/${forum.id}`" class="text-emerald-500 hover:underline">
                 {{ forum.title }}
               </router-link>
             </h3>
-            <p class="text-gray-500 text-sm mt-2">
+            <p class="text-neutral-500 text-sm mt-2">
             {{ formatDate(forum.date) }} |
             {{ forum.user?.pseudo || "Anonyme" }}
             </p>
@@ -56,12 +56,11 @@
     margin: 0 auto;
   }
   .forum-item {
-    border: 1px solid #ddd;
     padding: 1rem;
   }
   
   small {
-    color: green;
+  
     margin-bottom: 1rem;
   }
   </style>

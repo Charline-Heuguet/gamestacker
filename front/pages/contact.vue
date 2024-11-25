@@ -1,10 +1,10 @@
 <template>
-  <div class="contact-container mw-80 bg-white py-12 px-4 rounded-lg shadow-lg mx-auto my-6 py-12">
+  <div class="shadow-lg mw-80 bg-white py-12 px-4 rounded-lg shadow-lg mx-auto my-6 py-12 dark:bg-neutral-800">
     <h1 class="text-3xl font-bold text-emerald-500 mb-8 text-center">Contactez-nous</h1>
     <form @submit.prevent="sendMessage" class="space-y-6">
       <!-- Nom -->
       <div class="form-group">
-        <label for="name" class="block text-lg font-semibold text-gray-700 mb-2">Nom :</label>
+        <label for="name" class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Nom :</label>
         <input
           type="text"
           id="name"
@@ -16,7 +16,7 @@
 
       <!-- Email -->
       <div class="form-group">
-        <label for="email" class="block text-lg font-semibold text-gray-700 mb-2 bg-white">Email :</label>
+        <label for="email" class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2 ">Email :</label>
         <input
           type="email"
           id="email"
@@ -28,7 +28,7 @@
 
       <!-- Message -->
       <div class="form-group">
-        <label for="message" class="block text-lg font-semibold text-gray-700 mb-2">Message :</label>
+        <label for="message" class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Message :</label>
         <textarea
           id="message"
           v-model="message"

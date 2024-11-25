@@ -1,5 +1,5 @@
 <template>
-  <div class="forum-page-container min-h-screen bg-white py-12 px-4">
+  <div class="forum-page-container min-h-screen bg-white dark:bg-neutral-900 py-12 px-4">
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
       <!-- Colonne de gauche pour les forums sans commentaires -->
       <div class="no-comments-section col-span-1  p-4 rounded-lg ">
@@ -7,24 +7,36 @@
       </div>
 
       <!-- Colonne principale pour afficher le forum sélectionné -->
-      <div v-if="forum" class="forum-details col-span-1 lg:col-span-3 bg-gray-100 p-8 rounded-lg shadow-neumorphism">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">{{ forum.title }}</h1>
-        <p class="text-gray-600 mb-4"><strong>Date :</strong> {{ formatDate(forum.date) }}</p>
-        <p class="text-gray-600 mb-4"><strong>Auteur :</strong> {{ forum.user ? forum.user.pseudo : 'Anonyme' }}</p>
+      <div v-if="forum" class="forum-details col-span-1 lg:col-span-3 bg-gray-100 dark:bg-neutral-800 p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-emerald-500 mb-4">{{ forum.title }}</h1>
+        <div class="flex items-center gap-2 mb-5">
+              <img
+                :src="forum.user.image ? `${backendUrl}/images/users/${forum.user.image}` : `${backendUrl}/images/default.jpg`"
+                :alt="forum.user.pseudo"
+                class="w-10 h-10 rounded-full object-cover"
+              />
+              <p class="text-gray-700 font-medium dark:text-emerald-700">{{ forum.user.pseudo }}</p>
+            </div>
         <div class="content mb-6">
-          <p class="text-gray-700">{{ forum.content }}</p>
+          <p class="text-gray-700 dark:text-gray-100">{{ forum.content }}</p>
         </div>
-
+        <p class="text-neutral-600 mb-4">Ticket rédiger le {{ formatDate(forum.date) }}</p>
+        <hr class="my-4 border-neutral-300 dark:border-gray-700" />
         <!-- Section des commentaires -->
         <div v-if="forum.comment && forum.comment.length" class="comments-section mt-8">
           <div class="flex justify-between">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Commentaires</h2>
-            <button><a href="#new-comment-anchor" class="text-gray-500">Ajouter un commentaire</a></button>
+            <h2 class="text-2xl font-semibold text-gray-800 dark:text-emerald-700 mb-4">Commentaires:</h2>
+            <button><a href="#new-comment-anchor" class="text-gray-500 add-comment">Ajouter un commentaire</a></button>
           </div>
-          <div v-for="(comment, index) in forum.comment" :key="index" class="comment bg-gray-50 p-4 mb-4 rounded-lg shadow relative">
-            <p class="text-gray-600 mb-1">
-              <strong>{{ comment.user ? comment.user.pseudo : 'Anonyme' }}</strong> le {{ formatDate(comment.date) }}
-            </p>
+          <div v-for="(comment, index) in forum.comment" :key="index" class="comment bg-gray-50 dark:bg-emerald-50 p-4 mb-4 rounded-lg shadow relative">
+            <div class="flex items-center gap-2 mb-5">
+              <img
+                :src="comment.user.image ? `${backendUrl}/images/users/${comment.user.image}` : `${backendUrl}/images/default.jpg`"
+                :alt="comment.user.pseudo"
+                class="w-10 h-10 rounded-full object-cover"
+              />
+              <p class=" font-medium text-emerald-700">{{ comment.user.pseudo }} <span class="text-gray-700"> le {{ formatDate(comment.date) }} </span></p>
+            </div>
             <p class="text-gray-700">{{ comment.content }}</p>
             <div class="flex items-center gap-4 mt-2 text-gray-400 hover:text-emerald-400">
               <button 
@@ -63,15 +75,15 @@
 
     <!-- Modale de signalement -->
     <div v-if="showReportModal" class="modal-backdrop">
-      <div class="modal">
-        <h2 class="text-xl font-semibold mb-4">Signaler un commentaire</h2>
-        <label for="category" class="block mb-2">Sélectionnez la catégorie du signalement :</label>
+      <div class="modal bg-white dark:bg-gray-800">
+        <h2 class="text-xl font-semibold mb-4 dark:text-gray-100">Signaler un commentaire</h2>
+        <label for="category" class="block mb-2 dark:text-gray-300">Sélectionnez la catégorie du signalement :</label>
         <select v-model="selectedCategory" id="category" class="p-2 border rounded w-full">
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.name }}
           </option>
         </select>
-        <button @click="submitReport" class="mt-4 bg-red-500 text-white p-2 rounded">Envoyer signalement</button>
+        <button @click="submitReport" class="mt-4 mr-5 bg-red-500 text-white p-2 rounded">Envoyer signalement</button>
         <button @click="closeReportModal" class="mt-2 text-gray-500">Annuler</button>
       </div>
     </div>
@@ -84,6 +96,8 @@ import { useRoute } from 'vue-router';
 import AddCommentForum from '@/components/AddCommentForum.vue';
 import { useAuthStore } from '@/stores/auth';
 import NoCommentsForums from '@/components/NoCommentsForums.vue';
+const backendUrl = 'http://localhost:8000'
+
 
 
 const route = useRoute();
@@ -239,10 +253,11 @@ onMounted(() => {
 }
 
 .modal {
-  background: white;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
 }
+
+
 </style>

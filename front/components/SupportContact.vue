@@ -7,37 +7,37 @@
 
     <!-- Modale de contact pour le support -->
     <div v-if="showModal" class="modal-overlay" @click="toggleModal">
-      <div class="modal-content" @click.stop>
+      <div class="modal-content bg-white dark:bg-neutral-800" @click.stop>
         <h2 class="modal-title">Contact Support</h2>
         <form @submit.prevent="sendSupportMessage" class="space-y-4">
           <div class="form-group">
-            <label for="name" class="block text-lg font-semibold">Nom :</label>
+            <label for="name" class="block text-lg font-semibold text-black dark:text-gray-100">Nom :</label>
             <input
               type="text"
               id="name"
               v-model="name"
               required
-              class="input-field"
+              class="input-field bg-gray-100 dark:bg-neutral-700"
             />
           </div>
           <div class="form-group">
-            <label for="email" class="block text-lg font-semibold">Email :</label>
+            <label for="email" class="block text-lg font-semibold text-black dark:text-gray-100">Email :</label>
             <input
               type="email"
               id="email"
               v-model="email"
               required
-              class="input-field"
+              class="input-field bg-gray-100 dark:bg-neutral-700"
             />
           </div>
           <div class="form-group">
-            <label for="message" class="block text-lg font-semibold">Message :</label>
+            <label for="message" class="block text-lg font-semibold text-black dark:text-gray-100">Message :</label>
             <textarea
               id="message"
               v-model="message"
               required
               rows="4"
-              class="input-field"
+              class="input-field bg-gray-100 dark:bg-neutral-700"
             ></textarea>
           </div>
           <!-- reCAPTCHA -->
@@ -164,7 +164,6 @@ export default {
 }
 
 .modal-content {
-  background-color: white;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
@@ -182,12 +181,9 @@ export default {
 .input-field {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
   border-radius: 4px;
   margin-top: 5px;
   margin-bottom: 10px;
-  background-color: white;
-  color: black;
   transition: border-color 0.3s;
 }
 

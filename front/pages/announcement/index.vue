@@ -1,5 +1,5 @@
 <template>
-    <div class="announcement-container min-h-screen bg-white py-12 px-4">
+    <div class="announcement-container min-h-screen bg-white dark:bg-neutral-900 py-12 px-4">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Liste des Annonces</h1>
 
         <!-- Bouton pour créer une annonce -->
@@ -17,12 +17,12 @@
             v-model="searchTerm"
             @input="searchAnnouncements"
             placeholder="Rechercher par #room ou jeu"
-            class="w-full p-3 mb-8 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:border-emerald-500"
+            class="w-full p-3 mb-8 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-neutral-700 dark:text-white text-gray-900 focus:outline-none focus:border-emerald-500"
         />
 
         <!-- Liste des annonces -->
         <div v-if="announcements.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div v-for="announcement in announcements" :key="announcement.id" class="announcement-card relative bg-gray-100 text-gray-800 p-6 rounded-lg shadow-neumorphism">
+            <div v-for="announcement in announcements" :key="announcement.id" class="announcement-card relative bg-gray-100 dark:bg-neutral-800 text-gray-800 p-6 rounded-lg shadow">
                 <div class="user-image mb-4">
                     <img 
                         :src="announcement.user.image ? `${backendUrl}/images/users/${announcement.user.image}` : `${backendUrl}/images/users/default.jpg`" 
@@ -33,10 +33,10 @@
                 <span class="room-id absolute top-4 right-4 text-sm font-medium">
                     {{ announcement.roomId }}
                 </span>
-                <h2 class="text-xl font-semibold mb-2 mt-8">{{ announcement.title }}</h2>
-                <p class="mb-1"><strong class="text-gray-500">Jeu :</strong> {{ announcement.game }}</p>
-                <p class="mb-1"><strong class="text-gray-500">Date :</strong> {{ formatDate(announcement.date) }}</p>
-                <p class="mb-1"><strong class="text-gray-500">Nb max de joueurs :</strong> {{ announcement.max_nb_players }}</p>
+                <h2 class="text-xl font-semibold mb-2 mt-8 dark:text-emerald-400">{{ announcement.title }}</h2>
+                <p class="mb-1 dark:text-neutral-300"><strong class="text-gray-500 dark:text-neutral-300">Jeu :</strong> {{ announcement.game }}</p>
+                <p class="mb-1 dark:text-neutral-300"><strong class="text-gray-500 dark:text-neutral-300">Date :</strong> {{ formatDate(announcement.date) }}</p>
+                <p class="mb-1 dark:text-neutral-300"><strong class="text-gray-500 dark:text-neutral-300">Nb max de joueurs :</strong> {{ announcement.max_nb_players }}</p>
                 <a :href="`/announcement/${announcement.id}`" class="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded text-center block">
                     Voir l'annonce
                 </a>
@@ -224,9 +224,8 @@ h1 {
 }
 
 .announcement-card {
-    background-color: #f8fafc;
     border-radius: 8px;
-    box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff; /* Neumorphisme */
+    /*box-shadow: 8px 8px 16px #d1d5db, -8px -8px 16px #ffffff;  Neumorphisme */
 }
 
 .room-id {
