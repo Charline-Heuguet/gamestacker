@@ -1,5 +1,5 @@
 <template>
-  <section class="home articles">
+  <section class="my-12 articles">
     <div class="latest-articles flex justify-between items-center mb-6">
       <div class="title flex items-center space-x-3">
         <img src="/medias/icons/news.svg" alt="megaphone" class="w-10 h-10" />
