@@ -9,6 +9,8 @@ use App\Entity\Comment;
 use App\Entity\Category;
 use App\Entity\Platform;
 use App\Entity\Announcement;
+use App\Entity\ReportComment;
+use App\Entity\ReportCategory;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -63,6 +65,10 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section("Labels");
         yield MenuItem::linkToCrud("Categories", 'fa fa-tags', Category::class);
         yield MenuItem::linkToCrud("Platforms", 'fas fa-gamepad', Platform::class);
+
+        yield MenuItem::section("Demande de report");
+        yield MenuItem::linkToCrud('Report Comments', 'fas fa-comments', ReportComment::class);
+        yield MenuItem::linkToCrud('Report Categories', 'fas fa-exclamation-triangle', ReportCategory::class);
         // yield MenuItem::linkToCrud('The Label', 'fas fa-list', EntityClass::class);
     }
 }

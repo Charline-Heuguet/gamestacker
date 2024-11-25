@@ -5,7 +5,7 @@
             <h1 class="text-2xl font-bold text-white mb-4">{{ announcement.title }}</h1>
 
             <div class="flex flex-col lg:flex-row">
-                <div class="announcement-details bg-gray-800 text-white p-6 rounded-lg shadow-lg flex-1">
+                <div class="announcement-details bg-slate-100 dark:bg-neutral-800  p-6 rounded-lg shadow-lg flex-1 relative">
                     <!-- Informations de l'utilisateur -->
                     <div class="user-info flex items-center mb-4" v-if="announcement.user">
                         <img
@@ -15,15 +15,17 @@
                         />
                         <div>
                             <h2 class=" text-white text-lg font-semibold text-emerald-500">{{ announcement.user.pseudo }}</h2>
-                            <p class="text-white ">Discord : <span class="text-emerald-500 hover:text-emerald-300">{{ announcement.user.discord }}</span></p>
+                            <p class="text-gray-700 dark:text-white ">Discord : <span class="text-emerald-500 hover:text-emerald-300">{{ announcement.user.discord }}</span></p>
                         </div>
                     </div>
 
-                    <p><strong class="text-gray-300">Jeu :</strong> {{ announcement.game }}</p>
-                    <p><strong class="text-gray-300">Date :</strong> {{ formatDate(announcement.date) }}</p>
-                    <p><strong class="text-gray-300">Nombre maximum de joueurs :</strong> {{ announcement.max_nb_players }}</p>
-                    <p><strong class="text-gray-300">Room ID :</strong> <span class="text-emerald-500 hover:text-emerald-300">{{ announcement.roomId }}</span></p>
-                    <p class="mt-4">{{ announcement.content }}</p>
+                    <p class="inline-block absolute top-5 right-5 px-3 py-1 bg-gray-200 text-gray-700 font-medium rounded-lg transition-colors duration-200 hover:bg-emerald-500 hover:text-white dark:bg-neutral-600 dark:text-slate-100 dark:hover:bg-emerald-500 dark:hover:text-white cursor-pointer">
+                      <strong>Jeu :</strong> {{ announcement.game }}
+                    </p>
+                    <p class="text-gray-700 dark:text-slate-100 mb-2"><strong>Date :</strong> {{ formatDate(announcement.date) }}</p>
+                    <p class="text-gray-700 dark:text-slate-100 mb-2"><strong>Nombre maximum de joueurs :</strong> {{ announcement.max_nb_players }}</p>
+                    <p class="text-gray-700 dark:text-slate-100"><strong>Room ID :</strong> <span class="text-emerald-500 hover:text-emerald-300">{{ announcement.roomId }}</span></p>
+                    <p class="mt-4 text-gray-700 dark:text-slate-50">{{ announcement.content }}</p>
 
                     <button 
                         @click="openJoinModal" 
@@ -38,8 +40,8 @@
                     </button>
                 </div>
 
-                <div class="participants-list bg-gray-900 text-white p-6 rounded-lg shadow-lg mt-6 lg:mt-0 lg:ml-6 lg:w-1/3">
-                    <h3 class="text-xl font-semibold mb-4 text-white">Participants</h3>
+                <div class="participants-list bg-slate-100 dark:bg-neutral-800 text-white p-6 rounded-lg shadow-lg mt-6 lg:mt-0 lg:ml-6 lg:w-1/3">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-700 dark:text-white">Participants</h3>
                     <div v-for="(participant, index) in announcement.participants" :key="participant.id" class="participant-info flex items-center mb-4">
                         <img
                             :src="participant.image ? `${backendUrl}/images/users/${participant.image}` : `${backendUrl}/images/users/default.jpg`"
@@ -48,7 +50,7 @@
                         />
                         <div class="flex-1">
                             <h4 class="font-semibold text-emerald-500">{{ participant.pseudo }}</h4>
-                            <p class="text-gray-400">Discord : <span class="text-emerald-500 hover:text-emerald-300">{{ participant.discord }}</span></p>
+                            <p class="text-gray-700 dark:text-white">Discord : <span class="text-emerald-500 hover:text-emerald-300">{{ participant.discord }}</span></p>
                         </div>
                         <!-- Bouton d'expulsion, visible seulement si l'utilisateur actuel est le créateur -->
                         <button 
@@ -65,9 +67,9 @@
 
         <!-- Modal de confirmation pour rejoindre le salon -->
         <div v-if="showJoinModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
-                <h3 class="text-xl font-semibold mb-4 text-white">Confirmer l'action</h3>
-                <p class="mb-6">Voulez-vous rejoindre le salon "{{ announcement.title }}" ?</p>
+            <div class="modal bg-slate-200 dark:bg-neutral-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
+                <h3 class="text-xl font-semibold mb-4 text-gray-700 dark:text-slate-100">Confirmer l'action</h3>
+                <p class="mb-6 dark:text-slate-100">Voulez-vous rejoindre le salon <span class="text-emerald-500">"{{ announcement.title }}"</span> ?</p>
                 <div class="flex justify-end space-x-4">
                     <button @click="confirmJoin" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded">
                         Oui, rejoindre
@@ -81,9 +83,9 @@
 
         <!-- Modal de confirmation pour expulsion -->
         <div v-if="showKickModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div class="modal bg-gray-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
+            <div class="modal bg-neutral-800 text-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
                 <h3 class="text-xl font-semibold mb-4 text-white">Confirmer l'expulsion</h3>
-                <p class="mb-6">Êtes-vous sûr de vouloir expulser le joueur "{{ selectedParticipant.pseudo }}" ?</p>
+                <p class="mb-6 dark:text-slate-100">Êtes-vous sûr de vouloir expulser le joueur "{{ selectedParticipant.pseudo }}" ?</p>
                 <div class="flex justify-end space-x-4">
                     <button @click="kickConfirmed" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
                         Oui, expulser
@@ -115,6 +117,10 @@ const showKickModal = ref(false);
 const selectedParticipant = ref(null);
 
 const userReady = ref(false); // Indique si les données utilisateur sont chargées
+
+// Récupérer l'objet $toast
+const { $toast } = useNuxtApp();
+
 
 // Détermine si l'utilisateur actuel est le créateur de l'annonce
 const isOwner = computed(() => {
@@ -160,15 +166,19 @@ const confirmJoin = async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      alert(`Erreur : ${data.status}`);
+      $toast.error('Erreur lors de la tentative de rejoindre le salon');
     } else {
-      alert(`Succès : Vous avez rejoint le salon`);
-      window.location.reload();
+      $toast.success('Vous avez rejoint le salon avec succès. Restez respecteux envers les autres participants. Vous allez être redirigé vers le salon dans 5 secondes. Bon jeu !');
+      $toast.info('Si vous n’êtes pas redirigé, veuillez recharger la page.');
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
     }
   } catch (error) {
     console.error('Erreur lors de la tentative de rejoindre le salon :', error);
   } finally {
     closeJoinModal();
+
   }
 };
 
@@ -195,9 +205,9 @@ const kickConfirmed = async () => {
     const data = await response.json();
 
     if (!response.ok) {
-      alert(`Erreur : ${data.status}`);
+      $toast.error('Erreur lors de l’expulsion du participant');
     } else {
-      alert(`Succès : Vous avez expulsé le participant`);
+      $toast.success('Participant expulsé avec succès');
       removeParticipant(selectedParticipant.value.id);
     }
   } catch (error) {
@@ -259,24 +269,11 @@ onMounted(() => {
 }
 
 .announcement-details, .participants-list {
-    background-color: #222;
-    border: 1px solid #444;
+   
     border-radius: 8px;
 }
 
 .text-emerald-500 {
     color: #34d399;
-}
-
-.modal h3 {
-    color: #ffffff;
-}
-
-.modal p {
-    color: #cbd5e0;
-}
-
-p {
-  color: white;
 }
 </style>

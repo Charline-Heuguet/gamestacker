@@ -1,11 +1,11 @@
 <template>
-  <div class="add-comment p-4 bg-zinc-300 rounded-lg shadow-xl">
+  <div class="add-comment p-4 bg-gray-100 dark:bg-neutral-700 rounded-lg">
     <h3 class="text-xl font-semibold text-emerald-500 mb-4">Prenez part à la discussion</h3>
     <div class="relative">
       <textarea
         v-model="content"
         :disabled="!isAuthenticated"
-        :class="['w-full p-3 rounded-lg mb-4 resize-none focus:ring focus:ring-emerald-500', isAuthenticated ? 'bg-white text-black' : 'bg-gray-300 text-gray-500']"
+        :class="['w-full p-3 rounded-lg mb-4 resize-none focus:ring focus:ring-emerald-500', isAuthenticated ? 'bg-white text-black' : 'bg-neutral-300 text-gray-500']"
         rows="3"
         placeholder="Écrivez votre commentaire ici..."
       ></textarea>
@@ -19,7 +19,7 @@
         </NuxtLink>
       </div>
     </div>
-    <small><p class="text-neutral-400">N'oubliez pas que votre commentaire est soumis à la modération</p></small>
+    <small><p class="text-neutral-400 mb-5">N'oubliez pas que votre commentaire est soumis à la modération</p></small>
     <button
       @click="submitComment"
       :disabled="!isAuthenticated"
@@ -42,6 +42,9 @@ const errorMessage = ref('');
 const route = useRoute();
 const emit = defineEmits(['commentAdded']);
 
+// Récupérer la fonction $toast depuis le contexte de l'application
+const { $toast } = useNuxtApp();
+
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
@@ -62,6 +65,9 @@ const apiUrl = computed(() => {
 });
 
 const submitComment = async () => {
+  
+  $toast.success("Commentaire ajouté avec succès !");
+
     errorMessage.value = '';
     if (!content.value.trim()) {
         errorMessage.value = 'Le contenu du commentaire ne peut pas être vide.';
@@ -94,6 +100,7 @@ const submitComment = async () => {
     } catch (error) {
         console.error("Erreur lors de l'ajout du commentaire:", error);
         errorMessage.value = error.message;
+        $toast.error("Une erreur s'est produite !")
     }
 };
 
@@ -106,9 +113,7 @@ const submitComment = async () => {
   margin: 0 auto;
 }
 
-.bg-zinc-300 {
-  background-color: #f9f9fb;
-}
+
 .bg-gray-300 {
   background-color: #e5e7eb;
 }

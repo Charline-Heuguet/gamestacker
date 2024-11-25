@@ -1,29 +1,71 @@
-body {
-  font-family: 'Poppins', sans-serif;
+html.dark body {
+  background-color: rgb(23 23 23);
+  ;
+  color: #f3f4f6;
+  scroll-behavior: smooth;
 }
+
 
 .gutter {
-    max-width: 80%;
-    margin: 0 auto;
+  max-width: 80%;
+  margin: 0 auto;
 }
 
-h1{
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #333;
+}
+
+body.dark p,
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6 {
+  color: #f3f4f6;
+  /* Couleur texte clair pour le mode sombre */
+}
+
+h1 {
   font-size: 2.5rem;
   font-weight: 600;
 }
 
-h2{
+h2 {
   font-size: 1.5rem;
   font-weight: 600;
 }
 
-p{
+p {
+  font-size: 1rem;
   line-height: 1.5;
 }
 
-
-a:hover{
+a:hover {
   color: rgb(52 211 153 / var(--tw-bg-opacity));
+}
+
+body.dark a:hover {
+  color: rgb(16 185 129 / var(--tw-bg-opacity));
+  /* Vert plus doux en sombre */
+}
+
+/* Rules for sections in the homepage, don't touch pleaz */
+section {
+  .home {
+    margin-top: 32px;
+    margin-bottom: 32px;
+
+    h2 {
+      text-transform: uppercase;
+    }
+  }
 }
 
 .mw-80 {

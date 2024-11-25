@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Slider Swiper Full Width -->
-    <swiper v-if="articles.length > 0" :slides-per-view="1" loop autoplay class="w-full h-96">
+    <swiper v-if="articles.length > 0" :modules="[Autoplay]" :autoplay="{ delay: 3000, disableOnInteraction: false }" :loop="true" :slides-per-view="1" class="w-full h-96">
       <swiper-slide v-for="article in articles.slice(0, 3)" :key="article.id"
         class="relative flex items-end bg-gray-800 text-white bg-cover bg-center"
         :style="{ backgroundImage: `url(${backendUrl}/images/articles/${article.image})`, height: '24rem' }">
@@ -34,17 +34,12 @@
               {{ cat.name }}
             </option>
           </select>
-
-
-
-
-
         </div>
 
-        <div v-if="loading" class="text-center text-gray-500">Chargement des articles...</div>
+        <div v-if="loading" class="text-center text-gray-500 dark:text-white">Chargement des articles...</div>
         <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div v-for="article in paginatedArticles" :key="article.id"
-            class="bg-white border border-gray-200 rounded-lg shadow-lg">
+            class="bg-white border dark:border-gray-800 rounded-lg shadow-lg dark:bg-neutral-800">
             <a @click.prevent="viewArticle(article.id)" href="#">
               <img v-if="article.image" :src="`${backendUrl}/images/articles/${article.image}`" alt="Image de l'article"
                 class="rounded-t-lg w-full h-36 object-cover" />
@@ -52,7 +47,7 @@
 
             <div class="p-5">
               <a @click.prevent="viewArticle(article.id)" href="#">
-                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {{ article.title }}
                 </h5>
               </a>
@@ -64,7 +59,7 @@
                 </span>
               </div>
 
-              <p class="mb-3 font-normal text-gray-700">
+              <p class="mb-3 font-normal text-gray-700 dark:text-gray-100">
                 {{ article.content ? article.content.slice(0, 250) : "Pas de contenu disponible" }}...
               </p>
 
@@ -110,8 +105,10 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import AnnounceList from '@/components/AnnounceList.vue'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import 'swiper/swiper-bundle.css'
+import { Swiper, SwiperSlide } from 'swiper/vue';
+import { Autoplay } from 'swiper/modules';
+import 'swiper/swiper-bundle.css';
+
 
 const backendUrl = 'https://localhost:8000'
 const articles = ref([])
@@ -130,6 +127,7 @@ const paginatedArticles = computed(() => {
   return articles.value.slice(start, end)
 })
 
+
 const totalPages = computed(() => Math.ceil(articles.value.length / articlesPerPage))
 
 const nextPage = () => {
@@ -147,6 +145,8 @@ const prevPage = () => {
 watch(selectedCategory, (newVal) => {
   filterArticles();
 });
+
+
 
 const fetchArticles = async (categoryId = '') => {
   loading.value = true;

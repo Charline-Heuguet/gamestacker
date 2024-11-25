@@ -46,27 +46,30 @@
   </div>
 
   <!-- Contenu principal (Forums) -->
-  <div class="forum-container bg-white py-12 px-4 rounded-lg mw-80 w-full ">
-    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Liste des Forums</h1>
+  <div class="forum-container bg-white py-12 px-4 rounded-lg mw-80 w-full dark:bg-neutral-900 ">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8 dark:text-emerald-400">Liste des Forums</h1>
 
     <!-- Barre de recherche -->
     <input
       v-model="searchTerm"
       @input="searchForums"
       placeholder="Rechercher un forum"
-      class="w-full p-3 mb-8 border border-gray-300 rounded-lg shadow-sm bg-white text-gray-900 focus:outline-none focus:border-emerald-500"
+      class="w-full p-3 mb-8 border border-gray-300 rounded-lg shadow-sm bg-white dark:bg-neutral-800 text-gray-900 focus:outline-none focus:border-emerald-500"
     />
+    <div v-if="isLoading" class="text-center text-xl text-emerald-500 mt-8">Un peu de patience ! Ca arrive <UIcon name="svg-spinners:90-ring-with-bg" class="w-6 h-6" />
+    </div>
 
     <div v-if="forums.length" class="space-y-8">
-      <div v-for="forum in forums" :key="forum.id" class="forum-item bg-gray-100 p-6 rounded-lg shadow-neumorphism">
+      <div v-for="forum in forums" :key="forum.id" class="forum-item bg-gray-100 p-6 rounded-lg shadow-lg dark:bg-neutral-800">
         <a v-if="forum.id" :href="`/forum/${forum.id}`" class="text-xl font-semibold text-emerald-600 underline mb-2">
           {{ forum.title }}
         </a>
         <p v-else class="text-red-500">Erreur : ID manquant pour cet article.</p>
-        <p class="text-gray-700 mb-2">{{ forum.content }}</p>
-        <p class="text-gray-600"><strong>Date :</strong> {{ formatDate(forum.date) }}</p>
-        <p class="text-gray-600"><strong>Utilisateur :</strong> {{ forum.user ? forum.user.pseudo : 'Anonyme' }}</p>
-        <hr class="my-4 border-gray-300" />
+        <p class="text-gray-700 dark:text-gray-100 mb-2">{{ forum.content }}</p>
+        <p class="text-gray-600 dark:text-gray-50"><strong>Date :</strong> {{ formatDate(forum.date) }}</p>
+        <hr class="my-4 border-gray-300 dark:border-gray-700" />
+        <p class="text-neutral-600 dark:text-emerald-800"><strong> {{ forum.user ? forum.user.pseudo : 'Anonyme' }}</strong></p>
+
       </div>
 
       <!-- Pagination -->
@@ -97,6 +100,9 @@ const isLastPage = ref(false);
 const totalItems = ref(0);
 const itemsPerPage = 10;
 const searchTerm = ref('');
+const isLoading = ref(false);  // Variable de chargement
+const { $toast } = useNuxtApp();
+
 
 const showCreateModal = ref(false);
 const newForum = ref({
@@ -125,7 +131,7 @@ const closeCreateModal = () => {
 
 // Afficher une alerte si l'utilisateur n'est pas connecté
 const showLoginAlert = () => {
-    alert("Veuillez vous connecter pour créer une discussion.");
+    $toast.warning("Veuillez vous connecter pour créer une discussion.");
 };
 
 // Envoyer la requête pour créer un nouveau forum
@@ -142,11 +148,10 @@ const createForum = async () => {
 
         const data = await response.json();
         if (!response.ok) {
-            alert(`Erreur : ${data.status}`);
+            $toast.error("Une erreur est survenue lors de la création de la discussion.");
         } else {
-            alert('Discussion créée avec succès !');
             closeCreateModal();
-            // Actualisez les forums ou redirigez l'utilisateur vers la discussion nouvellement créée
+            $toast.success("Ticket créé avec succès !");
             fetchForums();  // Rafraîchit la liste des forums
         }
     } catch (error) {
@@ -156,6 +161,7 @@ const createForum = async () => {
 
 // Récupération des forums
 const fetchForums = async (pageNum = 1, term = '') => {
+  isLoading.value = true;  // Début du chargement
   try {
     const response = await fetch(`http://localhost:8000/api/forum?page=${pageNum}&search=${term}`, {
       headers: {
@@ -170,6 +176,8 @@ const fetchForums = async (pageNum = 1, term = '') => {
     isLastPage.value = pageNum * itemsPerPage >= totalItems.value;
   } catch (error) {
     errorMessage.value = `Erreur : ${error.message}`;
+  } finally {
+    isLoading.value = false;  // Fin du chargement
   }
 };
 

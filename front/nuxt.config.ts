@@ -15,17 +15,34 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'light'
   },
-  modules: [
-    '@nuxt/ui',
-    'nuxt-swiper'],
+  modules: ['@nuxt/ui', 'nuxt-swiper', '@nuxtjs/color-mode'],
+  colorMode: {
+    preference: 'system', // default value of $colorMode.preference
+    fallback: 'light', // fallback value if not system preference found
+    hid: 'nuxt-color-mode-script',
+    globalName: '__NUXT_COLOR_MODE__',
+    componentName: 'ColorScheme',
+    classPrefix: '',
+    classSuffix: '',
+    storage: 'localStorage', // or 'sessionStorage' or 'cookie'
+    storageKey: 'nuxt-color-mode'
+  },
   css: [
     '@/assets/css/global.css'
   ],
   plugins: [
-    '~/plugins/pinia.js'
+    '~/plugins/pinia.js',
+    '~/plugins/toast.client.js',
   ],
   app: {
     head: {
+      script: [
+        {
+          src: 'https://www.google.com/recaptcha/api.js',
+          async: true,
+          defer: true
+        }
+      ],
       link: [
         {
           rel: 'preconnect',

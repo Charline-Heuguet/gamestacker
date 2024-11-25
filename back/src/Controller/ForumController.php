@@ -33,6 +33,15 @@ class ForumController extends AbstractController
         $this->commentRepository = $commentRepository;
     }
 
+    /// Visualiser les tickets sans commentaires depuis 2 semaines (max 5)
+    #[Route('/no-comments', name: 'no_comments', methods: ['GET'])]
+    public function noCommentsForum(): JsonResponse
+    {
+        $forums = $this->forumRepository->findForumsWithoutComments();
+
+        return $this->json($forums, 200, [], ['groups' => 'forum:read']);
+    }
+
     /// VISUALISER TOUS LES TICKETS
     #[Route('/', name: 'forum', methods: ['GET', 'OPTIONS'])]
     public function index(Request $request, PaginatorInterface $paginator): Response
@@ -169,4 +178,6 @@ class ForumController extends AbstractController
 
         return new JsonResponse(['status' => 'Le ticket n\'existe pas.'], 404);
     }
+
+    
 }

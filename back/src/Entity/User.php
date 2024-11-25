@@ -54,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         minMessage: "Le pseudo doit contenir au moins {{ limit }} caractères.",
         maxMessage: "Le pseudo ne peut pas dépasser {{ limit }} caractères."
     )]
-    #[Groups(['user:read', 'user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read','announcement:details', 'article:annonce'])]
+    #[Groups(['user:read', 'user:signup', 'forum:read', 'forum:details', 'article:details', 'announcement:read', 'announcement:details', 'article:annonce'])]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
@@ -65,8 +65,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['announcement:read', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments'])]
+    #[Groups(['announcement:read','article:details', 'announcement:details', 'user:announcement', 'comment:details', 'forum:details', 'user:article:comments', 'user:forum:comments', 'user:read'])]
     private ?string $image = null;
+
 
     #[Vich\UploadableField(mapping: 'users', fileNameProperty: 'image')]
     private ?File $imageFile = null;
@@ -78,7 +79,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $age = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read' ,'user:signup', 'announcement:details'])]
+    #[Groups(['user:read', 'user:signup', 'announcement:details'])]
     private ?string $discord = null;
 
     #[ORM\Column(length: 30)]
@@ -123,6 +124,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['comment:details', 'user:article:comments', 'user:forum:comments'])]
     private Collection $comment;
 
+    /**
+     * @var Collection<int, ReportComment>
+     */
+    #[ORM\OneToMany(targetEntity: ReportComment::class, mappedBy: 'user')]
+    private Collection $reportComments;
+
 
     public function __construct()
     {
@@ -132,6 +139,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->announcements = new ArrayCollection();
         $this->announcementsParticipated = new ArrayCollection();
         $this->comment = new ArrayCollection();
+        $this->reportComments = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -249,7 +257,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->imageFile = $imageFile;
 
-        if(null !== $imageFile) {
+        if (null !== $imageFile) {
             $this->updatedAt = new \DateTimeImmutable();
         }
 
@@ -469,16 +477,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    
+
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
     }
 
-    
+
     public function setUpdatedAt(\DateTimeInterface $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, ReportComment>
+     */
+    public function getReportComments(): Collection
+    {
+        return $this->reportComments;
+    }
+
+    public function addReportComment(ReportComment $reportComment): static
+    {
+        if (!$this->reportComments->contains($reportComment)) {
+            $this->reportComments->add($reportComment);
+            $reportComment->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReportComment(ReportComment $reportComment): static
+    {
+        if ($this->reportComments->removeElement($reportComment)) {
+            // set the owning side to null (unless already changed)
+            if ($reportComment->getUser() === $this) {
+                $reportComment->setUser(null);
+            }
+        }
 
         return $this;
     }
