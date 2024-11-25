@@ -10,7 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -29,7 +29,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('pseudo'),
             TextField::new('discord'),
             TextField::new('email')->onlyOnIndex(),
-            TextEditorField::new('description'),
+            TextareaField::new('description'),
 
             // Champ pour uploader l'image de profil avec VichUploader
             VichFileField::new('imageFile', 'Photo de profil')
