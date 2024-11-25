@@ -25,8 +25,13 @@ class ArticleFixtures extends Fixture
         for ($i = 1; $i <= 10; $i++) {
             $article = new Article();
             $article->setTitle($faker->sentence());
-            $article->setContent($faker->paragraph());
+
+            // Contenu réaliste et détaillé pour l'article
+            $content = $this->generateRealisticContent($faker);
+            $article->setContent($content);
+
             $article->setDate($faker->dateTimeThisYear());
+
             // Attribuer une image aléatoire depuis le tableau
             $article->setImage($imageNames[array_rand($imageNames)]);
 
@@ -37,5 +42,32 @@ class ArticleFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    private function generateRealisticContent($faker): string
+    {
+        // Ajout de sections pour simuler un article structuré
+        $intro = $faker->paragraph(3); // Introduction avec plusieurs phrases
+        $section1 = $faker->paragraphs(4, true); // Section détaillée avec plus de contenu
+        $section2 = $faker->paragraphs(3, true); // Une autre section
+        $conclusion = $faker->paragraph(2); // Conclusion courte
+
+        return <<<TEXT
+### Introduction
+
+$intro
+
+### Section 1: {$faker->sentence(6)}
+
+$section1
+
+### Section 2: {$faker->sentence(6)}
+
+$section2
+
+### Conclusion
+
+$conclusion
+TEXT;
     }
 }
