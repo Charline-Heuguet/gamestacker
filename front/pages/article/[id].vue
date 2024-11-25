@@ -1,22 +1,22 @@
 <template>
   <div class="article-page p-8">
-    <div v-if="loading" class="text-center text-gray-500">Chargement de l'article...</div>
+    <div v-if="loading" class="text-center text-gray-500 dark:text-gray-100">Chargement de l'article...</div>
     <div v-else-if="article">
-      <div class="article-container mx-auto text-gray-500 p-6 rounded-lg shadow-lg">
+      <div class="article-container mx-auto text-gray-500 dark:text-gray-100 p-6 rounded-lg shadow-lg">
         <h1 class="text-3xl font-bold mb-4 text-emerald-500">{{ article.title }}</h1>
 
         <img v-if="article.image" :src="`${backendUrl}/images/articles/${article.image}`" alt="Image de l'article" class="w-full h-64 object-cover rounded mb-4" />
 
-        <p class="text-gray-400 mb-4">Date de publication : {{ formatDate(article.date) }}</p>
+        <p class="text-gray-400 dark:text-gray-100 mb-4">Date de publication : {{ formatDate(article.date) }}</p>
 
         <div v-if="article.category && article.category.length > 0" class="mb-4">
-          <h3 class="text-lg font-semibold">Catégories :</h3>
+          <h3 class="text-lg font-semibold dark:text-gray-100">Catégories :</h3>
           <div class="flex gap-2 mt-2">
             <span v-for="cat in article.category" :key="cat.name" class="inline-block bg-emerald-500 rounded-full px-2 py-1 text-sm font-semibold text-white">{{ cat.name }}</span>
           </div>
         </div>
 
-        <p class="text-gray-600 mb-6">{{ article.content }}</p>
+        <p class="text-gray-600 dark:text-gray-100 mb-6">{{ article.content }}</p>
         <RecommendedArticles />
         <div>
           <AddCommentArticle @commentAdded="fetchArticle" />
@@ -27,21 +27,29 @@
           <h3 class="text-2xl font-bold text-emerald-500 mb-4">Discussion:</h3>
           <div v-for="comment in paginatedComments" :key="comment.id" class="comment-item bg-emerald-50 p-4 gap-3 rounded-lg mt-4 relative" :id="`comment-${comment.id}`">
             <p class="text-gray-500">{{ comment.content }}</p>
-            <p class="text-sm text-gray-400 mt-2">Posté le : {{ formatDate(comment.date) }}</p>
-            <p>{{ comment.user.pseudo }}</p>
             <div class="flex items-center gap-4">
               <button 
                 @click="upvoteComment(comment.id)" 
                 :disabled="isCommentUpvoted(comment.id) || isLoading" 
                 :class="{ 'upvoted': isCommentUpvoted(comment.id) }"
               >
-                <UIcon name="lucide:arrow-big-up" class="w-6 h-6" /> Je trouve cela utile ({{ comment.upvote }})
-                <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2" />
+                <UIcon name="lucide:arrow-big-up" class="w-6 h-6 text-gray-500"/><span class="dark:text-gray-500">Je trouve cela utile ({{ comment.upvote }})</span>
+                <UIcon v-if="isLoading && currentUpvoteId === comment.id" name="svg-spinners:3-dots-bounce" class="w-6 h-6 ml-2 text-gray-500" />
               </button>
               <button class="absolute top-5 right-5" @click="openReportModal(comment.id)">
                 <UIcon name="lucide:message-square-warning" class="w-6 h-6 text-red-500" />
               </button>
             </div>
+
+            <div class="flex items-center gap-2">
+              <img
+                :src="comment.user.image ? `${backendUrl}/images/users/${comment.user.image}` : `${backendUrl}/images/default.jpg`"
+                :alt="comment.user.pseudo"
+                class="w-10 h-10 rounded-full object-cover"
+              />
+              <p class="text-gray-700 font-medium">{{ comment.user.pseudo }}</p>
+            </div>
+              <p class="text-sm text-gray-400 mt-2">Posté le : {{ formatDate(comment.date) }}</p>
           </div>
 
           <!-- Pagination controls -->
@@ -61,15 +69,15 @@
 
     <!-- Modale de signalement -->
     <div v-if="showReportModal" class="modal-backdrop">
-      <div class="modal">
-        <h2 class="text-xl font-semibold mb-4">Signaler un commentaire</h2>
+      <div class="modal bg-white dark:bg-neutral-800">
+        <h2 class="text-xl font-semibold mb-4 dark:text-white">Signaler un commentaire</h2>
         <label for="category" class="block mb-2">Sélectionnez la catégorie du signalement :</label>
         <select v-model="selectedCategory" id="category" class="p-2 border rounded w-full">
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.name }}
           </option>
         </select>
-        <button @click="submitReport" class="mt-4 bg-red-500 text-white p-2 rounded">Envoyer signalement</button>
+        <button @click="submitReport" class="mt-4 bg-red-500 text-white p-2 mr-5 rounded">Envoyer signalement</button>
         <button @click="closeReportModal" class="mt-2 text-gray-500">Annuler</button>
       </div>
     </div>
@@ -269,10 +277,10 @@ onMounted(() => {
 }
 
 .modal {
-  background: white;
   padding: 20px;
   border-radius: 8px;
   width: 90%;
   max-width: 400px;
 }
+
 </style>

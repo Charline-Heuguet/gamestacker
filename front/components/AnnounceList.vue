@@ -1,13 +1,13 @@
 <template>
     <div class="announcements-list p-4">
       <h2 class="text-2xl font-bold mb-4 text-emerald-500">Dernières Annonces</h2>
-      <p class="text-gray-500">Marre de jouer seul ? <span class="text-emerald-500">Rejoignez un salon !</span></p>
+      <p class="text-gray-500 dark:text-gray-100">Marre de jouer seul ? <span class="text-emerald-500">Rejoignez un salon !</span></p>
       <div v-if="loading" class="text-center text-gray-500">Chargement des annonces...</div>
       <div v-else-if="announcements.length > 0">
         <div
           v-for="announcement in announcements"
           :key="announcement.id"
-          class="announcement-item text-gray-500 p-4 my-4 relative shadow-lg rounded-lg bg-white p-6" 
+          class="announcement-item text-gray-500 p-4 my-4 relative shadow-lg rounded-lg bg-white p-6 dark:bg-neutral-700" 
         >
           <div class="flex items-center mb-4">
             <img
@@ -16,12 +16,12 @@
               class="w-12 h-12 rounded-full object-cover mr-4"
             />
             <div>
-              <h3 class="text-lg font-semibold">{{ announcement.title }}</h3>
-              <p class="text-gray-400">Proposé par : <span class="text-emerald-500">{{ announcement.user.pseudo }}</span></p>
+              <h3 class="text-lg font-semibold dark:text-white">{{ announcement.title }}</h3>
+              <p class="text-gray-400 dark:text-gray-100">Proposé par : <span class="text-emerald-500">{{ announcement.user.pseudo }}</span></p>
             </div>
           </div>
-          <p class="text-gray-400 mb-2">Jeu : {{ announcement.game }}</p>
-          <p class="text-gray-400 mb-2">Date : {{ formatDate(announcement.date) }}</p>
+          <p class="text-gray-400 mb-2 dark:text-gray-100">Jeu : {{ announcement.game }}</p>
+          <p class="text-gray-400 mb-2 dark:text-gray-100">{{ formatDate(announcement.date) }}</p>
           <p v-if="announcement.category.length > 0" class="text-gray-400 mb-2">
             <span
               v-for="cat in announcement.category"

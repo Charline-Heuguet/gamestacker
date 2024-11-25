@@ -8,12 +8,31 @@
             </span>
         </div>
     </div>
-    <nav class="bg-white border-b border-black">
+    <nav class="bg-white border-b border-black dark:bg-neutral-950">
         <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
             <!-- Logo et Nom du site -->
             <a href="/" class="flex items-center space-x-3 rtl:space-x-reverse">
                 <img src="@/assets/img/logo_GameStaker_black.webp" class="h-10" alt="GameStaker Logo" />
             </a>
+            
+        <div class="flex items-center space-x-3">
+            <UIcon name="material-symbols:mode-night" class="w-5 h-5 dark:text-amber-400" />
+            <label class="relative inline-flex items-center cursor-pointer">
+            <input
+                type="checkbox"
+                class="sr-only peer"
+                :checked="colorMode === 'dark'"
+                @change="toggleColorMode"
+            />
+            <div
+                class="w-11 h-6 bg-neutral-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-emerald-400 dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-emerald-500"
+            ></div>
+            </label>
+            <UIcon name="material-symbols:clear-day-rounded" class="w-5 h-5 text-amber-400 dark:text-white" />
+            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">
+            {{ colorMode === 'dark' ? '' : '' }}
+            </span>
+        </div>
 
             <!-- Bouton menu burger (visible en mode mobile) -->
             <button type="button" aria-controls="navbar-menu" aria-expanded="false"
@@ -28,7 +47,7 @@
 
             <!-- Menu de navigation (visible en mode desktop et mobile) -->
             <div :class="['w-full uppercase font-semibold md:flex md:w-auto', isMenuOpen ? '' : 'hidden']" id="navbar-menu">
-                <ul class="flex flex-col p-4 md:p-0 mt-4 font-semibold border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white">
+                <ul class="flex flex-col p-4 md:p-0 mt-4 font-semibold border border-gray-100 rounded-lg md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 bg-white dark:bg-neutral-950 ">
                     <!-- Liens de navigation -->
                     <LinkHeader page="Actualité" link="/article"/>
                     <LinkHeader page="Forum" link="/forum"/>
@@ -40,7 +59,7 @@
                             <UIcon name="material-symbols:person" class="w-5 h-5" />
                             <span class="uppercase font-semibold">Connexion</span>
                         </a>
-                        <a v-else @click="logout" class="flex items-center space-x-2 text-black hover:text-blue-700" style="cursor: pointer;">
+                        <a v-else @click="logout" class="flex items-center space-x-2 text-black dark:text-white hover:text-blue-700" style="cursor: pointer;">
                             <UIcon name="material-symbols:logout" class="w-5 h-5" />
                         </a>
                     </li>
@@ -53,12 +72,12 @@
                 <div class="flex items-center space-x-2">
                     <span class="text-black font-semibold">|</span>
                     <a v-if="!authStore.isAuthenticated" href="/login" class="icon-connect">
-                        <UIcon name="material-symbols:person" class="w-5 h-5 text-black" />
-                        <p class="text-black uppercase font-semibold">Connexion</p>
+                        <UIcon name="material-symbols:person" class="w-5 h-5 text-black dark:text-white" />
+                        <p class="text-black uppercase font-semibold dark:text-white">Connexion</p>
                     </a>
                     <template v-else>
                         <a href="/profile" class="icon-connect">
-                            <UIcon name="material-symbols:person" class="w-5 h-5 text-black" />
+                            <UIcon name="material-symbols:person" class="w-5 h-5 text-black dark:text-emerald-500" />
                         </a>
                         <a @click="logout" class="icon-connect" style="cursor: pointer;">
                             <UIcon name="material-symbols:logout" class="w-5 h-5" />
@@ -109,23 +128,30 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import SupportContact from '@/components/SupportContact.vue';
 
+// Accéder au composable useColorMode
+const colorMode = useColorMode();
+
 const authStore = useAuthStore();
 const isMenuOpen = ref(false);
 
 const toggleMenu = () => {
-    isMenuOpen.value = !isMenuOpen.value;
+  isMenuOpen.value = !isMenuOpen.value;
 };
 
 const logout = () => {
-    authStore.logout();
-    window.location.href = '/login';
+  authStore.logout();
+  window.location.href = '/login';
+};
+
+const toggleColorMode = () => {
+  colorMode.value = colorMode.value === 'dark' ? 'light' : 'dark';
 };
 </script>
+
 
 <style scoped>
 .icon-connect {
     cursor: pointer;
-    color: black;
     display: flex;
 }
 

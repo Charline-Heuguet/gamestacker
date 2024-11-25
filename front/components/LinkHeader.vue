@@ -1,6 +1,6 @@
 <template>
     <li>
-        <a :href="link" class="block py-2 px-3 text-black rounded md:bg-transparent md:p-0 header-link">{{ page }}</a> 
+        <a :href="link" class="block py-2 px-3 text-black rounded md:bg-transparent md:p-0 header-link dark:text-white">{{ page }}</a> 
     </li>
 </template>
   

@@ -1,12 +1,14 @@
 <template>
-    <div class=" add-comment p-4 bg-zinc-300 rounded-lg shadow-xl">
+    <div class=" add-comment p-4 rounded-lg shadow-xl dark:bg-neutral-800">
       <h3 class="text-xl font-semibold text-emerald-500 mb-4">Prenez part à la discution</h3>
-      <textarea
-        v-model="content"
-        class="w-full p-3 rounded-lg bg-zinc-400 text-white mb-4 resize-none focus:ring focus:ring-emerald-500"
-        rows="3"
-        placeholder="Écrivez votre commentaire ici..."
-      ></textarea>
+      <textarea v-model="content" :class="[
+        'w-full p-3 rounded-lg bg-zinc-400 mb-4 resize-none focus:ring focus:ring-emerald-500',
+        content ? 'text-gray-900' : 'text-white '
+      ]"
+  rows="3"
+  placeholder="Écrivez votre commentaire ici..."
+></textarea>
+
       <small><p class="text-neutral-400">N'oubliez pas que votre commentaire est soumis à la modération</p></small>
       <button
         @click="submitComment"

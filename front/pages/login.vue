@@ -1,20 +1,20 @@
 <template>
-  <div class="login-container min-h-screen flex items-center justify-center bg-white px-4 py-12">
+  <div class="login-container min-h-screen flex items-center justify-center bg-white dark:bg-neutral-900 px-4 py-12">
     <div v-if="authStore.isAuthenticated" class="text-center max-w-screen-lg">
       <h1 class="text-2xl font-bold text-center text-gray-800 mb-6 leading-relaxed">
         Bienvenue, {{ authStore.user?.pseudo }}, vous pouvez désormais profiter à 100% de notre site !
       </h1>
     </div>
-    <div v-else class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-neumorphism">
-      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Connectez-vous</h1>
+    <div v-else class="w-full max-w-4xl p-8 bg-white dark:bg-neutral-800 rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">Connectez-vous</h1>
       <form @submit.prevent="login" class="space-y-6">
         <div class="form-group">
-          <label for="email" class="block text-sm font-medium text-gray-600">Email :</label>
-          <input type="email" v-model="email" id="email" required class="input-field" />
+          <label for="email" class="block text-sm font-medium text-gray-600 dark:text-gray-300">Email :</label>
+          <input type="email" v-model="email" id="email" required class="input-field bg-white dark:bg-neutral-700 text-black dark:text-white" />
         </div>
         <div class="form-group">
-          <label for="password" class="block text-sm font-medium text-gray-600">Mot de passe :</label>
-          <input type="password" v-model="password" id="password" required class="input-field" />
+          <label for="password" class="block text-sm font-medium text-gray-600 dark:text-gray-300">Mot de passe :</label>
+          <input type="password" v-model="password" id="password" required class="input-field bg-white dark:bg-neutral-700 text-black dark:text-white" />
         </div>
         <button type="submit" class="btn" :disabled="isLoading">
           <span v-if="isLoading" class="loader"></span>
@@ -25,7 +25,7 @@
 
       <!-- Bouton pour créer un compte -->
       <div class="mt-6 text-center">
-        <p class="text-gray-600 mb-2">Pas de compte ?</p>
+        <p class="text-gray-600 dark:text-gray-500 mb-2">Pas de compte ?</p>
         <a href="/inscription" class="create-account-btn">Créer un compte</a>
       </div>
     </div>
@@ -75,9 +75,7 @@ const logout = () => {
 }
 
 .w-full {
-    background-color: #ffffff;
     border-radius: 8px;
-    box-shadow: 8px 8px 16px #c5c5c5, -8px -8px 16px #ffffff;
 }
 
 /* Style du titre */
@@ -103,8 +101,6 @@ label {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #f5f5f5;
-    color: #333;
     font-size: 14px;
     transition: border-color 0.3s;
 }
