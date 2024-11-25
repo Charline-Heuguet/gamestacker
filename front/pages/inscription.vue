@@ -3,7 +3,7 @@
       <div class="w-full max-w-4xl p-8 bg-white rounded-lg shadow-lg dark:bg-neutral-800">
         <h1 class="text-3xl font-bold text-center text-gray-800 dark:text-gray-400 mb-6">Inscription</h1>
         <form @submit.prevent="handleSignup" class="space-y-6">
-          <!-- Première ligne : Email, Pseudo, Discord -->
+          <!-- Email, Pseudo, Discord -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div class="form-group">
               <label for="email" class="block text-sm font-medium text-gray-600 dark:text-gray-300">Email :</label>
@@ -39,7 +39,7 @@
             </div>
           </div>
   
-          <!-- Deuxième ligne : Âge, Mot de passe -->
+          <!-- Âge, Mot de passe -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="form-group">
               <label for="age" class="block text-sm font-medium text-gray-600 dark:text-gray-300">Âge :</label>
@@ -87,11 +87,9 @@
             </select>
           </div>
   
-          <!-- Bouton d'inscription -->
           <button type="submit" class="btn">S'inscrire</button>
         </form>
   
-        <!-- Message d'erreur -->
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </div>
     </div>
@@ -137,7 +135,6 @@
     font-family: 'Poppins', sans-serif;
   }
   
-  /* Champs de saisie */
   .input-field {
     width: 100%;
     padding: 12px;
@@ -175,7 +172,6 @@
     background-color: #059669;
   }
   
-  /* Message d'erreur */
   .error-message {
     color: #f87171;
     text-align: center;

@@ -22,6 +22,21 @@ class UserFixtures extends Fixture
         $faker = Factory::create();
         $gender = ['Homme', 'Femme', 'Autre'];
 
+        // Création d'un utilisateur admin
+        $admin = new User();
+        $admin->setEmail('admin@example.com');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $hashedPassword = $this->passwordHasher->hashPassword($admin, 'Gamestackers!2024');
+        $admin->setPassword($hashedPassword);
+        $admin->setPseudo('Prof');
+        $admin->setAge(35);
+        $admin->setGender('Autre');
+        $admin->setDescription('Compte administrateur pour Valentin.');
+        $admin->setImage('default.jpg');
+        $admin->setDiscord('#Prof');
+
+        $manager->persist($admin);
+
         // Création de faux utilisateurs
         for ($i = 0; $i < 30; $i++) {
             $user = new User();
