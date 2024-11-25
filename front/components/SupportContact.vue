@@ -198,6 +198,8 @@ export default {
 
 .modal-content {
   padding: 20px;
+  height: 90%;
+  overflow: auto;
   border-radius: 8px;
   width: 90%;
   max-width: 500px;
