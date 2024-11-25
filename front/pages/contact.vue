@@ -1,10 +1,18 @@
 <template>
-  <div class="shadow-lg mw-80 bg-white py-12 px-4 rounded-lg shadow-lg mx-auto my-6 py-12 dark:bg-neutral-800">
-    <h1 class="text-3xl font-bold text-emerald-500 mb-8 text-center">Contactez-nous</h1>
+  <div
+    class="shadow-lg mw-80 bg-white py-12 px-4 rounded-lg shadow-lg mx-auto my-6 py-12 dark:bg-neutral-800"
+  >
+    <h1 class="text-3xl font-bold text-emerald-500 mb-8 text-center">
+      Contactez-nous
+    </h1>
     <form @submit.prevent="sendMessage" class="space-y-6">
       <!-- Nom -->
       <div class="form-group">
-        <label for="name" class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Nom :</label>
+        <label
+          for="name"
+          class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          >Nom :</label
+        >
         <input
           type="text"
           id="name"
@@ -16,7 +24,11 @@
 
       <!-- Email -->
       <div class="form-group">
-        <label for="email" class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2 ">Email :</label>
+        <label
+          for="email"
+          class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          >Email :</label
+        >
         <input
           type="email"
           id="email"
@@ -28,7 +40,11 @@
 
       <!-- Message -->
       <div class="form-group">
-        <label for="message" class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">Message :</label>
+        <label
+          for="message"
+          class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          >Message :</label
+        >
         <textarea
           id="message"
           v-model="message"
@@ -38,9 +54,31 @@
         ></textarea>
       </div>
 
+      <!-- Checkbox pour le RGPD -->
+      <div class="form-group flex">
+        <input
+          type="checkbox"
+          id="rgpd"
+          v-model="rgpd"
+          required
+          class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 bg-white mr-5"
+        />
+        <label
+          for="rgpd"
+          class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2"
+          >J'ai pris connaisance des
+          <a href="/mentions-legales">mentions légales</a> pour le traitement de
+          mon email.</label
+        >
+      </div>
+
       <!-- reCAPTCHA -->
       <div class="form-group">
-        <div id="g-recaptcha" class="g-recaptcha" data-sitekey="6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz"></div>
+        <div
+          id="g-recaptcha"
+          class="g-recaptcha"
+          data-sitekey="6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz"
+        ></div>
       </div>
 
       <!-- Bouton d'envoi avec état de chargement -->
@@ -49,35 +87,38 @@
         :disabled="isLoading"
         class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-3 rounded-lg transition duration-200"
       >
-        <span v-if="isLoading"><UIcon name="svg-spinners:90-ring-with-bg" class="w-7 h-7" /></span>
+        <span v-if="isLoading"
+          ><UIcon name="svg-spinners:90-ring-with-bg" class="w-7 h-7"
+        /></span>
         <span v-else>Envoyer</span>
       </button>
     </form>
-    <p v-if="statusMessage" class="mt-6 text-center font-medium text-gray-700">{{ statusMessage }}</p>
+    <p v-if="statusMessage" class="mt-6 text-center font-medium text-gray-700">
+      {{ statusMessage }}
+    </p>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 const { $toast } = useNuxtApp();
-
 
 export default {
   data() {
     return {
-      name: '',
-      email: '',
-      message: '',
-      statusMessage: '',
+      name: "",
+      email: "",
+      message: "",
+      statusMessage: "",
       isLoading: false, // État de chargement
     };
   },
   mounted() {
     // Vérifie si grecaptcha est chargé, puis rend le reCAPTCHA
-    if (typeof grecaptcha !== 'undefined') {
+    if (typeof grecaptcha !== "undefined") {
       grecaptcha.ready(() => {
-        grecaptcha.render('g-recaptcha', {
-          sitekey: '6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz',
+        grecaptcha.render("g-recaptcha", {
+          sitekey: "6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz",
         });
       });
     } else {
@@ -94,13 +135,13 @@ export default {
 
       if (!recaptchaResponse) {
         this.isLoading = false;
-        $toast.warning('Veuillez valider le reCAPTCHA. 🤖');
+        $toast.warning("Veuillez valider le reCAPTCHA. 🤖");
         return;
       }
 
       try {
         // Envoie les données avec le jeton reCAPTCHA au backend
-        await axios.post('https://localhost:8000/api/contact', {
+        await axios.post("https://localhost:8000/api/contact", {
           name: this.name,
           email: this.email,
           message: this.message,
@@ -108,7 +149,9 @@ export default {
         });
 
         grecaptcha.reset(); // Réinitialise le reCAPTCHA après l'envoi
-        $toast.success(`Message envoyé avec succès ! 🚀Une réponse vous sera donnée dans le délai le plus bref.`);
+        $toast.success(
+          `Message envoyé avec succès ! 🚀Une réponse vous sera donnée dans le délai le plus bref.`
+        );
       } catch (error) {
         console.error("Erreur d'envoi :", error);
         $toast.error("Erreur lors de l'envoi du message. 😔");
@@ -127,6 +170,6 @@ export default {
 
 input,
 textarea {
-    color:black;
+  color: black;
 }
 </style>

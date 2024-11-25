@@ -1,9 +1,7 @@
 <template>
   <div>
     <!-- Icone flottante pour le support -->
-    <div class="support-icon" @click="toggleModal">
-      ?
-    </div>
+    <div class="support-icon" @click="toggleModal">?</div>
 
     <!-- Modale de contact pour le support -->
     <div v-if="showModal" class="modal-overlay" @click="toggleModal">
@@ -11,7 +9,11 @@
         <h2 class="modal-title">Contact Support</h2>
         <form @submit.prevent="sendSupportMessage" class="space-y-4">
           <div class="form-group">
-            <label for="name" class="block text-lg font-semibold text-black dark:text-gray-100">Nom :</label>
+            <label
+              for="name"
+              class="block text-lg font-semibold text-black dark:text-gray-100"
+              >Nom :</label
+            >
             <input
               type="text"
               id="name"
@@ -21,7 +23,11 @@
             />
           </div>
           <div class="form-group">
-            <label for="email" class="block text-lg font-semibold text-black dark:text-gray-100">Email :</label>
+            <label
+              for="email"
+              class="block text-lg font-semibold text-black dark:text-gray-100"
+              >Email :</label
+            >
             <input
               type="email"
               id="email"
@@ -31,7 +37,11 @@
             />
           </div>
           <div class="form-group">
-            <label for="message" class="block text-lg font-semibold text-black dark:text-gray-100">Message :</label>
+            <label
+              for="message"
+              class="block text-lg font-semibold text-black dark:text-gray-100"
+              >Message :</label
+            >
             <textarea
               id="message"
               v-model="message"
@@ -40,13 +50,36 @@
               class="input-field bg-gray-100 dark:bg-neutral-700"
             ></textarea>
           </div>
+          <div class="form-group flex">
+            <input
+              type="checkbox"
+              id="rgpd"
+              v-model="rgpd"
+              required
+              class="p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-emerald-500 bg-white mr-5"
+            />
+            <label
+              for="rgpd"
+              class="block text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2"
+              >J'ai pris connaisance des
+              <a href="/mentions-legales">mentions légales</a> pour le
+              traitement de mon email.</label
+            >
+          </div>
           <!-- reCAPTCHA -->
           <div class="form-group">
-            <div id="g-recaptcha-support" class="g-recaptcha" data-sitekey="6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz"></div>
+            <div
+              id="g-recaptcha-support"
+              class="g-recaptcha"
+              data-sitekey="6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz"
+            ></div>
           </div>
           <button type="submit" class="submit-button" :disabled="isLoading">
             <span v-if="isLoading">
-              <UIcon name="svg-spinners:ring-resize" class="w-7 h-7 text-white-500" />
+              <UIcon
+                name="svg-spinners:ring-resize"
+                class="w-7 h-7 text-white-500"
+              />
             </span>
             <span v-else>Envoyer</span>
           </button>
@@ -58,17 +91,17 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 const { $toast } = useNuxtApp();
 
 export default {
   data() {
     return {
       showModal: false,
-      name: '',
-      email: '',
-      message: '',
-      statusMessage: '',
+      name: "",
+      email: "",
+      message: "",
+      statusMessage: "",
       isLoading: false,
       isRecaptchaRendered: false, // Variable pour contrôler si reCAPTCHA est déjà rendu
     };
@@ -79,10 +112,10 @@ export default {
 
       // Vérifie si la modale est ouverte et si reCAPTCHA n'est pas encore rendu
       if (this.showModal && !this.isRecaptchaRendered) {
-        if (typeof grecaptcha !== 'undefined') {
+        if (typeof grecaptcha !== "undefined") {
           grecaptcha.ready(() => {
-            grecaptcha.render('g-recaptcha-support', {
-              sitekey: '6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz',
+            grecaptcha.render("g-recaptcha-support", {
+              sitekey: "6LeplX4qAAAAAC_h2Dyjw8WAp9VYoU-uIDmvLNdz",
             });
             this.isRecaptchaRendered = true; // Marque reCAPTCHA comme rendu
           });
@@ -98,30 +131,30 @@ export default {
       const recaptchaResponse = grecaptcha.getResponse();
 
       if (!recaptchaResponse) {
-        this.statusMessage = 'Veuillez valider le reCAPTCHA.';
+        this.statusMessage = "Veuillez valider le reCAPTCHA.";
         this.isLoading = false;
         return;
       }
 
       try {
-        await axios.post('https://localhost:8000/api/contact', {
+        await axios.post("https://localhost:8000/api/contact", {
           name: this.name,
           email: this.email,
           message: this.message,
           recaptchaToken: recaptchaResponse,
         });
-        this.statusMessage = 'Votre message a bien été envoyé !';
+        this.statusMessage = "Votre message a bien été envoyé !";
         this.toggleModal();
-        $toast.success('Message envoyé avec succès !');
+        $toast.success("Message envoyé avec succès !");
         grecaptcha.reset(); // Réinitialise le reCAPTCHA après l'envoi
       } catch (error) {
-        this.statusMessage = 'Erreur lors de l\'envoi du message.';
-        $toast.error('Une erreur s\'est produite lors de l\'envoi du message.');
+        this.statusMessage = "Erreur lors de l'envoi du message.";
+        $toast.error("Une erreur s'est produite lors de l'envoi du message.");
       } finally {
         this.isLoading = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -131,7 +164,7 @@ export default {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #10B981;
+  background-color: #10b981;
   color: white;
   font-size: 24px;
   font-weight: bold;
@@ -174,7 +207,7 @@ export default {
 
 .modal-title {
   font-size: 24px;
-  color: #10B981;
+  color: #10b981;
   margin-bottom: 20px;
 }
 
@@ -188,12 +221,12 @@ export default {
 }
 
 .input-field:focus {
-  border-color: #10B981;
+  border-color: #10b981;
   outline: none;
 }
 
 .submit-button {
-  background-color: #10B981;
+  background-color: #10b981;
   color: white;
   font-weight: bold;
   padding: 10px 20px;
