@@ -49,7 +49,7 @@
 
         <!-- Section des commentaires avec pagination -->
         <div v-if="paginatedComments.length" class="comments-section mt-6">
-          <h3 class="text-2xl font-bold text-emerald-500 mb-4">Discussion:</h3>
+          <h3 class="text-2xl font-bold text-emerald-500 mb-4">Discussion :</h3>
           <div
             v-for="comment in paginatedComments"
             :key="comment.id"
