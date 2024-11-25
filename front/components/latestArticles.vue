@@ -31,8 +31,9 @@
           {{ article[0].title }}
         </h3>
         <p class="text-gray-600 dark:text-gray-300 line-clamp-3 mb-4">
-          {{ article[0].content }}
+          {{ stripHTML(article[0].content) }}
         </p>
+
         <NuxtLink
           :to="'/article/' + article[0].id"
           class="text-emerald-500 hover:underline dark:text-emerald-400"
@@ -95,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import { Autoplay } from "swiper/modules";
 import "swiper/swiper-bundle.css";
@@ -133,6 +134,11 @@ function updateSlidesPerView() {
   } else {
     getSlidesPerView.value = 1;
   }
+}
+
+// Fonction pour retirer les balises HTML
+function stripHTML(html) {
+  return html.replace(/<[^>]*>/g, ""); // Supprime toutes les balises HTML
 }
 </script>
 
