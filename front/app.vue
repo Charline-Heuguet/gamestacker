@@ -1,8 +1,7 @@
 <template>
-<div class="text-slate-500">
+  <div class="text-slate-500">
     <NuxtLayout>
-        <NuxtPage />
+      <NuxtPage />
     </NuxtLayout>
-</div>
+  </div>
 </template>
-  

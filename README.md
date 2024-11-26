@@ -146,9 +146,48 @@ npm run dev
 
 ```
 
+##4. Configuration des clés JWT##
+Le projet utilise des tokens JWT pour gérer l'authentification des utilisateurs. Vous devez générer les clés nécessaires avant de pouvoir utiliser ces fonctionnalités.
+
+Créez un dossier pour stocker les clés JWT dans le répertoire back/config :
+
+```
+
+mkdir -p config/jwt
+
+```
+
+Générez la clé privée et la clé publique à l'aide de la commande OpenSSL :
+
+```
+
+openssl genrsa -out config/jwt/private.pem -aes256 4096
+openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+
+Lors de la génération de la clé privée, utilisez la passphrase définie dans le fichier .env à la variable JWT_PASSPHRASE.
+
+Définissez les permissions des clés pour renforcer la sécurité :
+
+```
+chmod 600 config/jwt/private.pem
+chmod 644 config/jwt/public.pem
+```
+
+Assurez-vous que le fichier .env contient les chemins corrects pour les clés générées et la passphrase correspondante :
+
+```
+JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
+JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
+JWT_PASSPHRASE=mypass
+```
+
+Vérifiez que les routes liées à l'authentification JWT (par exemple, /api/login_check) fonctionnent en générant un token avec un utilisateur valide.
+
 ##🌐 Accès au site##
 
 Back-End Symfony : http://127.0.0.1:8000
 Front-End Nuxt : http://localhost:3000
+
+```
 
 ```

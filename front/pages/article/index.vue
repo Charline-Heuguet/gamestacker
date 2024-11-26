@@ -21,11 +21,9 @@
         <div
           class="p-4 sm:p-6 max-w-full bg-opacity-70 bg-gray-900 w-full flex flex-col items-start space-y-2 sm:space-y-4 h-full justify-end"
         >
-          <h2
-            class="text-lg sm:text-2xl lg:text-3xl font-bold text-emerald-500"
-          >
+          <p class="text-lg sm:text-2xl lg:text-3xl font-bold text-emerald-500">
             {{ article.title }}
-          </h2>
+          </p>
           <p class="text-sm sm:text-base mt-1 w-8/12 text-white">
             {{
               article.content
@@ -90,11 +88,11 @@
 
             <div class="p-5">
               <a @click.prevent="viewArticle(article.id)" href="#">
-                <h5
+                <h2
                   class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
                 >
                   {{ article.title }}
-                </h5>
+                </h2>
               </a>
 
               <div class="flex gap-2 mb-2">
