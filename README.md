@@ -150,4 +150,5 @@ npm run dev
 
 Back-End Symfony : http://127.0.0.1:8000
 Front-End Nuxt : http://localhost:3000
+
 ```
