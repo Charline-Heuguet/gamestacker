@@ -108,8 +108,11 @@ symfony server:start
 5. Créez et appliquez les migrations :
 
 ````
+php bin/console doctrine:database:create
 php bin/console make:migration
-php bin/console doctrine:migrations:migrate```
+php bin/console doctrine:migrations:migrate
+
+```
 
 ## 3. Configuration du Front-End
 
@@ -187,7 +190,3 @@ Vérifiez que les routes liées à l'authentification JWT (par exemple, /api/log
 
 Back-End Symfony : http://127.0.0.1:8000
 Front-End Nuxt : http://localhost:3000
-
-```
-
-```
