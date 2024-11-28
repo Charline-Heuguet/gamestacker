@@ -107,7 +107,7 @@ symfony server:start
 
 5. Créez et appliquez les migrations :
 
-````
+```
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:diff
 php bin/console doctrine:migrations:migrate
@@ -124,10 +124,9 @@ npm install -g nuxt
 npm install -g @vue/cli
 ```
 
-
 1. Accédez au répertoire front :
 
-````
+```
 
 cd ../front
 
@@ -155,7 +154,7 @@ Le projet utilise des tokens JWT pour gérer l'authentification des utilisateurs
 Créez un dossier pour stocker les clés JWT dans le répertoire back/config :
 
 ```
-
+cd ../back
 mkdir -p config/jwt
 
 ```
@@ -163,26 +162,40 @@ mkdir -p config/jwt
 Générez la clé privée et la clé publique à l'aide de la commande OpenSSL :
 
 ```
-
 openssl genrsa -out config/jwt/private.pem -aes256 4096
-openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+```
 
 Lors de la génération de la clé privée, utilisez la passphrase définie dans le fichier .env à la variable JWT_PASSPHRASE.
+
+```
+openssl rsa -pubout -in config/jwt/private.pem -out config/jwt/public.pem
+```
 
 Définissez les permissions des clés pour renforcer la sécurité :
 
 ```
 chmod 600 config/jwt/private.pem
 chmod 644 config/jwt/public.pem
+
 ```
 
 Assurez-vous que le fichier .env contient les chemins corrects pour les clés générées et la passphrase correspondante :
 
 ```
+
 JWT_SECRET_KEY=%kernel.project_dir%/config/jwt/private.pem
 JWT_PUBLIC_KEY=%kernel.project_dir%/config/jwt/public.pem
 JWT_PASSPHRASE=mypass
+
 ```
+
+Chargez les fixtures dans la base de données :
+
+```
+php bin/console doctrine:fixtures:load
+```
+
+Confirmez avec yes si demandé.
 
 Vérifiez que les routes liées à l'authentification JWT (par exemple, /api/login_check) fonctionnent en générant un token avec un utilisateur valide.
 
