@@ -286,23 +286,43 @@ const fetchProfile = async () => {
 
 const updateProfile = async () => {
   try {
+    // Créez une copie des données pour éviter les champs non nécessaires
+    const payload = { ...form.value };
+
+    // Supprimez le champ password s'il est vide ou non modifié
+    if (!payload.password) {
+      delete payload.password;
+    }
+
+    // Envoyez les données filtrées
     const response = await fetch(`${backendUrl}/api/profile/update`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${authStore.token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(form.value),
+      body: JSON.stringify(payload),
     });
-    if (!response.ok)
-      throw new Error("Erreur lors de la mise à jour du profil");
-    profile.value = await response.json();
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.errors ? errorData.errors.join(", ") : "Erreur inconnue"
+      );
+    }
+
+    // Mettre à jour le profil avec les nouvelles données
+    const updatedProfile = await response.json();
+    profile.value = updatedProfile;
     editMode.value = false;
+
     alert("Profil mis à jour avec succès !");
-    location.reload(); // Recharge la page
+    location.reload(); // Recharge la page pour afficher les changements
   } catch (error) {
     console.error("Erreur :", error.message);
-    alert("Une erreur s'est produite lors de la mise à jour.");
+    alert(
+      "Une erreur s'est produite lors de la mise à jour : " + error.message
+    );
   }
 };
 

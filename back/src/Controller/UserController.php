@@ -117,13 +117,16 @@ class UserController extends AbstractController
     public function updateProfile(
         Request $request,
         EntityManagerInterface $entityManager,
-        ValidatorInterface $validator
+        ValidatorInterface $validator,
+        UserPasswordHasherInterface $passwordHasher
     ): JsonResponse {
+        // Récupérer l'utilisateur actuel
         $user = $this->getUser();
         if (!$user) {
             return $this->json(['error' => 'Utilisateur non authentifié'], 401);
         }
 
+        // Décoder les données JSON de la requête
         $data = json_decode($request->getContent(), true);
 
         // Mettre à jour les informations du profil
@@ -143,8 +146,16 @@ class UserController extends AbstractController
             $user->setDiscord($data['discord']);
         }
 
-        // Valider les données
-        $errors = $validator->validate($user);
+        // Gestion du mot de passe : uniquement s'il est fourni
+        if (isset($data['password']) && !empty($data['password'])) {
+            $hashedPassword = $passwordHasher->hashPassword($user, $data['password']);
+            $user->setPassword($hashedPassword);
+        }
+
+        // Valider l'utilisateur (avec un groupe spécifique pour les mises à jour)
+        $errors = $validator->validate($user, null, ['password_update']);
+
+        // Retourner les erreurs de validation s'il y en a
         if (count($errors) > 0) {
             $errorMessages = [];
             foreach ($errors as $error) {
@@ -154,11 +165,22 @@ class UserController extends AbstractController
             return $this->json(['errors' => $errorMessages], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        // Sauvegarder les modifications dans la base de données
         $entityManager->persist($user);
         $entityManager->flush();
 
-        return $this->json(['message' => 'Profil mis à jour avec succès']);
+        return $this->json([
+            'message' => 'Profil mis à jour avec succès',
+            'user' => [
+                'pseudo' => $user->getPseudo(),
+                'description' => $user->getDescription(),
+                'age' => $user->getAge(),
+                'gender' => $user->getGender(),
+                'discord' => $user->getDiscord(),
+            ],
+        ]);
     }
+
 
 
     #[Route('/login', name: 'login', methods: ['POST', 'GET'])]
